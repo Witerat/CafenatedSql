@@ -1,215 +1,173 @@
 <?xml version="1.1" encoding="utf-8"?>
 <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="-//org.witerat/cafenated/sql" 
-	xmlns:csd="-//org.witerat/cafenated/sql"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	elementFormDefault="qualified" 
-	attributeFormDefault="unqualified">
-	<xsd:element name="driver">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="meta">
+	targetNamespace="-//org.witerat/cafenated/sql" xmlns:csd="-//org.witerat/cafenated/sql"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:element name="driver" type="csd:driverTag" />
 
-					<xsd:complexType>
-						<xsd:attribute name="name">
-							<xsd:simpleType>
-								<xsd:restriction base="xsd:string">
-									<xsd:minLength value="1" />
-								</xsd:restriction>
-							</xsd:simpleType>
-						</xsd:attribute>
-						<xsd:attribute name="description" type="xsd:string" />
-						<xsd:attribute name="protocol">
-							<xsd:simpleType>
-								<xsd:restriction base="xsd:string">
-									<xsd:minLength value="1" />
-									<xsd:whiteSpace value="collapse" />
-									<xsd:pattern value="jdbc\:([a-zA-Z0-9]+)\:"></xsd:pattern>
-								</xsd:restriction>
-							</xsd:simpleType>
-						</xsd:attribute>
-						<xsd:attribute name="className">
-							<xsd:simpleType>
-								<xsd:restriction base="xsd:string">
-									<xsd:pattern
-										value="([a-z_](.[a-z_][a-zA-Z0-9_]*)*\.)?[A-Z][A-Za-z0-9]*"></xsd:pattern>
-								</xsd:restriction>
-							</xsd:simpleType>
-						</xsd:attribute>
-					</xsd:complexType>
-				</xsd:element>
-
-				<xsd:element name="template-engine" type="csd:TemplateType" />
-
-
-				<xsd:element name="def" maxOccurs="unbounded" minOccurs="0">
-					<xsd:complexType mixed="true">
-						<xsd:sequence minOccurs="0" maxOccurs="unbounded">
-							<xsd:element name="use">
-								<xsd:complexType>
-									<xsd:attribute name="macro"></xsd:attribute>
-								</xsd:complexType>
-							</xsd:element>
-						</xsd:sequence>
-						<xsd:attribute name='id' type="ID" />
-					</xsd:complexType>
-
-				</xsd:element>
-
-				<xsd:element name="dialect">
-					<xsd:complexType>
-						<xsd:sequence>
-							<xsd:element name='grammar' maxOccurs="unbounded">
-								<xsd:complexType>
-									<xsd:sequence>
-										<xsd:element name="noun" maxOccurs="unbounded">
-											<xsd:complexType>
-												<xsd:sequence>
-													<xsd:element name='param' type='csd:paramType'
-														maxOccurs="unbounded" minOccurs="0" />
-													<xsd:element name="verb" maxOccurs="unbounded">
-														<xsd:complexType mixed="true">
-															<xsd:sequence>
-																<xsd:element name='param' type='csd:paramType'
-																	maxOccurs="unbounded" minOccurs="0" />
-
-															</xsd:sequence>
-															<xsd:attribute name="name" />
-														</xsd:complexType>
-													</xsd:element>
-												</xsd:sequence>
-												<xsd:attribute name="name" />
-											</xsd:complexType>
-										</xsd:element>
-									</xsd:sequence>
-									<xsd:attribute name="name" />
-								</xsd:complexType>
-							</xsd:element>
-						</xsd:sequence>
-						<xsd:attribute name="id" type="ID"></xsd:attribute>
-					</xsd:complexType>
-				</xsd:element>
-				<xsd:element name="connection" type="csd:ConnectionType"
-					maxOccurs="unbounded" />
-
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:complexType name="TemplateType">
-		<xsd:simpleContent>
-			<xsd:extension base="xsd:string">
-
-			</xsd:extension>
-		</xsd:simpleContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="DriverType">
+	<xsd:complexType name="driverTag">
 		<xsd:sequence>
-			<xsd:element name="template">
+			<xsd:element name="meta" type="csd:MetaTag" />
+
+			<xsd:element name="template-engine" type="xsd:string" />
+
+			<xsd:element name="ddl" type="csd:DDLType"/>
+			<xsd:element name="dml" type="csd:DMLType"/>
+			
+			<xsd:element name="def" maxOccurs="unbounded" minOccurs="0" type="csd:DefType"/>
+
+			<xsd:element name="dialect" maxOccurs="unbounded" minOccurs="0" type="csd:DialectType" />
+
+			<xsd:element name="template" minOccurs="0" maxOccurs="unbounded">
 				<xsd:complexType>
-					<xsd:attribute name="name" type="xsd:string"></xsd:attribute>
+					<xsd:attribute name="name" type="xsd:string" />
 				</xsd:complexType>
 			</xsd:element>
-
-			<xsd:element name="def">
-				<xsd:complexType>
-					<xsd:attribute name="name" type="xsd:string"></xsd:attribute>
-				</xsd:complexType>
-			</xsd:element>
-
-
-			<xsd:element name="connection" maxOccurs="unbounded"
-				minOccurs="1">
-				<xsd:complexType id="connType">
-
-					<xsd:sequence>
-
-						<xsd:element name="macro" maxOccurs="unbounded">
-							<xsd:complexType>
-								<xsd:attribute name="name" />
-							</xsd:complexType>
-
-						</xsd:element>
-						<xsd:element name="url" minOccurs="1" maxOccurs="1">
-							<xsd:complexType mixed="true">
-								<xsd:sequence>
-									<xsd:element name="use" maxOccurs="unbounded"
-										minOccurs="0">
-										<xsd:complexType>
-											<xsd:attribute name="def" type="xsd:string" />
-										</xsd:complexType>
-									</xsd:element>
-								</xsd:sequence>
-							</xsd:complexType>
-						</xsd:element>
-					</xsd:sequence>
-					<xsd:attribute name="method" type="xsd:string" />
-				</xsd:complexType>
-			</xsd:element>
+			<xsd:element name="connection" maxOccurs="unbounded" minOccurs="1" type="csd:ConnectionType" />
 		</xsd:sequence>
 	</xsd:complexType>
+
+
+	<xsd:complexType name="ConnectionType">
+		<xsd:sequence>
+			<xsd:element name="dialect" type="csd:DialectType" />
+			<xsd:element name="url" type="csd:UrlType" maxOccurs="unbounded" minOccurs="1" />
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" />
+		<xsd:attribute name="method" type="xsd:string" />
+
+	</xsd:complexType>
+
+	<xsd:complexType name="DDLType">
+		<xsd:sequence>
+			<xsd:element name="parameter" type="csd:ParamType" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="sql" type="csd:MacroType"/>
+		</xsd:sequence>
+		<xsd:attribute name="impliesCommit" type="boolean" default="true" />
+	</xsd:complexType>
+
+	<xsd:complexType name="DefType" mixed="true" >
+		<xsd:complexContent><xsd:extension base="csd:UrlType">
+			<xsd:attribute name="name" type="xsd:string" />
+			<xsd:attribute name="macro" type="xsd:string" />
+		
+		</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="DialectType">
+		<xsd:sequence>
+			<xsd:element name='grammar' maxOccurs="unbounded" type="csd:GrammarType" />
+		</xsd:sequence>
+		<xsd:attribute name="name" type="string" />
+		<xsd:attribute name="nameEx" type="string" />
+		<xsd:attribute name="default" type="string" />
+		<xsd:attribute name="id" type="NCName"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="DMLType">
+		<xsd:sequence>
+			<xsd:element name="parameter" type="csd:ParamType" maxOccurs="unbounded" minOccurs="0">
+			</xsd:element>
+			<xsd:element name="sql" type="csd:MacroType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="GrammarType">
+		<xsd:sequence>
+			<xsd:element name="noun" maxOccurs="unbounded" type="csd:NounType" />
+		</xsd:sequence>
+		<xsd:attribute name="name" />
+	</xsd:complexType>
+
+	<!-- define a macro that refers to other macros. -->
 	<xsd:complexType name="MacroType" mixed="true">
 		<xsd:sequence maxOccurs="unbounded" minOccurs="0">
-			<xsd:element name="use" type="csd:UseType" maxOccurs="unbounded"
-				minOccurs="0"></xsd:element>
+			<xsd:element name="use" type="csd:UseType" maxOccurs="unbounded" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="DefType">
-		<xsd:sequence>
-			<xsd:element name="param">
-				<xsd:complexType>
-					<xsd:attribute name="name" />
-					<xsd:attribute name="type" use="optional" default="object" />
-
-				</xsd:complexType>
-			</xsd:element>
-		</xsd:sequence>
-
-		<xsd:attribute name="macro" />
-	</xsd:complexType>
-	<xsd:complexType name="UseType">
-		<xsd:attribute name="macro">
+	<xsd:complexType name="MetaTag">
+		<xsd:attribute name="name">
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
-					<xsd:minLength value="1"></xsd:minLength>
-					<xsd:whiteSpace value="collapse"></xsd:whiteSpace>
+					<xsd:minLength value="1" />
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="description" type="xsd:string" />
+		<xsd:attribute name="protocol">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:minLength value="1" />
+					<xsd:whiteSpace value="collapse" />
+					<xsd:pattern value="jdbc\:([a-zA-Z0-9]+)\:"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="className">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:pattern value="([a-z_](.[a-z_][a-zA-Z0-9_]*)*\.)?[A-Z][A-Za-z0-9]*"/>
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
 	</xsd:complexType>
 
-
-	<xsd:complexType name="ConnectionType">
-
+	<xsd:complexType name="NounType">
 		<xsd:sequence>
-			<xsd:element name="dialect">
-				<xsd:complexType>
-					<xsd:attribute name="name" />
-					<xsd:attribute name="default" />
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="url" type="csd:MacroType" />
-			<xsd:element type="csd:MacroType" maxOccurs="unbounded"
-				minOccurs="0" name="url"></xsd:element>
+			<xsd:element name='param' type='csd:ParamType' maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="verb" maxOccurs="unbounded" type="csd:VerbType"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string"/>
+	</xsd:complexType>
 
+	<xsd:complexType name="ParamType">
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="type" type="xsd:string" use="optional" />
+		<xsd:attribute name="usual" type="xsd:string" use="optional" />
+		<xsd:attribute name="optional" type="boolean" default="false" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="TemplateTag">
+		<xsd:choice maxOccurs="unbounded" minOccurs="0">
+		</xsd:choice>
+		<xsd:attribute name="name" type="xsd:string" />
+	</xsd:complexType>
+
+	<xsd:complexType name="TemplateType">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string" />
+		</xsd:simpleContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="UrlType" mixed="true">
+		<xsd:sequence>
+			<xsd:choice maxOccurs="unbounded" minOccurs="0">
+				<xsd:element name="param" type="csd:ParamType" />
+				<xsd:element name="use" type="csd:UseType" />
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="UseType">
+
+		<xsd:attribute name="macro">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:minLength value="1"/>
+					<xsd:whiteSpace value="collapse"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="param" type="string"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="VerbType" mixed="true">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element name='param' type='csd:ParamType' maxOccurs="unbounded" minOccurs="0" />
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" />
-		<xsd:attribute name="method" type="xsd:string"></xsd:attribute>
 	</xsd:complexType>
-	<xsd:complexType name="DDLType">
-		<xsd:sequence>
-			<xsd:element name="parameter" type="csd:paramType"
-				maxOccurs="unbounded" minOccurs="0">
-			</xsd:element>
-			<xsd:element name="sql" type="csd:MacroType"></xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="paramType">
-		<xsd:attribute name="name" type="xsd:string" use="required"/>
-		<xsd:attribute name="type" type="anySimpleType" use="optional"/>
-		<xsd:attribute name="default" type="anySimpleType" use="optional"/>
-		<xsd:attribute name="optional" type="boolean" default="false"/>
-	</xsd:complexType>
+
 </xsd:schema>    

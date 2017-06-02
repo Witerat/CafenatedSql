@@ -1,0 +1,7 @@
+net.witerat.cafenatedsql.api
+net.witerat.cafenatedsql.api.driver
+net.witerat.cafenatedsql.api.driver.template
+net.witerat.cafenatedsql.spi
+net.witerat.cafenatedsql.spi.driver
+net.witerat.cafenatedsql.spi.driver.tags
+net.witerat.cafenatedsql.spi.driver.template

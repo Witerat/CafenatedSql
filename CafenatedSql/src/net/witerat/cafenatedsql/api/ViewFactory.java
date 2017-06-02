@@ -1,5 +1,8 @@
 package net.witerat.cafenatedsql.api;
 
-public interface ViewFactory {
+/**
+ * A factory for creating View objects.
+ */
+public interface ViewFactory extends CafenatedFactory {
 
 }
