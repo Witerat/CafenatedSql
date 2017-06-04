@@ -42,6 +42,9 @@ public class SqlTemplate {
 		}
 	}
 
+	/**
+	 * @param param a new parameter
+	 */
 	public void setParameter(ParameterTag param) {
 		if(parametersByName==null)parametersByName=new LinkedHashMap<>();
 		parametersByName.put(param.getName(), param);

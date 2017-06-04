@@ -1,9 +1,10 @@
 package net.witerat.cafenatedsql.spi.driver.tags;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 
@@ -16,7 +17,7 @@ public class DefTag extends UrlTag {
     
     /** The name. */
     String name;
-
+    
 	/**
 	 * Gets the name.
 	 *
@@ -35,15 +36,14 @@ public class DefTag extends UrlTag {
 	public void setName(String name) {
 		this.name = name;
 	}
-    @XmlMixed
-	@Override
-	public LinkedList<Object> getRawContent() {
-		// TODO Auto-generated method stub
+	@XmlElementRefs({
+		@XmlElementRef(name="use", namespace="-//org.witerat/cafenated/sql", type=UseTag.class),
+		@XmlElementRef(name="param", namespace="-//org.witerat/cafenated/sql", type=ParameterTag.class)})
+	@XmlMixed
+	public List<Object> getRawContent() {
 		return super.getRawContent();
 	}
-	@Override
 	public void setRawContent(List<Object> raw) {
-		// TODO Auto-generated method stub
 		super.setRawContent(raw);
 	}
 }

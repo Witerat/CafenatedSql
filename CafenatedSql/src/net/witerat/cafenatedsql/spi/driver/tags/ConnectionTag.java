@@ -70,6 +70,7 @@ public class ConnectionTag implements Parameterized {
 	 *
 	 * @param _dialect the new dialect
 	 */
+	@XmlElement(name="dialect", namespace="-//org.witerat/cafenated/sql",type=DialectTag.class)
 	void setDialect(DialectTag _dialect) {
 		dialect = _dialect;
 	}

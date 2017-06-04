@@ -13,7 +13,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class VerbTag.
  */
@@ -34,6 +33,9 @@ public class VerbTag {
 		return name;
 	}
 
+	/**
+	 * @return strings and tags
+	 */
 	public Collection<Object> getRawContent() {
 		return rawContent;
 	}
@@ -47,6 +49,9 @@ public class VerbTag {
 		this.name = name;
 	}
 
+	/**
+	 * @param rawContent strings and tags
+	 */
 	@XmlElementRefs({
 		@XmlElementRef(name="param",type=ParameterTag.class),
 		@XmlElementRef(name="use", type=UseTag.class)})
@@ -57,7 +62,8 @@ public class VerbTag {
 			if(o instanceof ParameterTag)
 				setParameter((ParameterTag)o);
 			
-			else rc.add(o);
+			else if(!rc.isEmpty()|| (!(o instanceof String))||!(((String)o).trim().isEmpty())) 
+				rc.add(o);
 		}
 		this.rawContent = rc;
 	}

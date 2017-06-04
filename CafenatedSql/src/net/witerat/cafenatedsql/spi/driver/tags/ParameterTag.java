@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * The Class ParameterTag.
  */
-@XmlRootElement(name="param",namespace="-//org.witerat/cafenated/sql")
+@XmlRootElement(name="param")
 @XmlType(name="ParamType", namespace="-//org.witerat/cafenated/sql")
 public class ParameterTag {
 	

@@ -76,6 +76,9 @@ public class TypeMapper {
 			return null;
 		}
 	}
+	/**
+	 * @return the default typeMapper singleton
+	 */
 	public static TypeMapper  getDefault(){
 		if(defaultMapper==null){
 			defaultMapper=new TypeMapper();

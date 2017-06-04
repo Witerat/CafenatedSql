@@ -68,8 +68,7 @@ public class DialectTag {
 	 *
 	 * @return the name
 	 */
-	@XmlAttribute(name="name")
-	public String getName() {
+	public String getNameExpression() {
 		return expression ? name : null;
 	}
 
@@ -78,7 +77,8 @@ public class DialectTag {
 	 *
 	 * @return the name expression
 	 */
-	public String getNameExpression() {
+	@XmlAttribute(name="name")
+	public String getName() {
 		return expression ? null : name;
 	}
 
@@ -136,6 +136,9 @@ public class DialectTag {
 		expression = true;
 	}
 
+	/**
+	 * @param grammar a new grammar tag
+	 */
 	@XmlElement(namespace="-//org.witerat/cafenated/sql",type=GrammarTag.class)
 	public void setGrammar(GrammarTag grammar){
 		if(grammarsByName==null)grammarsByName=new LinkedHashMap<>();

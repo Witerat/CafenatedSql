@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlMixed;
@@ -28,7 +27,6 @@ public class UrlTag extends MacroTag {
 	/** The content. */
 	Collection<AbstractContent> content;
 
-	@XmlTransient
 	private LinkedList<Object> rawContent;
 
 	private Map<String, ParameterTag> parametersByName;
@@ -63,31 +61,32 @@ public class UrlTag extends MacroTag {
 		this.content.add(content);
 	}
 
-	@XmlElementRefs({@XmlElementRef(name="use",type=UseTag.class),
-		@XmlElementRef(name="param",type=ParameterTag.class)})
+	/**
+	 * @param raw
+	 */
+	@XmlElementRefs({@XmlElementRef(name="use",type=UseTag.class,namespace="-//org.witerat/cafenated/sql"),
+		@XmlElementRef(name="param",type=ParameterTag.class, namespace="-//org.witerat/cafenated/sql")})
 	@XmlMixed
 	public void setRawContent(List<Object> raw){
 		LinkedList<Object> rawC=new LinkedList<Object>();
 		for(Object o:raw){
-			if(o instanceof String){
+			if(o instanceof ParameterTag){
+				setParameter((ParameterTag)o);
+			}else {
 				rawC.add(o);
-			}else if(o instanceof JAXBElement){
-				JAXBElement<?> jaxbE = (JAXBElement<?>) o;
-				Object v = jaxbE.getValue();
-				if(v instanceof ParameterTag){
-					setParameter((ParameterTag)v);
-				}else if(v instanceof UseTag){
-					rawC.add((UseTag)v);
-				}
 			}
 		}
 		rawContent=rawC;
 	}
-	public LinkedList<Object> getRawContent() {
+	/**
+	 * @return a list of strings and tags strings and tags.
+	 */
+	public List<Object> getRawContent() {
 		if(rawContent==null)rawContent=new LinkedList<>();
 		return rawContent;
 	}
 
+	
 	@XmlTransient
 	private void setParameter(ParameterTag v) {
 		if(parametersByName==null) parametersByName=new LinkedHashMap<>();
@@ -117,6 +116,7 @@ public class UrlTag extends MacroTag {
 	/* (non-Javadoc)
 	 * @see net.witerat.cafenatedsql.spi.driver.tags.MacroTag#getParent()
 	 */
+	@XmlTransient
 	@Override
 	public AbstractContent getParent() {
 		return null;

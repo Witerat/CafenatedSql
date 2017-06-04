@@ -2,6 +2,7 @@ package net.witerat.cafenatedsql.spi.driver.tags;
 
 import java.util.Collection;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -11,8 +12,8 @@ import net.witerat.cafenatedsql.spi.driver.Content;
 /**
  * The Class Use describes the inclusion of def content that stands in place of the Use tag in the produced template.
  */
-@XmlRootElement(name="use", namespace="-//org.witerat/cafenated/sql")
-@XmlType(namespace="-//org.witerat/cafenated/sql")
+@XmlType(name="UseType", namespace="-//org.witerat/cafenated/sql") 
+@XmlRootElement(name="use")
 public class UseTag extends MacroTag{
 	
 	/** The macro locator the chooses the def content to be substituted for this Use tag. */
@@ -26,6 +27,7 @@ public class UseTag extends MacroTag{
 	 *
 	 * @return the macro
 	 */
+	@XmlAttribute
 	public String getMacro() {
 		return macro;
 	}

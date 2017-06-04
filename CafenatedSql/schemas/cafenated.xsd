@@ -4,6 +4,8 @@
 	xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xsd:element name="driver" type="csd:driverTag" />
+	<xsd:element name="param" type="csd:ParamType"/>
+	<xsd:element name="use" type="csd:UseType"/>
 
 	<xsd:complexType name="driverTag">
 		<xsd:sequence>
@@ -67,17 +69,17 @@
 
 	<xsd:complexType name="DMLType">
 		<xsd:sequence>
-			<xsd:element name="parameter" type="csd:ParamType" maxOccurs="unbounded" minOccurs="0">
-			</xsd:element>
+			<xsd:element name="parameter" type="csd:ParamType" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="sql" type="csd:MacroType"/>
 		</xsd:sequence>
 	</xsd:complexType>
 
 	<xsd:complexType name="GrammarType">
 		<xsd:sequence>
+			<xsd:element name="param" type="csd:ParamType" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="noun" maxOccurs="unbounded" type="csd:NounType" />
 		</xsd:sequence>
-		<xsd:attribute name="name" />
+		<xsd:attribute name="name" type="xsd:string"/>
 	</xsd:complexType>
 
 	<!-- define a macro that refers to other macros. -->
@@ -151,7 +153,6 @@
 	</xsd:complexType>
 
 	<xsd:complexType name="UseType">
-
 		<xsd:attribute name="macro">
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
@@ -166,6 +167,7 @@
 	<xsd:complexType name="VerbType" mixed="true">
 		<xsd:sequence maxOccurs="unbounded">
 			<xsd:element name='param' type='csd:ParamType' maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="use" type="csd:UseType" />
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" />
 	</xsd:complexType>

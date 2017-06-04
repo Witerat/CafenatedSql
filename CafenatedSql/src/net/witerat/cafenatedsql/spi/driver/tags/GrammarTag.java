@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import net.witerat.cafenatedsql.spi.driver.tags.NounTag;
 
@@ -15,6 +16,7 @@ import net.witerat.cafenatedsql.spi.driver.tags.NounTag;
 /**
  * The Class GrammarTag.
  */
+@XmlType(name="GrammarType",namespace="-//org.witerat/cafenated/sql")
 public class GrammarTag {
 	
 	/** The name. */
