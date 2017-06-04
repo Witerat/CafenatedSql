@@ -14,7 +14,8 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * The Class VerbTag.
+ * The Class <code>VerbTag</code> describes how instructions related to 
+ * database entities - nouns are rendered and submitted to a backend database.
  */
 @XmlType(name="VerbType", namespace="-//org.witerat/cafenated/sql")
 public class VerbTag {
