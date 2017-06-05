@@ -69,14 +69,15 @@ public class VerbTag {
 		this.rawContent = rc;
 	}
 	
+	/**
+	 * Sets a parameter.
+	 *
+	 * @param param the new parameter
+	 */
 	private void setParameter(ParameterTag param) {
 		if(parametersByName==null)parametersByName=new LinkedHashMap<>();
 		parametersByName.put(param.name, param);
 	}
-
-	/**
-	 * @param params the new parameters
-	 */
 
 	/**
 	 * @return the parameters
