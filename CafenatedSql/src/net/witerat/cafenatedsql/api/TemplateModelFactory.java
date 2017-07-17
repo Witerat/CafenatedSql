@@ -8,4 +8,6 @@ public interface TemplateModelFactory extends CafenatedFactory{
 
 	TemplateEngineModel newInstance(Properties properties);
 
+	TemplateEngineModel newInstance(TemplateEngineModel model);
+
 }
