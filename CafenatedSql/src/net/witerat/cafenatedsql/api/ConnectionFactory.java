@@ -40,4 +40,8 @@ public interface ConnectionFactory extends CafenatedFactory {
 	 */
 	Connection connect();
 
+	Class<?> getPropertyType(Object property);
+
+	boolean isPropertyRequired(Object property);
+
 }
