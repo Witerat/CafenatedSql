@@ -66,7 +66,7 @@ public class DriverLoaderTest {
 			assertEquals("velocity", driver.getTemplateEngine());
 			
 			assertNotNull(driver.getMeta());
-			assertEquals("wrong name", "H2-SimpleDatabase",driver.getMeta().getName());
+			assertEquals("wrong name", "H2-Database",driver.getMeta().getName());
 			assertEquals("wrong protocol", "jdbc:h2:", driver.getMeta().getProtocol());
 			assertEquals("wrong description", "H2 pure java DB", driver.getMeta().getDescription());
 			assertEquals("wrong class name", "org.h2.Driver", driver.getMeta().getClassName());
