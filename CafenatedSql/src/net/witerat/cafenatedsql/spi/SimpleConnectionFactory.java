@@ -395,4 +395,16 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
 
 	}
 
+	@Override
+	public Class<?> getPropertyType(Object property) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isPropertyRequired(Object property) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
