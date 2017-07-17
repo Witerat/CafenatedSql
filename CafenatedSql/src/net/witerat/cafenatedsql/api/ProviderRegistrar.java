@@ -2,11 +2,15 @@ package net.witerat.cafenatedsql.api;
 
 import java.util.Collection;
 
+import net.witerat.cafenatedsql.spi.RootProviderRegistrar;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface ProviderRegistrar.
  */
 public interface ProviderRegistrar {
+
+	ProviderRegistrar ROOT_REGISTRAR = new RootProviderRegistrar();
 
 	/**
 	 * Gets the provider.
@@ -74,5 +78,7 @@ public interface ProviderRegistrar {
 	 * @return A collection of the registered vendor identifiers.
 	 */
 	Collection<String> getVendors();
+
+	String getDescription(String string);
 
 }
