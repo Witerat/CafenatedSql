@@ -85,5 +85,11 @@ public class DefaultProviderRegistrar implements ProviderRegistrar {
 		return providerRegistrar;
 	}
 
+	@Override
+	public String getDescription(String string) {
+		// TODO Auto-generated method stub
+		return providerRegistrar.getDescription(string);
+	}
+
 
 }
