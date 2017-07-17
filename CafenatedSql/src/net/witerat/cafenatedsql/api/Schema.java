@@ -1,5 +1,7 @@
 package net.witerat.cafenatedsql.api;
 
+import java.util.List;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface Schema.
@@ -19,4 +21,6 @@ public interface Schema {
 	 * @param name the new name
 	 */
 	void setName(String name);
+
+	void setJournal(List<Refactor> refactors);
 }
