@@ -92,4 +92,12 @@ public interface Provider {
 	 * @return the dialect factory
 	 */
 	public abstract DialectFactory getDialectFactory();
+
+	String[] getConnectionMethods();
+
+	ConnectionFactory getConnectionFactory(String method);
+
+	DatabaseFactory getDatabaseFactory();
+
+	TemplateModelFactory getModelFactory();
 }
