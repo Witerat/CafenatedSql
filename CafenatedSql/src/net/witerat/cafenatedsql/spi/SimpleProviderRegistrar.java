@@ -1,6 +1,7 @@
 package net.witerat.cafenatedsql.spi;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -15,25 +16,25 @@ import net.witerat.cafenatedsql.api.ProviderRegistrar;
 public class SimpleProviderRegistrar implements ProviderRegistrar {
 
 	/** The factory. */
-	Map<String, Provider> providers;
+	Map<String, Provider> providers=new LinkedHashMap<>();
 
 	/** The description. */
-	Map<String, String> description;
+	Map<String, String> description=new LinkedHashMap<>();
 
 	/** The copyright. */
-	Map<String, String> copyright;
+	Map<String, String> copyright= new LinkedHashMap<>();
 
 	/** The long name. */
-	Map<String, String> longName;
+	Map<String, String> longName=new LinkedHashMap<>();
 
 	/** The vendor. */
-	Map<String, String> vendor;
+	Map<String, String> vendor=new LinkedHashMap<>();
 
 	/** The vendor name. */
-	Map<String, String> vendorName;
+	Map<String, String> vendorName = new LinkedHashMap<>();
 
 	/** The vendor long name. */
-	Map<String, String> vendorLongName;
+	Map<String, String> vendorLongName= new LinkedHashMap<>();
 
 	/**
 	 * 
