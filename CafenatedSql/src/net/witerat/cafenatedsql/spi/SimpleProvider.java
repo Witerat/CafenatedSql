@@ -2,6 +2,7 @@ package net.witerat.cafenatedsql.spi;
 
 import net.witerat.cafenatedsql.api.CafenatedFactory;
 import net.witerat.cafenatedsql.api.ConnectionFactory;
+import net.witerat.cafenatedsql.api.DatabaseFactory;
 import net.witerat.cafenatedsql.api.DialectFactory;
 import net.witerat.cafenatedsql.api.DriverFactory;
 import net.witerat.cafenatedsql.api.GrammarFactory;
@@ -10,6 +11,7 @@ import net.witerat.cafenatedsql.api.ParameterFactory;
 import net.witerat.cafenatedsql.api.Provider;
 import net.witerat.cafenatedsql.api.SchemaFactory;
 import net.witerat.cafenatedsql.api.TableFactory;
+import net.witerat.cafenatedsql.api.TemplateModelFactory;
 import net.witerat.cafenatedsql.api.URLFactory;
 import net.witerat.cafenatedsql.api.VerbFactory;
 import net.witerat.cafenatedsql.api.ViewFactory;
@@ -57,6 +59,10 @@ public class SimpleProvider implements Provider {
 	/** The view factory. */
 	private ViewFactory viewFactory;
 
+	private DatabaseFactory databaseFactory;
+
+	private TemplateModelFactory modelFactory;
+
 	/**
 	 * Configures this provider to expose the factory services implemented by a
 	 * specified factory.
@@ -74,12 +80,16 @@ public class SimpleProvider implements Provider {
 			tableFactory = (TableFactory) factory;
 		if (factory instanceof ViewFactory)
 			verbFactory = (VerbFactory) factory;
+		if (factory instanceof DatabaseFactory)
+			databaseFactory = (DatabaseFactory) factory;
 		if (factory instanceof DriverFactory)
 			driverFactory = (DriverFactory) factory;
 		if (factory instanceof GrammarFactory)
 			grammarFactory = (GrammarFactory) factory;
 		if (factory instanceof DialectFactory)
 			dialectFactory = (DialectFactory) factory;
+		if (factory instanceof TemplateModelFactory)
+			modelFactory=(TemplateModelFactory) factory;
 		if (factory instanceof NounFactory)
 			nounFactory = (NounFactory) factory;
 		if (factory instanceof VerbFactory)
@@ -281,10 +291,10 @@ public class SimpleProvider implements Provider {
 	}
 
 	/**
-	 * Sets the paramater factory.
+	 * Sets the parameter factory.
 	 *
 	 * @param paramaterFactory
-	 *            the new paramater factory
+	 *            the new parameter factory
 	 */
 	public void setParamaterFactory(ParameterFactory paramaterFactory) {
 		this.parameterFactory = paramaterFactory;
@@ -338,6 +348,30 @@ public class SimpleProvider implements Provider {
 	 */
 	public void setViewFactory(ViewFactory viewFactory) {
 		this.viewFactory = viewFactory;
+	}
+
+	@Override
+	public String[] getConnectionMethods() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ConnectionFactory getConnectionFactory(String method) {
+		// TODO Auto-generated method stub
+		return connectionFactory;
+	}
+
+	@Override
+	public DatabaseFactory getDatabaseFactory() {
+		// TODO Auto-generated method stub
+		return databaseFactory;
+	}
+
+	@Override
+	public TemplateModelFactory getModelFactory() {
+		// TODO Auto-generated method stub
+		return modelFactory;
 	}
 
 }
