@@ -1,6 +1,7 @@
 package net.witerat.cafenatedsql.spi.mock;
 
 import net.witerat.cafenatedsql.api.Database;
+import net.witerat.cafenatedsql.api.DatabaseFactory;
 import net.witerat.cafenatedsql.api.DriverFactory;
 import net.witerat.cafenatedsql.api.driver.ConnectionType;
 import net.witerat.cafenatedsql.api.driver.DialectDef;
@@ -14,7 +15,7 @@ import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 import net.witerat.cafenatedsql.spi.driver.DialectSelector;
 import net.witerat.cafenatedsql.spi.driver.Driver;
 
-public class MockDriverFactory implements DriverFactory {
+public class MockDriverFactory implements DriverFactory, DatabaseFactory {
 
 	@Override
 	public Database newDatabase(TemplateEngineModel model) throws DriverCreationException {
