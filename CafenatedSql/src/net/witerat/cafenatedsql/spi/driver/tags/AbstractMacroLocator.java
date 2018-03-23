@@ -11,10 +11,13 @@ import net.witerat.cafenatedsql.spi.driver.MacroLocator;
 @XmlTransient
 public abstract class AbstractMacroLocator implements MacroLocator {
 
-	/* (non-Javadoc)
-	 * @see net.witerat.cafenatedsql.spi.driver.MacroLocator#getMacro(java.lang.String)
-	 */
-	@Override
-	public abstract MacroTag getMacro(String name);
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * net.witerat.cafenatedsql.spi.driver.MacroLocator#getMacro(java.lang.String)
+   */
+  @Override
+  public abstract MacroTag getMacro(String name);
 
 }
