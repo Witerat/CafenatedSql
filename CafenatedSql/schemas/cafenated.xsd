@@ -79,7 +79,7 @@
 			<xsd:element name="param" type="csd:ParamType" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="noun" maxOccurs="unbounded" type="csd:NounType" />
 		</xsd:sequence>
-		<xsd:attribute name="name" type="xsd:string"/>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
 	</xsd:complexType>
 
 	<!-- define a macro that refers to other macros. -->
