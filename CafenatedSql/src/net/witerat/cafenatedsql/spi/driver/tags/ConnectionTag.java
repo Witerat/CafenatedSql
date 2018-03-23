@@ -8,86 +8,90 @@ import javax.xml.bind.annotation.XmlType;
 
 import net.witerat.cafenatedsql.api.driver.Parameterized;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class ConnectionTag.
+ * The Class ConnectionTag describe a connection method.
  */
-@XmlType(name = "ConnectionType", namespace="-//org.witerat/cafenated/sql")
+@XmlType(name = "ConnectionType", namespace = "-//org.witerat/cafenated/sql")
 public class ConnectionTag implements Parameterized {
-	
-	/** The method name. */
-	String method;
-	
-	/** The url. */
-	UrlTag url;
-	
-	/** The dialect. */
-	DialectTag dialect;
-	
-	/** The parameters descriptions. */
-	private Collection<ParameterTag> parameters;
 
-	/**
-	 * Gets the name of the connection method.
-	 *
-	 * @return the method
-	 */
-	public String getMethod() {
-		return method;
-	}
+  /** The method name. */
+  private String method;
 
-	/**
-	 * Sets the name of the method.
-	 *
-	 * @param _method the new method
-	 */
-	@XmlAttribute
-	public void setMethod(String _method) {
-		this.method = _method;
-	}
+  /** The url. */
+  private UrlTag url;
 
-	/**
-	 * Gets the url template description.
-	 *
-	 * @return the url
-	 */
-	@XmlElement(name = "url",namespace="-//org.witerat/cafenated/sql", type=UrlTag.class)
-	public UrlTag getUrl() {
-		return url;
-	}
+  /** The dialect. */
+  private DialectTag dialect;
 
-	/**
-	 * Sets the url template description.
-	 *
-	 * @param url the new url
-	 */
-	public void setUrl(UrlTag url) {
-		this.url = url;
-	}
+  /** The parameters descriptions. */
+  private Collection<ParameterTag> parameters;
 
-	/**
-	 * Sets the associated dialect.
-	 *
-	 * @param _dialect the new dialect
-	 */
-	@XmlElement(name="dialect", namespace="-//org.witerat/cafenated/sql",type=DialectTag.class)
-	void setDialect(DialectTag _dialect) {
-		dialect = _dialect;
-	}
+  /**
+   * Gets the name of the connection method.
+   *
+   * @return the method
+   */
+  public String getMethod() {
+    return method;
+  }
 
-	/**
-	 * Gets the associatd dialect.
-	 *
-	 * @return the dialect
-	 */
-	public DialectTag getDialect() {
-		return dialect;
-	}
+  /**
+   * Sets the name of the method.
+   *
+   * @param method0
+   *          the new method
+   */
+  @XmlAttribute
+  public void setMethod(final String method0) {
+    this.method = method0;
+  }
 
-	/* (non-Javadoc)
-	 * @see net.witerat.cafenatedsql.api.driver.Parameterized#getParams()
-	 */
-	public Collection<ParameterTag> getParams() {
-		return parameters;
-	}
+  /**
+   * Gets the url template description.
+   *
+   * @return the url
+   */
+  @XmlElement(name = "url", namespace = "-//org.witerat/cafenated/sql",
+      type = UrlTag.class)
+  public UrlTag getUrl() {
+    return url;
+  }
+
+  /**
+   * Sets the url template description.
+   *
+   * @param url0
+   *          the new url
+   */
+  public void setUrl(final UrlTag url0) {
+    this.url = url0;
+  }
+
+  /**
+   * Sets the associated dialect.
+   *
+   * @param dialect0
+   *          the new dialect
+   */
+  @XmlElement(name = "dialect", namespace = "-//org.witerat/cafenated/sql",
+      type = DialectTag.class)
+  void setDialect(final DialectTag dialect0) {
+    this.dialect = dialect0;
+  }
+
+  /**
+   * Gets the associatd dialect.
+   *
+   * @return the dialect
+   */
+  public DialectTag getDialect() {
+    return dialect;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public Collection<ParameterTag> getParams() {
+    return parameters;
+  }
 }
