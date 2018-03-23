@@ -10,10 +10,13 @@ import net.witerat.cafenatedsql.spi.driver.Content;
  *
  */
 @XmlTransient
-public abstract class AbstractContent implements Content{
-	/* (non-Javadoc)
-	 * @see net.witerat.cafenatedsql.spi.driver.Content#getText(net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel)
-	 */
-	abstract public String getText(TemplateEngineModel model) ;
+public abstract class AbstractContent implements Content {
+  /**
+   * {@inheritDoc}
+   *
+   * @see net.witerat.cafenatedsql.spi.driver.Content#getText(net.witerat.
+   * cafenatedsql.api.driver.template.TemplateEngineModel)
+   */
+  public abstract String getText(TemplateEngineModel model);
 
 }
