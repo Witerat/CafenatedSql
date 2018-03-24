@@ -15,7 +15,7 @@ public interface DialectFactory extends CafenatedFactory {
    *          the driver
    * @param name
    *          the name
-   * @return the dialect def
+   * @return the dialect definition
    */
   DialectDef newDialect(Driver driver, String name);
 
