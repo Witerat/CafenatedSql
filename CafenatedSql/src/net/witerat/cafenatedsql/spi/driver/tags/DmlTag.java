@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * The Class DMLTag.
  */
-@XmlType(name="DMLType")
+@XmlType(name = "DMLType")
 public class DmlTag {
 
 }
