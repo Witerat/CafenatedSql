@@ -6,58 +6,57 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-
-// TODO: Auto-generated Javadoc
 /**
- * The Class DDL.
+ * The Class DDL marks a dialect as definition language.
+ * @see DmlTag
  */
-@XmlType(name="DDLType",  namespace="-//org.witerat/cafenated/sql" )
+@XmlType(name = "DDLType", namespace = "-//org.witerat/cafenated/sql")
 public class DDL {
-		
-		/** The implies commit. */
-		boolean impliesCommit;
-		
-		/** The parameters. */
-		Collection<ParameterTag> parameters;
-		
-		/**
-		 * Checks if is implies commit.
-		 *
-		 * @return true, if is implies commit
-		 */
-		@XmlAttribute(name="impliesCommit" )
-		public boolean isImpliesCommit() {
-			return impliesCommit;
-		}
-		
-		/**
-		 * Sets the implies commit.
-		 *
-		 * @param _impliesCommit the new implies commit
-		 */
-		void setImpliesCommit(boolean _impliesCommit){
-			impliesCommit=_impliesCommit;
-		}
-		
-		/**
-		 * Gets the parameters.
-		 *
-		 * @return the parameters
-		 */
-		@XmlTransient
-		public Collection<ParameterTag> getParameters() {
-			return parameters;
-		}
 
-		/**
-		 * Sets the parameters.
-		 *
-		 * @param parameters the new parameters
-		 */
-		public void setParameters(Collection<ParameterTag> parameters) {
-			this.parameters = parameters;
-		}
+  /** The implies commit. */
+  private boolean impliesCommit;
 
+  /** The parameters. */
+  private Collection<ParameterTag> parameters;
 
-		
+  /**
+   * Checks if is implies commit.
+   *
+   * @return true, if is implies commit
+   */
+  @XmlAttribute(name = "impliesCommit")
+  public boolean isImpliesCommit() {
+    return impliesCommit;
+  }
+
+  /**
+   * Sets the implies commit.
+   *
+   * @param impliesCommit0
+   *          the new implies commit state.
+   */
+  public void setImpliesCommit(final boolean impliesCommit0) {
+    this.impliesCommit = impliesCommit0;
+  }
+
+  /**
+   * Gets the parameters.
+   *
+   * @return the parameters
+   */
+  @XmlTransient
+  public Collection<ParameterTag> getParameters() {
+    return parameters;
+  }
+
+  /**
+   * Sets the parameters.
+   *
+   * @param parameters0
+   *          the new parameters
+   */
+  public void setParameters(final Collection<ParameterTag> parameters0) {
+    this.parameters = parameters0;
+  }
+
 }
