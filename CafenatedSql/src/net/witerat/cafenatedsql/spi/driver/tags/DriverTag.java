@@ -12,193 +12,232 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  * The Class DriverTag.
  */
-@XmlRootElement(name="driver",namespace="-//org.witerat/cafenated/sql" )
+@XmlRootElement(name = "driver", namespace = "-//org.witerat/cafenated/sql")
 public class DriverTag extends AbstractMacroLocator {
-	
-	/** The defs. */
-	Map<String, DefTag> defs;
-	
-	
-	/** The dialects by id. */
-	Map<String, DialectTag> dialectsById;
-	
-	/** The connections by method. */
-	private Map<String, ConnectionTag> connectionsByMethod;
-	
-	/** The ddl. */
-	DDL ddl;
-	
-	/** The dml. */
-	DmlTag dml;
 
-	private MetaTag meta;
+  /** The definitions. */
+  private Map<String, DefTag> defs;
 
-	private String templateEngine;
+  /** The dialects by id. */
+  private Map<String, DialectTag> dialectsById;
 
+  /** The connections by method. */
+  private Map<String, ConnectionTag> connectionsByMethod;
 
-	/**
-	 * Adds the.
-	 *
-	 * @param def the def
-	 */
-	void add(DefTag def) {
-		defs.put(def.name, def);
-	}
+  /** The ddl. */
+  private DDL ddl;
 
-	/**
-	 * Gets the connections.
-	 *
-	 * @return the connections
-	 */
-	public Collection<ConnectionTag> getConnections() {
-		if(connectionsByMethod==null) connectionsByMethod=new LinkedHashMap<>();
+  /** The dml. */
+  private DmlTag dml;
 
-		return connectionsByMethod.values();
-	}
+  /** The meta property. */
+  private MetaTag meta;
 
-	/**
-	 * Gets the ddl.
-	 *
-	 * @return the ddl
-	 */
-	@XmlElement(namespace="-//org.witerat/cafenated/sql")
-	public DDL getDdl() {
-		return ddl;
-	}
+  /**
+   * The templateEngine property.
+   */
+  private String templateEngine;
 
-	/**
-	 * Gets the defs.
-	 *
-	 * @return the defs
-	 */
-	@XmlTransient
-	public Map<String, DefTag> getDefs() {
-		if(defs==null)defs=new HashMap<>();
-		return defs;
-	}
+  /**
+   * Adds the.
+   *
+   * @param def
+   *          A definition.
+   */
+  public void add(final DefTag def) {
+    defs.put(def.getName(), def);
+  }
 
-	/**
-	 * Gets the dml.
-	 *
-	 * @return the dml
-	 */
-	@XmlElement(name="dml", namespace="-//org.witerat/cafenated/sql", type=DmlTag.class)
-	public DmlTag getDml() {
-		return dml;
-	}
+  /**
+   * Gets the connections.
+   *
+   * @return the connections
+   */
+  public Collection<ConnectionTag> getConnections() {
+    if (connectionsByMethod == null) {
+      connectionsByMethod = new LinkedHashMap<>();
+    }
+    return connectionsByMethod.values();
+  }
 
-	/* (non-Javadoc)
-	 * @see net.witerat.cafenatedsql.spi.driver.MacroLocator#getMacro(java.lang.String)
-	 */
-	@Override
-	public MacroTag getMacro(String name) {
-		return defs.get(name);
-	}
+  /**
+   * Gets the ddl.
+   *
+   * @return the ddl
+   */
+  @XmlElement(namespace = "-//org.witerat/cafenated/sql")
+  public DDL getDdl() {
+    return ddl;
+  }
 
-	/**
-	 * Sets the connections.
-	 *
-	 * @param connection the new connection
-	 */
-	@XmlElement(type=ConnectionTag.class, name="connection", namespace="-//org.witerat/cafenated/sql")
-	public void setConnection(ConnectionTag connection) {
-		if(connectionsByMethod==null)connectionsByMethod = new LinkedHashMap<>();
-		connectionsByMethod.put(connection.getMethod(), connection);
-	}
+  /**
+   * Gets the definitions.
+   *
+   * @return the definitions in a map keyed by name.
+   */
+  @XmlTransient
+  public Map<String, DefTag> getDefs() {
+    if (defs == null) {
+      defs = new HashMap<>();
+    }
+    return defs;
+  }
 
-	
-	/**
-	 * Sets the dialect.
-	 *
-	 * @param dialect the new dialect
-	 */
-	@XmlElement(name="dialect", namespace="-//org.witerat/cafenated/sql", type=DialectTag.class)
-	public void setDialect(DialectTag dialect) {
-		if(dialectsById==null) dialectsById=new HashMap<>();
-		dialectsById.put(dialect.getId(), dialect);
-	}
+  /**
+   * Gets the dml.
+   *
+   * @return the dml
+   */
+  @XmlElement(name = "dml", type = DmlTag.class,
+      namespace = "-//org.witerat/cafenated/sql")
+  public DmlTag getDml() {
+    return dml;
+  }
 
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * net.witerat.cafenatedsql.spi.driver.MacroLocator#getMacro(java.lang.String)
+   */
+  @Override
+  public MacroTag getMacro(final String name) {
+    return defs.get(name);
+  }
 
-	/**
-	 * Sets the ddl.
-	 *
-	 * @param ddl the new ddl
-	 */
-	public void setDdl(DDL ddl) {
-		this.ddl = ddl;
-	}
+  /**
+   * Sets the connections.
+   *
+   * @param connection
+   *          the new connection
+   */
+  @XmlElement(type = ConnectionTag.class, name = "connection",
+      namespace = "-//org.witerat/cafenated/sql")
+  public void setConnection(final ConnectionTag connection) {
+    if (connectionsByMethod == null) {
+      connectionsByMethod = new LinkedHashMap<>();
+    }
+    connectionsByMethod.put(connection.getMethod(), connection);
+  }
 
-	/**
-	 * Sets the defs.
-	 *
-	 * @param defs the defs
-	 */
-	public void setDefs(Map<String, DefTag> defs) {
-		this.defs = defs;
-	}
+  /**
+   * Sets the dialect.
+   *
+   * @param dialect
+   *          the new dialect
+   */
+  @XmlElement(name = "dialect", type = DialectTag.class,
+      namespace = "-//org.witerat/cafenated/sql")
+  public void setDialect(final DialectTag dialect) {
+    if (dialectsById == null) {
+      dialectsById = new HashMap<>();
+    }
+    dialectsById.put(dialect.getId(), dialect);
+  }
 
-	/**
-	 * @param def a new def tag
-	 */
-	@XmlElement(name="def", type=DefTag.class, namespace="-//org.witerat/cafenated/sql")
-	public void setDef(DefTag def){
-		if(defs==null)defs=new HashMap<>();
-		defs.put(def.name, def);
-	}
-	/**
-	 * Sets the dml.
-	 *
-	 * @param dml the new dml
-	 */
-	public void setDml(DmlTag dml) {
-		this.dml = dml;
-	}
+  /**
+   * Sets the ddl.
+   *
+   * @param ddl0
+   *          the new ddl
+   */
+  public void setDdl(final DDL ddl0) {
+    this.ddl = ddl0;
+  }
 
-	/**
-	 * @param name name of dialect
-	 * @return the dialect associated with name
-	 */
-	public DialectTag getDialectByName(String name){
-		return dialectsById==null?null:dialectsById.get(name);
-	}
-	/**
-	 * Gets the dialects.
-	 *
-	 * @return the dialects
-	 */
-	public Collection<DialectTag> getDialects() {
-		if(dialectsById==null) dialectsById=new HashMap<>();
-		return dialectsById.values();
-	}
+  /**
+   * Sets the defs.
+   *
+   * @param defs0
+   *          the defs
+   */
+  public void setDefs(final Map<String, DefTag> defs0) {
+    this.defs = defs0;
+  }
 
-	/**
-	 * @return The meta tag.
-	 */
-	@XmlElement(namespace="-//org.witerat/cafenated/sql",type=MetaTag.class)
-	public MetaTag getMeta() {
-		// TODO Auto-generated method stub
-		return meta;
-	}
+  /**
+   * Set a def element.
+   *
+   * @param def
+   *          a new def tag
+   */
+  @XmlElement(name = "def", type = DefTag.class,
+      namespace = "-//org.witerat/cafenated/sql")
+  public void setDef(final DefTag def) {
+    if (defs == null) {
+      defs = new HashMap<>();
+    }
+    defs.put(def.getName(), def);
+  }
 
-	/**
-	 * @param meta the meta tag.
-	 */
-	public void setMeta(MetaTag meta) {
-		this.meta = meta;
-	}
-	/**
-	 * @return  the template engine id.
-	 */
-	@XmlElement(namespace="-//org.witerat/cafenated/sql", name="template-engine", type=String.class)
-	public String getTemplateEngine(){
-		return templateEngine;
-	}
+  /**
+   * Sets the dml.
+   *
+   * @param dml0
+   *          the new dml
+   */
+  public void setDml(final DmlTag dml0) {
+    this.dml = dml0;
+  }
 
-	/**
-	 * @param templateEngine The template engine id.
-	 */
-	public void setTemplateEngine(String templateEngine) {
-		this.templateEngine = templateEngine;
-	}
-	
+  /**
+   * Get a dialect for the given name.
+   * @param name
+   *          name of dialect
+   * @return the dialect associated with name
+   */
+  public DialectTag getDialectByName(final String name) {
+    if (dialectsById != null) {
+      return dialectsById.get(name);
+    }
+    return null;
+  }
+
+  /**
+   * Gets the dialects.
+   *
+   * @return the dialects
+   */
+  public Collection<DialectTag> getDialects() {
+    if (dialectsById == null) {
+      dialectsById = new HashMap<>();
+    }
+    return dialectsById.values();
+  }
+
+  /**
+   * @return The meta tag.
+   */
+  @XmlElement(namespace = "-//org.witerat/cafenated/sql", type = MetaTag.class)
+  public MetaTag getMeta() {
+    // TODO Auto-generated method stub
+    return meta;
+  }
+
+  /**
+   * @param meta0
+   *          the meta tag.
+   */
+  public void setMeta(final MetaTag meta0) {
+    this.meta = meta0;
+  }
+
+  /**
+   * Get identifier for the template engine.
+   * @return the template engine id.
+   */
+  @XmlElement(name = "template-engine", type = String.class,
+      namespace = "-//org.witerat/cafenated/sql")
+  public String getTemplateEngine() {
+    return templateEngine;
+  }
+
+  /**
+   * @param templateEngine0
+   *          The template engine id.
+   */
+  public void setTemplateEngine(final String templateEngine0) {
+    this.templateEngine = templateEngine0;
+  }
+
 }
