@@ -10,7 +10,7 @@ public interface URLFactory extends CafenatedFactory {
   /**
    * New url.
    *
-   * @return the url def
+   * @return the url definition
    */
   UrlDef newUrl();
 
