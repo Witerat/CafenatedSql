@@ -12,55 +12,83 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * The Class NounTag.
  */
-@XmlType(name="NounType",namespace="-//org.witerat/cafenated/sql")
+@XmlType(name = "NounType", namespace = "-//org.witerat/cafenated/sql")
 public class NounTag extends SqlTemplate {
 
-	private String name;
-	private Map<String, VerbTag> verbsByName;
-	/**
-	 * @return the name of this noun or database entity.
-	 */
-	@XmlAttribute(name="name")
-	public String getName() {
-		return name;
-	}
+  /**
+   * The name property is the noun id.
+   */
+  private String name;
+  /**
+   * The verbsByName property contains of associated verbs.
+   */
+  private Map<String, VerbTag> verbsByName;
 
-	/**
-	 * @return a collection of verbs applied to nouns.
-	 */
-	@XmlTransient
-	public Collection<VerbTag> getVerbs() {
-		if(verbsByName==null)verbsByName=new LinkedHashMap<>();
-		return verbsByName.values();
-	}
-	
-	
-	/** The verbs. 
-	 * @param name
-	 */
+  /**
+   * Gets the noun' name.
+   * @return the name of this noun or database entity.
+   */
+  @XmlAttribute(name = "name")
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  /**
+   * @return a collection of verbs applied to nouns.
+   */
+  @XmlTransient
+  public Collection<VerbTag> getVerbs() {
+    if (verbsByName == null) {
+      verbsByName = new LinkedHashMap<>();
+    }
+    return verbsByName.values();
+  }
 
-	@XmlElement(name="param", type=ParameterTag.class, namespace="-//org.witerat/cafenated/sql")
-	public void setParameter(ParameterTag param) {
-		super.setParameter(param);
-	}
+  /**
+   * The name property.
+   *
+   * @param name0 set the of this noun.
+   */
 
-	@XmlElement(namespace="-//org.witerat/cafenated/sql", type=VerbTag.class)
-	void setVerb(VerbTag verb){
-		if(verbsByName==null)verbsByName=new LinkedHashMap<>();
-		verbsByName.put(verb.name,verb);
-	}
-	/**
-	 * 
-	 * @param verbs a new collection of verbs 
-	 */
-	public void setVerbs(Collection<VerbTag> verbs) {
-		Map<String, VerbTag> vbn=new LinkedHashMap<>();
-		for(VerbTag v:verbs) vbn.put(v.name,v);
-		verbsByName = vbn;
-		
-	}
+  public void setName(final String name0) {
+    this.name = name0;
+  }
+
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.spi.driver.tags.SqlTemplate#setParameter(
+   * net.witerat.cafenatedsql.spi.driver.tags.ParameterTag)
+   */
+  @XmlElement(name = "param", type = ParameterTag.class,
+      namespace = "-//org.witerat/cafenated/sql")
+  public void setParameter(final ParameterTag param) {
+    super.setParameter(param);
+  }
+
+  /**
+   * Adds a verb to a noun.
+   * @param verb0 a verb to be added to this noun.
+   */
+  @XmlElement(type = VerbTag.class,
+      namespace = "-//org.witerat/cafenated/sql")
+  void setVerb(final VerbTag verb0) {
+    if (verbsByName == null) {
+      verbsByName = new LinkedHashMap<>();
+    }
+    verbsByName.put(verb0.getName(), verb0);
+  }
+
+  /**
+   * Set the verbs applicable for this noun.
+   * @param verbs
+   *          a new collection of verbs
+   */
+  public void setVerbs(final Collection<VerbTag> verbs) {
+    Map<String, VerbTag> vbn = new LinkedHashMap<>();
+    for (VerbTag v : verbs) {
+      vbn.put(v.getName(), v);
+    }
+    verbsByName = vbn;
+
+  }
 }
