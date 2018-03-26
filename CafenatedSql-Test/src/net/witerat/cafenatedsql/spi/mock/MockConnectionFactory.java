@@ -40,7 +40,7 @@ public class MockConnectionFactory implements ConnectionFactory {
 	@Override
 	public Connection connect() {
 		// TODO Auto-generated method stub
-		return new MockConnection(method, properties);
+		return new MockConnection(properties, method);
 	}
 
 }
