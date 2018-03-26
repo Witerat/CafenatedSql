@@ -4,85 +4,100 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * The Class Meta.
+ * The MetaTag class is used to populate the provider meta data.
+ * @see ProviderRegistrar
  */
-@XmlType(name="MetaTag")
+@XmlType(name = "MetaTag")
 public class MetaTag {
-	/** The class name. */
-	String className;
+  /** The class name. */
+  private String className;
 
-	String description;
+  /**
+   * The description property.
+   */
+  private String description;
 
-	String name;
+  /**
+   * The name property.
+   */
+  private String name;
 
-	String protocol;
+  /**
+   * The protocol property.
+   */
+  private String protocol;
 
-	/**
-	 * Gets the class name.
-	 *
-	 * @return the class name
-	 */
-	@XmlAttribute
-	public String getClassName() {
-		return className;
-	}
+  /**
+   * Gets the class name.
+   *
+   * @return the class name
+   */
+  @XmlAttribute
+  public String getClassName() {
+    return className;
+  }
 
-	/**
-	 * @return human readable description.
-	 */
-	@XmlAttribute
-	public String getDescription() {
-		return description;
-	}
+  /**
+   * @return human readable description.
+   */
+  @XmlAttribute
+  public String getDescription() {
+    return description;
+  }
 
-	/**
-	 * @return a human name for the driver
-	 */
-	@XmlAttribute
-	public String getName() {
-		return name;
-	}
+  /**
+   * The name of the driver.
+   * @return a human name for the driver
+   */
+  @XmlAttribute
+  public String getName() {
+    return name;
+  }
 
-	/**
-	 * @return default protocol
-	 */
-	@XmlAttribute
-	public String getProtocol() {
-		return protocol;
-	}
+  /**
+   * The main protocol for connection.
+   * @return default protocol
+   */
+  @XmlAttribute
+  public String getProtocol() {
+    return protocol;
+  }
 
-	/**
-	 * Sets the class name.
-	 *
-	 * @param className
-	 *            the new class name
-	 */
-	public void setClassName(String className) {
-		this.className = className;
-	}
+  /**
+   * Sets the class name.
+   *
+   * @param className0
+   *          the new class name
+   */
+  public void setClassName(final String className0) {
+    this.className = className0;
+  }
 
-	/**
-	 * Sets the human readable description of the driver.
-	 * @param description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  /**
+   * Sets the human readable description of the driver.
+   *
+   * @param description0 the new driver description
+   */
+  public void setDescription(final String description0) {
+    this.description = description0;
+  }
 
-	/**
-	 * Sets the unique name of the driver.
-	 * @param name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+  /**
+   * Sets the unique name of the driver.
+   *
+   * @param name0 the name of the driver.
+   */
+  public void setName(final String name0) {
+    this.name = name0;
+  }
 
-	/**
-	 * Sets the driver's base protocol.
-	 * @param protocol
-	 */
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
-	}
+  /**
+   * Sets the driver's base protocol.
+   *
+   * @param protocol0 the primary protocol.
+   */
+  public void setProtocol(final String protocol0) {
+    this.protocol = protocol0;
+  }
 
 }
