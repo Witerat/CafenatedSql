@@ -1,4 +1,4 @@
 /**
- * Provides framework interfaces
+ * Provides framework interfaces.
  */
 package net.witerat.cafenatedsql.api;
