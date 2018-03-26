@@ -12,79 +12,90 @@ import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * The Class <code>VerbTag</code> describes how instructions related to 
- * database entities - nouns are rendered and submitted to a backend database.
+ * The Class <code>VerbTag</code> describes how instructions related to database
+ * entities - nouns are rendered and submitted to a backend database.
  */
-@XmlType(name="VerbType", namespace="-//org.witerat/cafenated/sql")
+@XmlType(name = "VerbType", namespace = "-//org.witerat/cafenated/sql")
 public class VerbTag {
-	Collection<Object> rawContent;
-	Map<String, ParameterTag> parametersByName;
-	/** The name. */
-	String name;
+  /** The rawContent property. */
+  private Collection<Object> rawContent;
+  /** The parametersByName property. */
+  private Map<String, ParameterTag> parametersByName;
+  /** The name. */
+  private String name;
 
-	/**
-	 * Gets the name.
-	 *
-	 * @return the name
-	 */
-	@XmlAttribute(name="name")
-	public String getName() {
-		return name;
-	}
+  /**
+   * Gets the name.
+   *
+   * @return the name
+   */
+  @XmlAttribute(name = "name")
+  public String getName() {
+    return name;
+  }
 
-	/**
-	 * @return strings and tags
-	 */
-	public Collection<Object> getRawContent() {
-		return rawContent;
-	}
+  /**
+   * Get additional tags and text.
+   * @return strings and tags
+   */
+  public Collection<Object> getRawContent() {
+    return rawContent;
+  }
 
-	/**
-	 * Sets the name.
-	 *
-	 * @param name the new name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+  /**
+   * Sets the name.
+   *
+   * @param name0
+   *          the new name
+   */
+  public void setName(final String name0) {
+    this.name = name0;
+  }
 
-	/**
-	 * @param rawContent strings and tags
-	 */
-	@XmlElementRefs({
-		@XmlElementRef(name="param",type=ParameterTag.class),
-		@XmlElementRef(name="use", type=UseTag.class)})
-	@XmlMixed
-	public void setRawContent(Collection<Object> rawContent) {
-		Collection<Object> rc=new ArrayList<>();
-		for(Object o:rawContent){
-			if(o instanceof ParameterTag)
-				setParameter((ParameterTag)o);
-			
-			else if(!rc.isEmpty()|| (!(o instanceof String))||!(((String)o).trim().isEmpty())) 
-				rc.add(o);
-		}
-		this.rawContent = rc;
-	}
-	
-	/**
-	 * Sets a parameter.
-	 *
-	 * @param param the new parameter
-	 */
-	private void setParameter(ParameterTag param) {
-		if(parametersByName==null)parametersByName=new LinkedHashMap<>();
-		parametersByName.put(param.name, param);
-	}
+  /**
+   * Set Tags and text fragment content.
+   * @param rawContent0
+   *          strings and tags
+   */
+  @XmlElementRefs({ @XmlElementRef(name = "param", type = ParameterTag.class),
+      @XmlElementRef(name = "use", type = UseTag.class) })
+  @XmlMixed
+  public void setRawContent(final Collection<Object> rawContent0) {
+    Collection<Object> rc = new ArrayList<>();
+    for (Object o : rawContent0) {
+      if (o instanceof ParameterTag) {
+        setParameter((ParameterTag) o);
+      } else if (!rc.isEmpty() || (!(o instanceof String))
+          || !(((String) o).trim().isEmpty())) {
+        rc.add(o);
+      }
+    }
+    this.rawContent = rc;
+  }
 
-	/**
-	 * @return the parameters
-	 */
-	@XmlTransient
-	public Collection<ParameterTag> getParameters() {
-		if(parametersByName==null)parametersByName=new LinkedHashMap<>(); 
-		return parametersByName.values();
-	}
+  /**
+   * Sets a parameter.
+   *
+   * @param param
+   *          the new parameter
+   */
+  private void setParameter(final ParameterTag param) {
+    if (parametersByName == null) {
+      parametersByName = new LinkedHashMap<>();
+    }
+    parametersByName.put(param.getName(), param);
+  }
+
+  /**
+   * get parameter tags.
+   * @return the parameters
+   */
+  @XmlTransient
+  public Collection<ParameterTag> getParameters() {
+    if (parametersByName == null) {
+      parametersByName = new LinkedHashMap<>();
+    }
+    return parametersByName.values();
+  }
 }
