@@ -4,106 +4,107 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class ParameterTag.
+ * The Class ParameterTag describes a model parameter.
  */
-@XmlRootElement(name="param")
-@XmlType(name="ParamType", namespace="-//org.witerat/cafenated/sql")
+@XmlRootElement(name = "param")
+@XmlType(name = "ParamType", namespace = "-//org.witerat/cafenated/sql")
 public class ParameterTag {
-	
-	/** The type. */
-	String type;
-	
-	/** The name. */
-	String name;
-	
-	/** The optional. */
-	boolean optional;
-	
-	/** The usual(default) value for this parameter. */
-	private String usual;
 
-	/**
-	 * Checks if is optional.
-	 *
-	 * @return true, if is optional
-	 */
-	public boolean isOptional() {
-		return optional;
-	}
+  /** The type. */
+  private String type;
 
-	
-	/**
-	 * Sets the optional.
-	 *
-	 * @param optional the new optional
-	 */
-	@XmlAttribute
-	public void setOptional(boolean optional) {
-		this.optional = optional;
-	}
+  /** The name. */
+  private String name;
 
-	/**
-	 * Gets the class name for the type of a model parameter for template
-	 * processing. if left unset, any object may be provided to the model,
-	 * otherwise arguments for this parameter must pass the instanceof test.
-	 * 
-	 * @return the class-name of the parameter.
-	 */
+  /** The optional. */
+  private boolean optional;
 
-	public String getType() {
-		return type;
-	}
+  /** The usual(default) value for this parameter. */
+  private String usual;
 
-	/**
-	 * Defines the type for a model parameter for template processing. If left
-	 * unset, any object may be provides to the model, otherwise arguments for
-	 * this parameter must pass the instanceof test.
-	 * 
-	 * @param type the name or identifier a type.
-	 */
-	@XmlAttribute
-	public void setType(String type) {
-		this.type = type;
-	}
+  /**
+   * Checks if is optional.
+   *
+   * @return true, if is optional
+   */
+  public boolean isOptional() {
+    return optional;
+  }
 
-	/**
-	 * gets the name of the parameter;.
-	 *
-	 * @return the parameter name
-	 */
-	public String getName() {
-		return name;
-	}
+  /**
+   * Sets the optional.
+   *
+   * @param optional0
+   *          the new optional
+   */
+  @XmlAttribute
+  public void setOptional(final boolean optional0) {
+    this.optional = optional0;
+  }
 
-	/**
-	 * Sets the name of the parameter.
-	 * 
-	 * @param name
-	 *            the new name of the parameter.
-	 */
-	@XmlAttribute
-	public void setName(String name) {
-		this.name = name;
-	}
+  /**
+   * Gets the class name for the type of a model parameter for template
+   * processing. if left unset, any object may be provided to the model,
+   * otherwise arguments for this parameter must pass the instanceof test.
+   *
+   * @return the class-name of the parameter.
+   */
 
-	/**
-	 * Gets the default.
-	 *
-	 * @return the default
-	 */
-	@XmlAttribute(name="usual")
-	public String getUsual() {
-		return usual;
-	}
-	
-	/**
-	 * Sets the default.
-	 *
-	 * @param usual the new default
-	 */
-	public void setUsual(String usual) {
-		this.usual = usual;
-	}
+  public String getType() {
+    return type;
+  }
+
+  /**
+   * Defines the type for a model parameter for template processing. If left
+   * unset, any object may be provides to the model, otherwise arguments for
+   * this parameter must pass the instanceof test.
+   *
+   * @param type0
+   *          the name or identifier a type.
+   */
+  @XmlAttribute
+  public void setType(final String type0) {
+    this.type = type0;
+  }
+
+  /**
+   * gets the name of the parameter;.
+   *
+   * @return the parameter name
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * Sets the name of the parameter.
+   *
+   * @param name0
+   *          the new name of the parameter.
+   */
+  @XmlAttribute
+  public void setName(final String name0) {
+    this.name = name0;
+  }
+
+  /**
+   * Gets the default.
+   *
+   * @return the default
+   */
+  @XmlAttribute(name = "usual")
+  public String getUsual() {
+    return usual;
+  }
+
+  /**
+   * Sets the default.
+   *
+   * @param usual0
+   *          the new default
+   */
+  public void setUsual(final String usual0) {
+    this.usual = usual0;
+  }
 }

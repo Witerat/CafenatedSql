@@ -4,16 +4,15 @@ import java.util.Collection;
 
 import net.witerat.cafenatedsql.spi.driver.tags.ParameterTag;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface Parameterized.
  */
 public interface Parameterized {
-  
+
   /**
-   * Gets the params.
+   * Gets the parameters.
    *
-   * @return the params
+   * @return the parameters
    */
   Collection<ParameterTag> getParams();
 }
