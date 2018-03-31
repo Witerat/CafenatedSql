@@ -8,166 +8,178 @@ import java.util.Map;
 import net.witerat.cafenatedsql.api.Provider;
 import net.witerat.cafenatedsql.api.ProviderRegistrar;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AbstractProvider encapsulates the framework database providers
  * which offers one or more database product models .
  */
 public class SimpleProviderRegistrar implements ProviderRegistrar {
 
-	/** The factory. */
-	Map<String, Provider> providers=new LinkedHashMap<>();
+  /** The factory. */
+  private Map<String, Provider> providers = new LinkedHashMap<>();
 
-	/** The description. */
-	Map<String, String> description=new LinkedHashMap<>();
+  /** The description. */
+  private Map<String, String> description = new LinkedHashMap<>();
 
-	/** The copyright. */
-	Map<String, String> copyright= new LinkedHashMap<>();
+  /** The copyright. */
+  private Map<String, String> copyright = new LinkedHashMap<>();
 
-	/** The long name. */
-	Map<String, String> longName=new LinkedHashMap<>();
+  /** The long name. */
+  private Map<String, String> longName = new LinkedHashMap<>();
 
-	/** The vendor. */
-	Map<String, String> vendor=new LinkedHashMap<>();
+  /** The vendor. */
+  private Map<String, String> vendor = new LinkedHashMap<>();
 
-	/** The vendor name. */
-	Map<String, String> vendorName = new LinkedHashMap<>();
+  /** The vendor name. */
+  private Map<String, String> vendorName = new LinkedHashMap<>();
 
-	/** The vendor long name. */
-	Map<String, String> vendorLongName= new LinkedHashMap<>();
+  /** The vendor long name. */
+  private Map<String, String> vendorLongName = new LinkedHashMap<>();
 
-	/**
-	 * 
-	 * Get a specified factory.
-	 *
-	 * @param name
-	 *            The registered name o the factory;
-	 * @return the factory
-	 * @see net.witerat.cafenatedsql.api.ProviderRegistrar#getProvider(java.lang.String)
-	 */
-	@Override
-	public Provider getProvider(String name) {
-		return providers.get(name);
-	}
+  /**
+   * Gets the description for the specified provider.
+   *
+   * @param name
+   *          the name
+   * @return the description
+   */
+  public String getDescription(final String name) {
+    return description.get(name);
+  }
 
-	/**
-	 * 
-	 * Get Factory names. useful for publishing.
-	 *
-	 * @return the factory names
-	 * @see net.witerat.cafenatedsql.api.ProviderRegistrar#getProviderNames()
-	 */
-	@Override
-	public Collection<String> getProviderNames() {
-		LinkedHashSet<String> names = new LinkedHashSet<String>();
-		names.addAll(providers.keySet());
-		return names;
-	}
+  /**
+   * Gets the long name of the specified provider.
+   *
+   * @param name
+   *          the name
+   * @return the long name
+   */
+  public String getLongName(final String name) {
+    return longName.get(name);
+  }
 
-	/**
-	 * Gets the long name of the specified provider.
-	 *
-	 * @param name
-	 *            the name
-	 * @return the long name
-	 */
-	public String getLongName(String name) {
-		return longName.get(name);
-	}
+  /**
+   * Get a specified factory.
+   *
+   * @param name
+   *          The registered name o the factory;
+   * @return the factory
+   * @see net.witerat.cafenatedsql.api.ProviderRegistrar#getProvider(
+   *    java.lang.String)
+   */
+  @Override
+  public Provider getProvider(final String name) {
+    return providers.get(name);
+  }
 
-	/**
-	 * Gets the description for the specified provider.
-	 *
-	 * @param name
-	 *            the name
-	 * @return the description
-	 */
-	public String getDescription(String name) {
-		return description.get(name);
-	}
-	
-	/* (non-Javadoc)
-	 * @see net.witerat.cafenatedsql.api.ProviderRegistrar#getVendors()
-	 */
-	@Override
-	public Collection<String> getVendors(){
-		return vendor.keySet();
-	}
+  /**
+   * Get Factory names. useful for publishing.
+   *
+   * @return the factory names
+   * @see net.witerat.cafenatedsql.api.ProviderRegistrar#getProviderNames()
+   */
+  @Override
+  public Collection<String> getProviderNames() {
+    LinkedHashSet<String> names = new LinkedHashSet<String>();
+    names.addAll(providers.keySet());
+    return names;
+  }
 
-	/**
-	 * Gets the description.
-	 *
-	 * @param name
-	 *            the name
-	 * @return the description
-	 */
-	@Override
-	public String getVendor(String name) {
-		return description.get(name);
-	}
+  /**
+   * Get the map of providers by name.
+   * @return the name-> provider map.
+   */
+  protected Map<String, Provider> getProviders() {
+    return providers;
+  }
 
-	/**
-	 * Gets the vendor name.
-	 *
-	 * @param vendor the vendor id.
-	 * @return vendor name
-	 */
-	@Override
-	public String getVendorName(String vendor){
-		return vendorName.get(vendor);
-	}
-	
-	/**
-	 * Gets the vendor long name.
-	 *
-	 * @param vendor the vendor id.
-	 * @return the long name for the vendor.
-	 */
-	@Override
-	public String getVendorLongName(String vendor){
-		return vendorLongName.get(vendor);
-	}
-	
-	/**
-	 * Register factory.
-	 *
-	 * @param provider
-	 *            the factory
-	 * @param name
-	 *            the name
-	 * @param copyright
-	 *            short copyright message
-	 * @param longName
-	 *            the long name
-	 * @param description
-	 *            the description
-	 * @param vendor
-	 *            Vender id
-	 */
-	@Override
-	public void registerProvider(Provider provider, String name, String copyright, String longName,
-			String description, String vendor) {
-		this.providers.put(name, provider);
-		this.copyright.put(name, copyright);
-		this.longName.put(name, longName);
-		this.description.put(name, description);
-		this.vendor.put(name, vendor);
-	}
+  /**
+   * Gets the description.
+   *
+   * @param name
+   *          the name
+   * @return the description
+   */
+  @Override
+  public String getVendor(final String name) {
+    return description.get(name);
+  }
 
-	/**
-	 * Register vendor.
-	 *
-	 * @param vendor
-	 *            the vendor id
-	 * @param vendorName
-	 *            the vendor name
-	 * @param vendorLongName
-	 *            the vendor long name
-	 */
-	@Override
-	public void registerVendor(String vendor, String vendorName, String vendorLongName) {
-		this.vendorName.put(vendor, vendorName);
-		this.vendorLongName.put(vendor, vendorLongName);
-	}
+  /**
+   * Gets the vendor long name.
+   *
+   * @param vendor0
+   *          the vendor id.
+   * @return the long name for the vendor.
+   */
+  @Override
+  public String getVendorLongName(final String vendor0) {
+    return vendorLongName.get(vendor0);
+  }
+
+  /**
+   * Gets the vendor name.
+   *
+   * @param vendor0
+   *          the vendor id.
+   * @return vendor name
+   */
+  @Override
+  public String getVendorName(final String vendor0) {
+    return vendorName.get(vendor0);
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see net.witerat.cafenatedsql.api.ProviderRegistrar#getVendors()
+   */
+  @Override
+  public Collection<String> getVendors() {
+    return vendor.keySet();
+  }
+
+  /**
+   * Register factory.
+   *
+   * @param provider
+   *          the factory
+   * @param name
+   *          the name
+   * @param copyright0
+   *          short copyright message
+   * @param longName0
+   *          the long name
+   * @param description0
+   *          the description
+   * @param vendor0
+   *          Vender id
+   */
+  @Override
+  public void registerProvider(final Provider provider, final String name,
+      final String copyright0, final String longName0,
+      final String description0, final String vendor0) {
+    this.providers.put(name, provider);
+    this.copyright.put(name, copyright0);
+    this.longName.put(name, longName0);
+    this.description.put(name, description0);
+    this.vendor.put(name, vendor0);
+  }
+
+  /**
+   * Register vendor.
+   *
+   * @param vendor0
+   *          the vendor id
+   * @param vendorName0
+   *          the vendor name
+   * @param vendorLongName0
+   *          the vendor long name
+   */
+  @Override
+  public void registerVendor(final String vendor0, final String vendorName0,
+      final String vendorLongName0) {
+    this.vendorName.put(vendor0, vendorName0);
+    this.vendorLongName.put(vendor0, vendorLongName0);
+  }
 
 }
