@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import net.witerat.cafenatedsql.api.driver.DriverCreationException;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
-import net.witerat.cafenatedsql.spi.SimpleDatabase;
 import net.witerat.cafenatedsql.spi.mock.MockConnectionFactory;
 import net.witerat.cafenatedsql.spi.mock.MockProvider;
 
