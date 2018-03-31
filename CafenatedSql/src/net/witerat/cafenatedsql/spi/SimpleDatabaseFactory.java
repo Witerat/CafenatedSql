@@ -5,12 +5,21 @@ import net.witerat.cafenatedsql.api.DatabaseFactory;
 import net.witerat.cafenatedsql.api.driver.DriverCreationException;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 
+/**
+ * A factory for creating SimpleDatabase objects.
+ */
 public class SimpleDatabaseFactory implements DatabaseFactory {
 
-	@Override
-	public Database newDatabase(TemplateEngineModel model) throws DriverCreationException {
-		// TODO Auto-generated method stub
-		return new SimpleDatabase((String)model.get("driver"),(String)model.get("method"),model);
-	}
+  /* (non-Javadoc)
+   * @see net.witerat.cafenatedsql.api.DatabaseFactory#newDatabase(net.witerat
+   * .cafenatedsql.api.driver.template.TemplateEngineModel)
+   */
+  @Override
+  public Database newDatabase(final TemplateEngineModel model)
+      throws DriverCreationException {
+    // TODO Auto-generated method stub
+    return new SimpleDatabase((String) model.get("driver"),
+      (String) model.get("method"), model);
+  }
 
 }
