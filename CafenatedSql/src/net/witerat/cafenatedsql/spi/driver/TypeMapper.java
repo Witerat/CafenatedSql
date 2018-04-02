@@ -55,8 +55,6 @@ public class TypeMapper {
   /**
    * Instantiates a new type mapper.
    *
-   * @throws ClassNotFoundException
-   *           the class not found exception
    */
   protected TypeMapper() {
     // TODO Auto-generated constructor stub
