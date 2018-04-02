@@ -18,8 +18,8 @@ public class DefaultProviderRegistrar implements ProviderRegistrar {
   /**
    * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.api.ProviderRegistrar#getFactory(java.lang.String)
+   * @see net.witerat.cafenatedsql.api
+   *     .ProviderRegistrar#getProvider(java.lang.String)
    */
   public Provider getProvider(final String name) {
     return providerRegistrar.getProvider(name);
@@ -28,7 +28,7 @@ public class DefaultProviderRegistrar implements ProviderRegistrar {
   /**
    * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.api.ProviderRegistrar#getFactoryNames()
+   * @see net.witerat.cafenatedsql.api.ProviderRegistrar#getProviderNames()
    */
   public Collection<String> getProviderNames() {
     return providerRegistrar.getProviderNames();
@@ -50,8 +50,8 @@ public class DefaultProviderRegistrar implements ProviderRegistrar {
    * {@inheritDoc}
    *
    * @see
-   * net.witerat.cafenatedsql.api.ProviderRegistrar#registerFactory(
-   * net.witerat.cafenatedsql.api.driver.DriverFactory,
+   * net.witerat.cafenatedsql.api.ProviderRegistrar#registerProvider(
+   * Provider,
    * java.lang.String, java.lang.String,java.lang.String,
    * java.lang.String, java.lang.String)
    */
