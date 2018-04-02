@@ -18,11 +18,11 @@ public interface ProviderRegistrar {
       new RootProviderRegistrar();
 
   /**
-   * Gets the provider.
+   * Gets the provider specified by name.
    *
    * @param name
-   *          the name
-   * @return the provider
+   *          the name of the provider to be returned.
+   * @return the provider specified by <code>name</code>
    */
   Provider getProvider(String name);
 
