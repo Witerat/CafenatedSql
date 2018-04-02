@@ -14,7 +14,7 @@ import net.witerat.cafenatedsql.api.ProviderRegistrar;
  */
 public class SimpleProviderRegistrar implements ProviderRegistrar {
 
-  /** The factory. */
+  /** The providers. */
   private Map<String, Provider> providers = new LinkedHashMap<>();
 
   /** The description. */
@@ -58,10 +58,10 @@ public class SimpleProviderRegistrar implements ProviderRegistrar {
   }
 
   /**
-   * Get a specified factory.
+   * Get a specified provider.
    *
    * @param name
-   *          The registered name o the factory;
+   *          The registered name of the provider;
    * @return the factory
    * @see net.witerat.cafenatedsql.api.ProviderRegistrar#getProvider(
    *    java.lang.String)
@@ -72,9 +72,9 @@ public class SimpleProviderRegistrar implements ProviderRegistrar {
   }
 
   /**
-   * Get Factory names. useful for publishing.
+   * Get provider names. useful for publishing.
    *
-   * @return the factory names
+   * @return the provider names
    * @see net.witerat.cafenatedsql.api.ProviderRegistrar#getProviderNames()
    */
   @Override
@@ -139,10 +139,10 @@ public class SimpleProviderRegistrar implements ProviderRegistrar {
   }
 
   /**
-   * Register factory.
+   * Register a provider.
    *
    * @param provider
-   *          the factory
+   *          the provider
    * @param name
    *          the name
    * @param copyright0
