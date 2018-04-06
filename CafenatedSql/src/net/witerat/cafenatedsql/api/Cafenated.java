@@ -1,5 +1,6 @@
 package net.witerat.cafenatedsql.api;
 
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,6 +16,35 @@ import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
  *
  */
 public abstract class Cafenated {
+  /**
+   * Model property name for registered provider name.
+   */
+  public static final String PROVIDER_NAME = "provider_name";
+  /**
+   * Model property name for provider.
+   */
+  public static final String PROVIDER = "provider";
+  /**
+   * Model property name for connection method name.
+   */
+  public static final String CONNECTION_METHOD = "connection_method";
+  /**
+   * Model property name for connection.
+   */
+  public static final String CONNECTION = "connection";
+  /**
+   * Model property name for registered provider name.
+   */
+  public static final String DATABASE_NAME = "database_name";
+  /**
+   * Model property name for database.
+   */
+  public static final String DATABASE = "database";
+  /**
+   * The DRIVER_NAME property.
+   */
+  public static final String DRIVER_NAME = "driver_name";
+
   /**
    * The logger property.
    */
@@ -42,7 +72,7 @@ public abstract class Cafenated {
    * Get the singleton root registrar.
    * @return the root registrar.
    */
-  static ProviderRegistrar getInstance() {
+  public static ProviderRegistrar getInstance() {
     if (root == null) {
       init();
     }
@@ -51,7 +81,6 @@ public abstract class Cafenated {
     }
     return root;
   }
-
   /**
    * bind the root registrar to a JNDI name.
    * @param jndiName0 The jndi to bind with which the root registrar.
@@ -59,6 +88,7 @@ public abstract class Cafenated {
   public void regsisterJNDI(final String jndiName0) {
 
   }
+
   /**
    *
    */
@@ -113,16 +143,48 @@ public abstract class Cafenated {
   static void configureJNDI(final String jndiName0) {
     jndiName = jndiName0;
   }
+
   /**
-   * @param dbpName provider Name
+   * Gets a new unconnected database using values of the specified model and
+   * provider.
+   * @param dbpName provider name this overrides the model's provider name.
    * @param model model of connection and other properties
    * @return A new database object.
-   * @throws DriverCreationException Drive creation fail.
+   * @throws DriverCreationException Driver creation fail.
    */
   public Database getDatabase(final String dbpName,
       final TemplateEngineModel model) throws DriverCreationException {
     Provider p = root.getProvider(dbpName);
     Database db = p.getDatabaseFactory().newDatabase(model);
+    return db;
+  }
+
+  /**
+   * Gets new unconnected database using properties in the specified model.
+   * @param model model of connection and other properties.
+   * @return A new database object.
+   * @throws DriverCreationException Drive creation fail.
+   */
+  public Database getDatabase(final TemplateEngineModel model)
+      throws DriverCreationException {
+    Provider p = root.getProvider((String) model.get(PROVIDER_NAME));
+    Database db = p.getDatabaseFactory().newDatabase(model);
+    return db;
+  }
+  /**
+   * Gets new unconnected database using properties in the specified model.
+   * @param props model of connection and other properties.
+   * @return A new database object.
+   * @throws DriverCreationException Drive creation fail.
+   */
+  public static Database getDatabase(final Properties props)
+      throws DriverCreationException {
+    String pn = props.getProperty(PROVIDER_NAME);
+    Provider p = root.getProvider(pn);
+    TemplateModelFactory tmf = p.getModelFactory();
+    TemplateEngineModel model = tmf.newInstance(props);
+    DatabaseFactory dbf = p.getDatabaseFactory();
+    Database db = dbf.newDatabase(model);
     return db;
   }
 }
