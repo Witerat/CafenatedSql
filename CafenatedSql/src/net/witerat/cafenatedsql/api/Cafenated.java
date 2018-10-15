@@ -8,7 +8,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import net.witerat.cafenatedsql.api.driver.DriverCreationException;
+import net.witerat.cafenatedsql.api.driver.template.SimplePropertiesModel;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
+import net.witerat.cafenatedsql.spi.driver.template.SimpleExpressionLanguage;
 
 
 /**
@@ -18,33 +20,59 @@ import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 public abstract class Cafenated {
   /**
    * Model property name for registered provider name.
+   * @see String
    */
   public static final String PROVIDER_NAME = "provider_name";
   /**
    * Model property name for provider.
+   * @See {@link Provider}
    */
   public static final String PROVIDER = "provider";
   /**
    * Model property name for connection method name.
+   * @see String
    */
   public static final String CONNECTION_METHOD = "connection_method";
   /**
    * Model property name for connection.
+   * @see  java.sql.Connection
    */
   public static final String CONNECTION = "connection";
   /**
    * Model property name for registered provider name.
+   * @see String
    */
   public static final String DATABASE_NAME = "database_name";
   /**
    * Model property name for database.
+   * @see Database
    */
   public static final String DATABASE = "database";
   /**
    * The DRIVER_NAME property.
+   * @see String
    */
   public static final String DRIVER_NAME = "driver_name";
 
+  /** The DEFAULT_MODEL property.  */
+  public static final TemplateEngineModel DEFAULT_MODEL
+    = new SimplePropertiesModel(new Properties() {
+      /** The serialVersionUID property. */
+      private static final long serialVersionUID = 1L;
+      {
+        put(Cafenated.EXPRESSION_LANGUAGE, new SimpleExpressionLanguage());
+      }
+    });
+  /**
+   * The TEMPLATE_ENGINE property.
+   * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngine
+   */
+  public static final String TEMPLATE_ENGINE = "template_engine";
+  /**
+   * The EXPRESSION_LANGUAGE property.
+   * @see net.witerat.cafenatedsql.api.driver.template.ExpressionLanguage
+   */
+  public static final String EXPRESSION_LANGUAGE = "expression_language";
   /**
    * The logger property.
    */
@@ -152,7 +180,7 @@ public abstract class Cafenated {
    * @return A new database object.
    * @throws DriverCreationException Driver creation fail.
    */
-  public Database getDatabase(final String dbpName,
+  public static Database getDatabase(final String dbpName,
       final TemplateEngineModel model) throws DriverCreationException {
     Provider p = root.getProvider(dbpName);
     Database db = p.getDatabaseFactory().newDatabase(model);
@@ -165,7 +193,7 @@ public abstract class Cafenated {
    * @return A new database object.
    * @throws DriverCreationException Drive creation fail.
    */
-  public Database getDatabase(final TemplateEngineModel model)
+  public static Database getDatabase(final TemplateEngineModel model)
       throws DriverCreationException {
     Provider p = root.getProvider((String) model.get(PROVIDER_NAME));
     Database db = p.getDatabaseFactory().newDatabase(model);
