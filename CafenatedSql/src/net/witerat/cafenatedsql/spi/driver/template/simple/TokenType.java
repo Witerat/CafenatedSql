@@ -126,6 +126,12 @@ enum TokenType {
   EXTENDS,
   /** the <code>for</code> keyword. */
   FOR,
+  /** the <code>try</code> keyword. */
+  TRY,
+  /** the <code>catch</code> keyword. */
+  CATCH,
+  /** the <code>enum</code> keyword. */
+  ENUM,
   /** the <code>finally</code> keyword. */
   FINALLY,
   /** the <code>final</code> keyword. */
@@ -139,5 +145,5 @@ enum TokenType {
       + "byte short int boolean long double float char "
       + "import instanceof interface new switch case break "
       + "class implements public protected private abstract "
-      + "static extends finally final").split(" ");
+      + "static extends for try catch enum finally final").split(" ");
 }
