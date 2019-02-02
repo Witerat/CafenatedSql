@@ -39,17 +39,17 @@ public interface ConnectionType {
   void setDialectSelector(DialectSelector ds);
 
   /**
-   * Sets the url definition.
+   * Sets the URL definition.
    *
    * @param url
-   *          the new url definition
+   *          the new URL definition
    */
   void setUrlDef(UrlDef url);
 
   /**
-   * Gets the url definiton.
+   * Gets the URL definition.
    *
-   * @return the url definition
+   * @return the URL definition
    */
   UrlDef getUrlDef();
 }
