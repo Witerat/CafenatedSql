@@ -10,8 +10,8 @@ import net.witerat.cafenatedsql.api.driver.DialectDef;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 
 /**
- * The Class Driver represents a construct that provides abstraction of
- * Data Definition language.
+ * The Class Driver represents a construct that provides abstraction of Data
+ * Definition language.
  */
 public class Driver {
   static {
@@ -26,6 +26,14 @@ public class Driver {
 
   /** The dialects by name. */
   private Map<String, DialectDef> dialectsByName;
+
+  /**
+   * @return the current model for the driver providing default values and
+   *         context for operations related to his driver.
+   */
+  protected TemplateEngineModel getModel() {
+    return model;
+  }
 
   /**
    * Sets the model.
