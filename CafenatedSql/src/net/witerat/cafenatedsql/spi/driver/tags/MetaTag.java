@@ -3,9 +3,10 @@ package net.witerat.cafenatedsql.spi.driver.tags;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
+
 /**
  * The MetaTag class is used to populate the provider meta data.
- * @see ProviderRegistrar
+ * @see net.witerat.cafenatedsql.api.ProviderRegistrar
  */
 @XmlType(name = "MetaTag")
 public class MetaTag {
