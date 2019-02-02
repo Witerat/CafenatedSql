@@ -110,6 +110,7 @@ public class RootProviderRegistrar extends SimpleProviderRegistrar {
    */
   @Override
   public Provider getProvider(final String name) {
+    assert name != null : "name cannot be null";
     if (name.indexOf('/') == -1) {
       Provider p = super.getProvider(name);
       if (p == null) {
