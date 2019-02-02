@@ -1,6 +1,8 @@
 package net.witerat.cafenatedsql.spi.driver;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import net.witerat.cafenatedsql.api.driver.ConnectionType;
@@ -42,6 +44,9 @@ public class Driver {
    *          the dd
    */
   public void addDialect(final DialectDef dd) {
+    if (null == dialectsByName) {
+      dialectsByName = new LinkedHashMap<>();
+    }
     dialectsByName.put(dd.getId(), dd);
   }
 
@@ -51,18 +56,37 @@ public class Driver {
    * @return the dialects
    */
   public Collection<DialectDef> getDialects() {
+    if (null == dialectsByName) {
+      return new LinkedHashSet<DialectDef>();
+    }
     return dialectsByName.values();
   }
 
   /**
    * Gets the connection type.
    *
-   * @param method
-   *          the method
+   * @param methodEx
+   *          the method expression to extract the method from the context
+   *          model.
    * @return the connection type
    */
-  public ConnectionType getConnectionType(final String method) {
-    return connectionTypesByMethod.get(model.getByExpression(method));
+  public ConnectionType getConnectionType(final String methodEx) {
+    if (null == connectionTypesByMethod) {
+      return null;
+    }
+    String method = (String) model.getByExpression(methodEx);
+    return connectionTypesByMethod.get(method);
+  }
 
+  /**
+   * @param ct the new connection type.
+   */
+  public void addConnectionType(final ConnectionType ct) {
+    if (ct != null) {
+      if (null == connectionTypesByMethod) {
+        connectionTypesByMethod = new LinkedHashMap<>();
+      }
+      connectionTypesByMethod.put(ct.getName(), ct);
+    }
   }
 }
