@@ -2,6 +2,8 @@ package net.witerat.cafenatedsql.api.driver.template;
 
 import java.util.Properties;
 
+import net.witerat.cafenatedsql.api.Cafenated;
+
 /**
  * A simple implementation that backs a template model with a
  * <code>java.util.Properties</code> it has the limitation that values can only
@@ -80,7 +82,24 @@ public class SimplePropertiesModel implements TemplateEngineModel {
   @Override
   public Object evaluateContextExpression(final String expression)
       throws ExpressionFailedException {
+    ExpressionLanguage el = getExpressionLanguage();
+    if (el != null) {
+      return el.evaluate(expression, this);
+    }
     return get(expression);
+  }
+
+  /**
+   * The ExpressionLanguage property returns the expression language parser to
+   * be used to extract and compute values from a model. If no expression
+   * language is a available a default of treating the expression as a key is
+   * recommended and is the default.
+   * @return the expression language used to analyse model values.
+   */
+  public ExpressionLanguage getExpressionLanguage() {
+    ExpressionLanguage el
+      = (ExpressionLanguage) get(Cafenated.EXPRESSION_LANGUAGE);
+    return el;
   }
 
   /**
