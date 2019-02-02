@@ -49,8 +49,8 @@ public class VelocityTemplateEngine implements TemplateEngine {
    */
   @Override
   public void define(final Object id) {
-    // TODO Auto-generated method stub
-
+    context.put(
+        id.getClass().getName() + "@" + System.identityHashCode(id), null);
   }
 
   /**
