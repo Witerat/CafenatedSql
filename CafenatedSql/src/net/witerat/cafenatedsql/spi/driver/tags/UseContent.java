@@ -2,6 +2,8 @@ package net.witerat.cafenatedsql.spi.driver.tags;
 
 import java.util.Collection;
 
+import net.witerat.cafenatedsql.api.Cafenated;
+import net.witerat.cafenatedsql.api.driver.template.TemplateEngine;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 import net.witerat.cafenatedsql.spi.driver.Content;
 import net.witerat.cafenatedsql.spi.driver.MacroLocator;
@@ -63,7 +65,7 @@ public class UseContent extends MacroTag {
    */
 
   public AbstractMacroLocator getMacros() {
-    if (macro != null) {
+    if (macros != null) {
       return macros;
     }
     Content parent = getParent();
@@ -91,10 +93,18 @@ public class UseContent extends MacroTag {
    */
   @Override
   public String getText(final TemplateEngineModel model) {
+    TemplateEngine te = (TemplateEngine) model.get(Cafenated.TEMPLATE_ENGINE);
     StringBuilder sb = new StringBuilder();
     for (Content c : getContent()) {
       sb.append(c.getText(model));
     }
+    if (te != null) {
+      te.appendText(sb.toString());
+      te.setModel(model);
+      return te.produce(null, model);
+    } else {
     return sb.toString();
+    }
   }
 }
+
