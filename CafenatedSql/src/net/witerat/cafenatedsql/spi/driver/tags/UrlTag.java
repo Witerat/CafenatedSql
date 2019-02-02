@@ -57,16 +57,6 @@ public class UrlTag extends MacroTag {
     return macros;
   }
 
-  /**
-   * {@inheritDoc}
-   * Adds the.
-   *
-   * @param content0
-   *          the content.
-   */
-  final void add(final AbstractContent content0) {
-    this.content.add(content0);
-  }
 
   /**
    * Add raw elements.
