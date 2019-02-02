@@ -1,5 +1,7 @@
 package net.witerat.cafenatedsql.spi;
 
+import java.util.Properties;
+
 import net.witerat.cafenatedsql.api.CafenatedFactory;
 import net.witerat.cafenatedsql.api.ConnectionFactory;
 import net.witerat.cafenatedsql.api.DatabaseFactory;
@@ -15,6 +17,7 @@ import net.witerat.cafenatedsql.api.TemplateModelFactory;
 import net.witerat.cafenatedsql.api.URLFactory;
 import net.witerat.cafenatedsql.api.VerbFactory;
 import net.witerat.cafenatedsql.api.ViewFactory;
+import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 
 /**
  * The Class SimpleProvider. This provider can be configured use a single object
@@ -98,7 +101,46 @@ public class SimpleProvider implements Provider {
       dialectFactory = (DialectFactory) factory0;
     }
     if (factory0 instanceof TemplateModelFactory) {
-      modelFactory = (TemplateModelFactory) factory0;
+      modelFactory = new TemplateModelFactory() {
+        private TemplateModelFactory target = (TemplateModelFactory) factory0;
+        @Override
+        public TemplateEngineModel newInstance(final Properties defaults) {
+          Properties defs = defaults;
+          if (null == defaults || !defaults.contains("provider")) {
+            defs = new Properties(defaults);
+            defs.put("provider", SimpleProvider.this);
+          }
+          if (null == defaults || !defaults.contains("connection_factory")) {
+            if (defs == defaults) {
+              defs = new Properties(defaults);
+            }
+            if (null != defaults && defaults.containsKey("connection_method")) {
+              String method = (String) defaults.get("connection_method");
+              defs.put("connection_factory", getConnectionFactory(method));
+            }
+          }
+          return target.newInstance(defs);
+        }
+        @Override
+        public TemplateEngineModel newInstance(
+            final TemplateEngineModel model) {
+          TemplateEngineModel defs = model;
+          if (model == null || model.get("provider") == null) {
+            defs = target.newInstance(model);
+            defs.set("provider", SimpleProvider.this);
+          }
+          if (null == model || model.get("connection_factory") == null) {
+            if (defs == model) {
+              defs = target.newInstance(model);
+            }
+            if (null != model && model.get("connection_method") != null) {
+              String method = (String) model.get("connection_method");
+              defs.set("connection_factory", getConnectionFactory(method));
+            }
+          }
+          return target.newInstance(defs);
+        }
+      };
     }
     if (factory0 instanceof NounFactory) {
       nounFactory = (NounFactory) factory0;
@@ -149,7 +191,9 @@ public class SimpleProvider implements Provider {
    */
   @Override
   public DatabaseFactory getDatabaseFactory() {
-    // TODO Auto-generated method stub
+    if (null == databaseFactory) {
+      return new SimpleDatabaseFactory();
+    }
     return databaseFactory;
   }
 
@@ -200,7 +244,9 @@ public class SimpleProvider implements Provider {
    */
   @Override
   public TemplateModelFactory getModelFactory() {
-    // TODO Auto-generated method stub
+    if (null == modelFactory) {
+      return SimpleModelFactory.get(this);
+    }
     return modelFactory;
   }
 
