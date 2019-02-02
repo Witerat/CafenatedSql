@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import net.witerat.cafenatedsql.api.Provider;
-import net.witerat.cafenatedsql.spi.mock.MockProvider;
+import net.witerat.cafenatedsql.api.mock.MockProvider;
 
 public class RootProviderRegistrarTest {
 
