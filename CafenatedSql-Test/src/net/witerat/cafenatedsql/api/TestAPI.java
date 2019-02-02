@@ -7,8 +7,8 @@ import org.junit.Test;
 
 import net.witerat.cafenatedsql.api.driver.DriverCreationException;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
-import net.witerat.cafenatedsql.spi.mock.MockConnectionFactory;
-import net.witerat.cafenatedsql.spi.mock.MockProvider;
+import net.witerat.cafenatedsql.api.mock.MockConnectionFactory;
+import net.witerat.cafenatedsql.api.mock.MockProvider;
 
 import java.sql.Connection;
 import java.util.LinkedHashMap;
@@ -28,10 +28,33 @@ public class TestAPI {
     ProviderRegistrar reg = ProviderRegistrar.ROOT_REGISTRAR;
     Provider prov = reg.getProvider("mock");
     ConnectionFactory cf = prov.getConnectionFactory("mock");
-    Connection c = cf.connect();
+    final Connection c = cf.connect();
     assertNotNull(c);
   }
 
+  @Test
+  public void testNewDatabase() {
+    @SuppressWarnings("serial")
+    Properties defaults = new Properties(){{
+     put("connection_method", "mock");
+     put("provider_name", "mock");
+    }};
+    ProviderRegistrar reg = ProviderRegistrar.ROOT_REGISTRAR;
+    Provider prov = reg.getProvider("mock");
+    TemplateModelFactory tmf = prov.getModelFactory();
+    TemplateEngineModel tem = tmf.newInstance(defaults);
+    Database db=null;
+    DatabaseFactory df = prov.getDatabaseFactory();
+    assertNotNull(df);
+
+    try {
+      db= df.newDatabase(tem);
+    } catch (DriverCreationException e) {
+      e.printStackTrace();
+    }
+    assertNotNull(db); 
+  }
+  @Test
   public void testDatabase() {
     ProviderRegistrar reg = ProviderRegistrar.ROOT_REGISTRAR;
     Provider provider = reg.getProvider("mock");
@@ -39,16 +62,20 @@ public class TestAPI {
     Properties properties = new Properties();
     properties.putAll(mockConProp);
     TemplateEngineModel model = provider.getModelFactory().newInstance(properties);
+    DatabaseFactory dbf = provider.getDatabaseFactory();
+    assertNotNull(dbf);
 
     Database db = null;
     try {
-      db = provider.getDatabaseFactory().newDatabase(model);
+      db = dbf.newDatabase(model);
     } catch (DriverCreationException e) {
-      // TODO Auto-generated catch block
       fail("Exception " + e.getLocalizedMessage());
       throw new RuntimeException(e);
     }
-    Schema sch = provider.getSchemaFactory().createSchema();
+    SchemaFactory scf = provider.getSchemaFactory();
+    assertNotNull(scf);
+    Schema sch = scf.createSchema();
+    assertNotNull(sch);
     sch.setName("mock");
     db.add(sch);
 
