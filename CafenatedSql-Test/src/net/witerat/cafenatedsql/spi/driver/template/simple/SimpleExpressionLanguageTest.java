@@ -30,12 +30,31 @@ public class SimpleExpressionLanguageTest {
     });
     Object r=null;
     try {
+      r = fixture.evaluate("3e4", model);
+      assertNotNull(r);
+    } catch (ExpressionFailedException e) {
+      fail("Exception "+e.getClass().getName()+": "+e.getMessage());
+    }
+    assertEquals(Integer.valueOf(30000),r);
+
+    r = null;
+    try {
       r = fixture.evaluate("3", model);
       assertNotNull(r);
     } catch (ExpressionFailedException e) {
       fail("Exception "+e.getClass().getName()+": "+e.getMessage());
     }
     assertEquals(Integer.valueOf(3),r);
+    
+    r = null;
+    try {
+      r = fixture.evaluate("0o4", model);
+      assertNotNull(r);
+    } catch (ExpressionFailedException e) {
+      fail("Exception "+e.getClass().getName()+": "+e.getMessage());
+    }
+    assertEquals(Integer.valueOf(32),r);
+
   }
 
 }
