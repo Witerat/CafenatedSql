@@ -1,4 +1,5 @@
 package net.witerat.cafenatedsql.spi.driver.template.simple;
+import net.witerat.cafenatedsql.spi.driver.template.simple.Processor.AbstractFetch;
 
 /** Operators. */
 enum Ops {
@@ -35,7 +36,19 @@ enum Ops {
   INCR(1), DECR(1),
 
   /** Values. */
-  LITERAL(0), PROPERTY(0);
+  LITERAL(0) {
+    @Override
+    public AbstractFetch[] encode(final Object[] op) {
+      Object literal = op[1];
+      Class<?> literalType = (Class<?>) op[2];
+      AbstractFetch[] afa = new AbstractFetch[]{
+          new Processor.LiteralFetch(literal, literalType)};
+      return afa;
+    }
+  },
+  /** Value of property. */
+  PROPERTY(0);
+
   /**
    * Instantiate operator enumeration value object.
    * @param priority
@@ -54,5 +67,14 @@ enum Ops {
    */
   int precedence() {
     return nPriority;
+  }
+
+  /**
+   * Encode as an AbsFetch processor sequence.
+   * @param op an array containing parameters for the opcode.
+   * @return A plan for executing the opcode.
+   */
+  public AbstractFetch[] encode(final Object[] op) {
+    throw new IllegalStateException("operator has no runtime");
   }
 }
