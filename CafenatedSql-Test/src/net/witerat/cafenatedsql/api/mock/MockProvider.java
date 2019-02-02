@@ -1,4 +1,4 @@
-package net.witerat.cafenatedsql.spi.mock;
+package net.witerat.cafenatedsql.api.mock;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,6 +24,7 @@ public class MockProvider implements Provider {
   private String[] connectionMethods = { "mock" };
   private String mockDriverClass = "MockDriver";
   private DatabaseFactory databaseFactory;
+  private SchemaFactory schemaFactory;
 
   @Override
   public ConnectionFactory getConnectionFactory() {
@@ -59,7 +60,9 @@ public class MockProvider implements Provider {
 
   @Override
   public DatabaseFactory getDatabaseFactory() {
-    // TODO Auto-generated method stub
+    if(databaseFactory==null){
+      return new MockDatabaseFactory();
+    }
     return databaseFactory;
   }
 
@@ -83,8 +86,10 @@ public class MockProvider implements Provider {
 
   @Override
   public SchemaFactory getSchemaFactory() {
-    // TODO Auto-generated method stub
-    return null;
+    if (null == schemaFactory){
+      return new MockSchemaFactory();
+    }
+    return schemaFactory;
   }
 
   @Override
