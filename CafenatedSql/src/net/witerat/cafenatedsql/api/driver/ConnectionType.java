@@ -49,11 +49,7 @@ public interface ConnectionType {
   /**
    * Gets the URL definition.
    *
-<<<<<<< HEAD
-   * @return the URL definition
-=======
    * @return the URK definition
->>>>>>> refs/remotes/origin/master
    */
   UrlDef getUrlDef();
 }
