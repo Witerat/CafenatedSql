@@ -141,14 +141,14 @@ class SyntaxFactory {
 
     @Override
     Object getModel(final Object parent) {
-      // TODO Auto-generated method stub
+      // No-op
       return null;
     }
   }
   /** Invoke named syntax. */
   class UseSyntax extends Syntax {
     /** Cache of definition. */
-    private Syntax define;
+    private Syntax definition;
     /** the language element name reference. */
     private final String name;
 
@@ -181,13 +181,13 @@ class SyntaxFactory {
      * @return the named definition.
      */
     Syntax getDefine() {
-      if (define == null) {
-        define = defines.get(name);
-        if (define == null) {
+      if (definition == null) {
+        definition = defines.get(name);
+        if (definition == null) {
           throw new IllegalStateException("construct undefined:" + name);
         }
       }
-      return define;
+      return definition;
     }
 
     /**
@@ -349,16 +349,25 @@ class SyntaxFactory {
     void validate(final Object model) throws ExpressionFailedException {
       Model mdl = (Model) model;
       if (mdl.count < min && min != Integer.MIN_VALUE) {
-        throw new ExpressionFailedException("too few");
+        throw new ExpressionFailedException(
+            "too few expected " + min + " got " + mdl.count + ".");
       } else if (mdl.count > max && max != Integer.MAX_VALUE) {
-        throw new ExpressionFailedException("too many.");
+        throw new ExpressionFailedException(
+            "too many expected " + max + " got " + mdl.count + ".");
       }
     }
 
     @Override
     Boolean test(final Object model) {
-      // TODO Auto-generated method stub
-      return null;
+      final Model mModel = (Model) model;
+      mModel.count = 0;
+      for (Syntax x:items) {
+        Object iModel = x.getModel(this);
+        if (x.test(iModel)) {
+          mModel.count++;
+        }
+      }
+      return mModel.count >= min && mModel.count <= max;
     }
 
     @Override
