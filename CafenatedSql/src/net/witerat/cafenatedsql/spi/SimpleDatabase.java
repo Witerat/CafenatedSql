@@ -4,10 +4,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import net.witerat.cafenatedsql.api.Cafenated;
 import net.witerat.cafenatedsql.api.ConnectionFactory;
 import net.witerat.cafenatedsql.api.Database;
+import net.witerat.cafenatedsql.api.DriverFactory;
 import net.witerat.cafenatedsql.api.Provider;
-import net.witerat.cafenatedsql.api.ProviderRegistrar;
 import net.witerat.cafenatedsql.api.Refactor;
 import net.witerat.cafenatedsql.api.Schema;
 import net.witerat.cafenatedsql.api.driver.DriverCreationException;
@@ -90,7 +91,6 @@ public class SimpleDatabase implements Database, SchemaManager {
    * Instantiate a(n) SimpleDatabase object.
    */
   private SimpleDatabase() {
-    // TODO Auto-generated constructor stub
   }
 
   /**
@@ -109,8 +109,17 @@ public class SimpleDatabase implements Database, SchemaManager {
       final TemplateEngineModel properties)
       throws DriverCreationException {
     this();
-    ProviderRegistrar root = ProviderRegistrar.ROOT_REGISTRAR;
-    this.provider = root.getProvider(providerName);
+    String pn = providerName;
+    Provider p = null;
+    if (null != pn) {
+      pn = (String) properties.get(Cafenated.PROVIDER_NAME);
+      p = Cafenated.getInstance().getProvider(pn);
+    }
+    if (null == p) {
+      String dn = (String) properties.get(Cafenated.DRIVER_NAME);
+      p = Cafenated.getInstance().getProvider(dn);
+    }
+    this.provider = p;
     init0(provider, provider.getConnectionFactory(method), properties);
   }
 
@@ -126,7 +135,6 @@ public class SimpleDatabase implements Database, SchemaManager {
    * @throws DriverCreationException
    *           if provider fails to provide a driver.
    */
-
   public SimpleDatabase(final Provider provider0, final String method,
       final TemplateEngineModel properties)
       throws DriverCreationException {
@@ -172,7 +180,8 @@ public class SimpleDatabase implements Database, SchemaManager {
       final TemplateEngineModel properties) throws DriverCreationException {
     TemplateEngineModel tem =
         provider0.getModelFactory().newInstance(properties);
-    driver = this.provider.getDriverFactory().newDriver(tem);
+    DriverFactory df = this.provider.getDriverFactory();
+    driver = df.newDriver(tem);
     this.connectionFactory = connectionFactory0;
   }
 
