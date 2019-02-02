@@ -85,4 +85,11 @@ public class SimpleConnectionType implements ConnectionType {
   public UrlDef getUrlDef() {
     return urlDef;
   }
+
+  /**
+   * @param name0 The new name of this connection type.
+   */
+  public void setName(final String name0) {
+    name = name0;
+  }
 }
