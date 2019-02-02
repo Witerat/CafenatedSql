@@ -10,7 +10,7 @@ import javax.naming.NamingException;
 import net.witerat.cafenatedsql.api.driver.DriverCreationException;
 import net.witerat.cafenatedsql.api.driver.template.SimplePropertiesModel;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
-import net.witerat.cafenatedsql.spi.driver.template.SimpleExpressionLanguage;
+import net.witerat.cafenatedsql.spi.driver.template.simple.SimpleExpressionLanguage;
 
 
 /**
@@ -64,7 +64,8 @@ public abstract class Cafenated {
       }
     });
   /**
-   * The TEMPLATE_ENGINE property.
+   * The TEMPLATE_ENGINE property. This property indexes the name of the
+   * template engine associated with a provider or database.
    * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngine
    */
   public static final String TEMPLATE_ENGINE = "template_engine";
