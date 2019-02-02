@@ -51,6 +51,9 @@ public class Dialect implements ParameterizedRequest, DialectDef {
    */
   @Override
   public void addGrammar(final GrammarDef g) {
+    if (null == grammars) {
+      grammars = new LinkedHashMap<String, GrammarDef>();
+    }
     grammars.put(g.getName(), g);
   }
 
