@@ -1,13 +1,15 @@
 package net.witerat.cafenatedsql.spi.driver.template.simple;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import net.witerat.cafenatedsql.api.driver.template.ExpressionFailedException;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
-import net.witerat.cafenatedsql.spi.driver.template.simple.SimpleExpressionLanguage.AbsFetch;
+import net.witerat.cafenatedsql.spi.driver.template.simple.Processor.AbstractFetch;
 
 /**
  * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
@@ -464,18 +466,6 @@ class Compiler {
   // ;
 
   /**
-   * The column property.
-   */
-  private int column = 0;
-  /**
-   * The line property.
-   */
-  private int line = 1;
-  /**
-   * The crBefore property.
-   */
-  private boolean crBefore = false;
-  /**
    *
    * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
    *
@@ -601,6 +591,90 @@ class Compiler {
     /** line number at {@link #mark()} position. */
     private int markLine;
     /**
+     * The line property.
+     */
+    private int line = 1;
+    // enum SyntaxCondition{
+    // ZERO_PLUS, ONE_PLUS, ITEM, GROUP, ONE_OF, ALL_OF
+    // };
+    // class SyntaxGroup {
+    // SyntaxCondition rule;
+    // LinkedList<TokenType> items = new LinkedList<>();
+    // SyntaxGroup add(SyntaxCondition cardinality, Object... items){
+    // return this;
+    // }
+    // }
+    // private final static SyntaxGroup SG_QCLASS = new SyntaxGroup()
+    // .add(SyntaxCondition.ONE_OF, new SyntaxGroup()
+    // .add(SyntaxCondition.ZERO_PLUS, TokenType.ID, TokenType.DOT),
+    // TokenType.ID);
+    // private final static SyntaxGroup SG_TYPE = new SyntaxGroup()
+    // .add(SyntaxCondition.ONE_OF, TokenType.TBYTE, TokenType.TSHORT,
+    // TokenType.TINT, TokenType.TBOOLEAN, TokenType.TLONG,
+    // TokenType.TDOUBLE, TokenType.TFLOAT, TokenType.TCHAR,
+    // SG_QCLASS, SG_CLASS);
+    // public final static SyntaxGroup SG_VAR = new SyntaxGroup()
+    // .add(SyntaxCondition.ONE_OF,
+    // SG_DECLARE_VAR, SG_VAR_NAME, SG_PROPERTY);
+    //
+    // public final static SyntaxGroup STX_ALL = new SyntaxGroup()
+    // .add(SyntaxCondition.ONE_PLUS,
+    // TokenType.KIMPORT, SG_QCLASS, TokenType.SEMI)
+    // .add(SyntaxCondition.ONE_PLUS, SG_TYPE, TokenType.ID,
+    // new SyntaxGroup().add(SyntaxCondition.ZERO_PLUS,
+    // SG_VAR, TokenType.ASSIGN, SG_EXPRESSION)
+    // )
+    //
+    // ;
+
+    /**
+     * The column property.
+     */
+    private int column = 0;
+    // enum SyntaxCondition{
+    // ZERO_PLUS, ONE_PLUS, ITEM, GROUP, ONE_OF, ALL_OF
+    // };
+    // class SyntaxGroup {
+    // SyntaxCondition rule;
+    // LinkedList<TokenType> items = new LinkedList<>();
+    // SyntaxGroup add(SyntaxCondition cardinality, Object... items){
+    // return this;
+    // }
+    // }
+    // private final static SyntaxGroup SG_QCLASS = new SyntaxGroup()
+    // .add(SyntaxCondition.ONE_OF, new SyntaxGroup()
+    // .add(SyntaxCondition.ZERO_PLUS, TokenType.ID, TokenType.DOT),
+    // TokenType.ID);
+    // private final static SyntaxGroup SG_TYPE = new SyntaxGroup()
+    // .add(SyntaxCondition.ONE_OF, TokenType.TBYTE, TokenType.TSHORT,
+    // TokenType.TINT, TokenType.TBOOLEAN, TokenType.TLONG,
+    // TokenType.TDOUBLE, TokenType.TFLOAT, TokenType.TCHAR,
+    // SG_QCLASS, SG_CLASS);
+    // public final static SyntaxGroup SG_VAR = new SyntaxGroup()
+    // .add(SyntaxCondition.ONE_OF,
+    // SG_DECLARE_VAR, SG_VAR_NAME, SG_PROPERTY);
+    //
+    // public final static SyntaxGroup STX_ALL = new SyntaxGroup()
+    // .add(SyntaxCondition.ONE_PLUS,
+    // TokenType.KIMPORT, SG_QCLASS, TokenType.SEMI)
+    // .add(SyntaxCondition.ONE_PLUS, SG_TYPE, TokenType.ID,
+    // new SyntaxGroup().add(SyntaxCondition.ZERO_PLUS,
+    // SG_VAR, TokenType.ASSIGN, SG_EXPRESSION)
+    // )
+    //
+    // ;
+
+    /**
+     * The crBefore property.
+     */
+    private boolean crBefore = false;
+    /** Numeric literal type suffix. */
+    private boolean expectSuffix;
+    /** operator precedence control operation ordering.*/
+    private Stack<Object[]> priorities = new Stack<>();
+    /** the plan under construction. */
+    private ArrayList<AbstractFetch> plan = null;
+    /**
      * The expression for parsing.
      * @return the expression being parsed.
      */
@@ -621,6 +695,37 @@ class Compiler {
     protected int getTkStart() {
       return tkStart;
     }
+    /**
+     * the pending operations for the plan.
+     *  @return an array of {@Link Ops} that represent the order
+     *          of pending operations.
+     */
+    protected Stack<Object[]> getPriorities() {
+      return priorities;
+    }
+    /**
+     * Set pending operations for the plan.
+     *  @param  priorities0 an array of {@Link Ops} that represent the order
+     *          of pending operations.
+     */
+    protected void setPriorities(final Stack<Object[]> priorities0) {
+      this.priorities = priorities0;
+    }
+    /**
+     * The plan.
+     * @return the plan
+     */
+    protected ArrayList<AbstractFetch> getPlan() {
+      return plan;
+    }
+    /**
+     * Set the execution plan.
+     * @param plan0 the new plan.
+     */
+    protected void setPlan(final ArrayList<AbstractFetch> plan0) {
+      this.plan = plan0;
+    }
+
     /**
      * Set token start.
      * @param tkStart0 the new tkStart value.
@@ -996,15 +1101,17 @@ class Compiler {
      * @throws ExpressionFailedException if unterminated comment.
      */
     protected boolean onLongComment() throws ExpressionFailedException {
-      if (ch == SimpleExpressionLanguage.CHAR_NIL) {
-        throw new ExpressionFailedException("unterminated comment");
-      }
-      if (starBefore) {
-        if (ch == '/') {
-          inLongComment = false;
-          return true;
-        } else {
-          starBefore = ch == '*';
+      if (inLongComment) {
+        if (ch == SimpleExpressionLanguage.CHAR_NIL) {
+          throw new ExpressionFailedException("unterminated comment");
+        }
+        if (starBefore) {
+          if (ch == '/') {
+            inLongComment = false;
+            return true;
+          } else {
+            starBefore = ch == '*';
+          }
         }
       }
       return false;
@@ -1014,12 +1121,20 @@ class Compiler {
      * @return true if current character should be ignored.
      */
     protected boolean onSlashBefore() {
-      if (ch == '/') {
-        inLineComment = true;
-      } else if (ch == '*') {
-        inLongComment = true;
+      if (slashBefore) {
+        if (ch == '/') {
+          inLineComment = true;
+          return true;
+        } else if (ch == '*') {
+          inLongComment = true;
+          return true;
+        }
+        slashBefore = false;
+      } else {
+        if (ch ==  '/') {
+          slashBefore = true;
+        }
       }
-      slashBefore = false;
       return false;
     }
     /**
@@ -1050,77 +1165,173 @@ class Compiler {
      */
     protected void onNumber()
         throws ExpressionFailedException {
-      if (inPow10) {
-        if (!Character.isDigit(ch)) {
-          inPow10 = false;
-          literal = Double.valueOf(
-              expression.substring(tkStart, chx));
-          literalType = Double.class;
+      boolean relex;
+      do {
+        relex = false;
+        if (!inNumber) {
+          if (Character.isDigit(ch)) {
+            inNumber = true;
+            radix = Compiler.RADIX_DEC;
+            relex = true;
+          } else {
+            return;
+          }
+        } else if (expectSuffix) {
+          final Class<?> lt = numberTypeForSuffix(ch);
+          if (lt != null) {
+            literalType = lt;
+          }
+
+          try {
+            literal = literalType.getMethod("valueOf", String.class).
+                invoke(null, expression.substring(tkStart, chx));
+          } catch (IllegalAccessException | IllegalArgumentException
+              | InvocationTargetException | NoSuchMethodException
+              | SecurityException e) {
+            throw new ExpressionFailedException(e);
+          }
           prioritize(Ops.LITERAL, literal, literalType);
-        }
-      } else if (expectPow10) {
-        if (expectESign) {
+          parse = true;
+          expectSuffix = false;
+        } else if (inPow10) {
+          if (!Character.isDigit(ch)) {
+            inPow10 = false;
+            expectSuffix = true;
+            relex = true;
+          }
+        } else if (expectPow10) {
+          if (expectESign) {
+            expectESign = false;
+            if (!Character.isDigit(ch)) {
+              inPow10 = true;
+              expectPow10 = false;
+              relex = true;
+            } else {
+              throw new ExpressionFailedException(
+                  "exponent expected in number");
+            }
+          } else {
+            throw new IllegalStateException("Unexpected state");
+          }
+        } else if (expectESign) {
           expectESign = false;
           if (ch == '-' || ch == '+') {
             eSign = ch;
-          } else if (!Character.isDigit(ch)) {
-            inPow10 = true;
-            expectPow10 = false;
+            expectPow10 = true;
           } else {
-            throw new ExpressionFailedException(
-                "exponent expected in number");
+            relex = true;
+          }
+        } else if (expectE) {
+          if (Character.toUpperCase(ch) == 'E') {
+            expectE = false;
+            expectESign = true;
+          }
+        } else if (inMantissa) {
+          if (Character.forDigit(ch, radix) != '\u0000') {
+            relex = false;
+          } else if (Character.toUpperCase(ch) == 'E') {
+            expectESign = true;
+          } else if ("SLFD".indexOf(Character.toUpperCase(ch)) >= 0) {
+            expectSuffix = true;
+          } else {
+            expectSuffix = true;
+          }
+        } else if (expectRadix) {
+          // TODO if radix symbol appears, handle it here, otherwise, set
+          // <code>relex</code> to handle down-stream pattern.
+          expectRadix = false;
+          radixBefore = true;
+          inMantissa = true;
+          switch (Character.toUpperCase(ch)) {
+          case 'E':
+            expectESign = true;
+            radixBefore = false;
+            expectRadix = false;
+            eSign = '+';
+            break;
+          case 'X':
+            radix = RADIX_HEX;
+            break;
+          case 'O':
+            radix = RADIX_OCT;
+            break;
+          case 'B':
+            radix = RADIX_BIN;
+            break;
+          default:
+            radixBefore = false;
+            relex = true;
+          }
+        } else if (inNumber) {
+          if (Character.isDigit(ch)) {
+            inMantissa = true;
+            expectRadix = true;
+            tkStart = chx;
+            relex = true;
           }
         } else {
-          throw new ExpressionFailedException("Unepected state");
+          expectRadix = true;
+          relex = true;
         }
-      } else if (expectESign) {
-        expectESign = false;
-        if (ch == '-' || ch == '+') {
-          eSign = ch;
-          expectPow10 = true;
-        }
-      } else if (expectRadix) {
-        expectRadix = false;
-        radixBefore = true;
-        switch (Character.toUpperCase(ch)) {
-        case 'E':
-          expectESign = true;
-          eSign = '+';
-          break;
-        case 'X':
-          radix = RADIX_HEX;
-          break;
-        case 'O':
-          radix = RADIX_OCT;
-          break;
-        case 'B':
-          radix = RADIX_BIN;
-          break;
-        default:
-          radixBefore = false;
-          if (!isDigit(ch, radix)) {
-            throw new ExpressionFailedException(
-                "bad radix indicator - B, X, O only");
-          }
-        }
-      } else if (inMantissa) {
-        if (radixBefore) {
-          if (!isDigit(ch, radix)) {
-            throw new ExpressionFailedException(
-                "digit required after radix");
-          }
-          radixBefore = false;
-        }
-        if (Character.toLowerCase(ch) == 'l') {
-          literal = Long.valueOf(
-              expression.substring(tkStart, chx));
-          literalType = Long.class;
+      } while (relex);
+    }
+    /**
+     * Push operation onto operation stack export higher priority operations on
+     * stack to execution plan.
+     * @param op
+     *          the operation.
+     * @param literal0
+     *          a literal value.
+     * @param literalType0
+     *          formal type of value.
+     */
+    private void prioritize(final Ops op,
+        final Object literal0, final Class<?> literalType0) {
+      while (!priorities.isEmpty()) {
+        Ops pre = (Ops) priorities .peek()[0];
+        if (op.precedence() < pre.precedence()) {
+          emit(priorities.pop());
         } else {
-          literal = Integer.valueOf(
-              expression.substring(tkStart, chx));
-          literalType = Integer.class;
+          break;
         }
-        prioritize(Ops.LITERAL, literal, literalType);
+      }
+      priorities.push(new Object[]{op, literal0, literalType0});
+    }
+    /**
+     * Flush the priorities queue.
+     */
+    private void prioritize() {
+      while (!priorities.isEmpty()) {
+          emit(priorities.pop());
+      }
+    }
+
+    /**
+     * translate character to radix.
+     * @param ch2 character indicating radix.
+     * @return radix value, <code>0</code> if not a radix indicator.
+     */
+    private int charToRadix(final char ch2) {
+      switch (Character.toUpperCase(ch2)) {
+      case 'B': return RADIX_BIN;
+      case 'O': return RADIX_OCT;
+      case 'X': return RADIX_HEX;
+      default: return 0;
+      }
+    }
+    /**
+     * get type for literal type suffix.
+     * @param suffix literal type indicator.
+     * @return representation class for number literal.
+     */
+    Class<?> numberTypeForSuffix(final char suffix) {
+      switch (Character.toLowerCase(suffix)) {
+      case 'b': return Byte.class;
+      case 's': return Short.class;
+      case 'l': return Long.class;
+      case 'f': return Float.class;
+      case 'd': return Double.class;
+      default: return Integer.class;
       }
     }
 
@@ -1129,6 +1340,9 @@ class Compiler {
      * @throws ExpressionFailedException if unrecognised symbol.
      */
     protected void onSymbol() throws ExpressionFailedException {
+      if (!inSymbol) {
+        inSymbol = true;
+      }
       SymbolTrei nextSymbolTrial;
       if (symbolTrial == null) {
         nextSymbolTrial = symbols.get(ch);
@@ -1167,7 +1381,8 @@ class Compiler {
     }
 
     /**
-     * Clear look-ahead reading.
+     * Clear look-ahead reading, input since mark() is consider to have been
+     * read.
      */
     private void unmark() {
       if (markX == -1) {
@@ -1177,8 +1392,9 @@ class Compiler {
     }
 
     /**
-     * Revert to mark point, next character, will be the character after the
-     * original current character.
+     * Revert to mark point, next character will be the character after the
+     * original current character - any input after mark will be considered
+     * unread.
      */
     private void reset() {
       if (markX == -1) {
@@ -1214,6 +1430,44 @@ class Compiler {
 
         crBefore = false;
       }
+    }
+    /**
+     * Lexical analysis of identifiers, symbols and numbers.
+     * @throws ExpressionFailedException if character pattern is unrecognised.
+     */
+    void onToken() throws ExpressionFailedException {
+      if (tkStart == -1) {
+        tkStart = chx;
+        inToken = true;
+        if (Character.isJavaIdentifierStart(ch)) {
+          inIdent = true;
+        } else if (inNumber || Character.isDigit(ch)) {
+          onNumber();
+        } else {
+          inSymbol = true;
+          // TODO analyse first symbol character.
+        }
+      }
+    }
+
+    /**
+     *
+     * @param op an operation.
+     */
+    void emit(final Object[] op) {
+      Ops ops = (Ops) op[0];
+      AbstractFetch[] af = ops.encode(op);
+      for (AbstractFetch f:af) {
+        plan.add(f);
+      }
+    }
+
+    /**
+     * parse the current token.
+     */
+    void parse() {
+      produceToken(tkStart, chx, token);
+
     }
   }
   /**
@@ -1262,11 +1516,13 @@ class Compiler {
    * @throws ExpressionFailedException
    *           if fail
    */
-  AbsFetch[] compile(final String expression,
+  AbstractFetch[] compile(final String expression,
       final TemplateEngineModel model)
           throws ExpressionFailedException {
+    final ArrayList<AbstractFetch> protoPlan = new ArrayList<AbstractFetch>();
     CompileState cs = new CompileState();
     cs.expression = expression;
+    cs.plan = protoPlan;
     for (cs.chx = 0; cs.chx <= expression.length(); cs.chx++) {
 
       cs.ch = getChar(expression, cs.chx);
@@ -1284,36 +1540,27 @@ class Compiler {
       if (cs.onSlashBefore()) {
         continue;
       }
-      if (cs.inToken) {
-        if (cs.inIdent) {
-          cs.onIdent();
-        } else if (cs.inNumber) {
-          cs.onNumber();
-        } else if (cs.inSymbol) {
-          cs.onSymbol();
-        }
-      } else if (cs.tkStart == -1) {
-        cs.tkStart = cs.chx;
-        cs.inToken = true;
-        if (Character.isJavaIdentifierStart(cs.ch)) {
-          cs.inIdent = true;
-        } else if (Character.isDigit(cs.ch)) {
-          cs.inNumber = true;
-          cs.radix = RADIX_DEC;
-          cs.expectRadix = cs.ch == '0';
-          cs.expectE = true;
-        } else {
-          cs.inSymbol = true;
-        }
+      if (cs.inNumber) {
+        cs.onNumber();
+      } else if (cs.inSymbol) {
+        cs.onSymbol();
+      } else if (cs.inIdent) {
+        cs.onIdent();
+      } else if (!cs.inToken) {
+        cs.onToken();
+      } else if (cs.parse) {
+        cs.parse();
+      } else {
+        throw new IllegalStateException("no recognised pattern near line:"
+          + cs.line + ", column: " + cs.column);
       }
     }
-
-    return null;
+    cs.prioritize();
+    return cs.getPlan().toArray(new AbstractFetch[cs.getPlan().size()]);
   }
 
   /** Preset token recognisers. */
   private ArrayList<TokenPattern> possibleTokens = new ArrayList<>();
-
   /**
    * Alternate implementation focused on a generalised token recognition
    * algorithm.
@@ -1325,12 +1572,13 @@ class Compiler {
    * @throws ExpressionFailedException
    *           on syntax.
    */
-  private AbsFetch[] compile0(final String expression,
+  private AbstractFetch[] compile0(final String expression,
       final TemplateEngineModel model) throws ExpressionFailedException {
     ArrayList<TokenPattern> probableTokens = new ArrayList<>();
-    ArrayList<AbsFetch> protoPlan = new ArrayList<>();
+    ArrayList<AbstractFetch> protoPlan = new ArrayList<>();
     final Map<TokenPattern, Object> models = new HashMap<>();
     CompileState cs = new CompileState();
+    cs.plan = protoPlan;
     cs.setExpression(expression);
     for (cs.chx = 0; cs.chx <= expression.length(); cs.chx++) {
       final char ch = getChar(expression, cs.chx);
@@ -1365,7 +1613,8 @@ class Compiler {
         }
       }
     }
-    return protoPlan.toArray(new AbsFetch[protoPlan.size()]);
+    cs.prioritize();
+    return protoPlan.toArray(new AbstractFetch[protoPlan.size()]);
   }
 
   /**
@@ -1384,21 +1633,7 @@ class Compiler {
 
   }
 
-  /**
-   * Push operation onto operation stack export higher priority operations on
-   * stack to execution plan.
-   * @param op
-   *          the operation.
-   * @param literal
-   *          a literal value.
-   * @param literalType
-   *          formal type of value.
-   */
-  private void prioritize(final Ops op,
-      final Object literal, final Class<?> literalType) {
-    // TODO Auto-generated method stub
 
-  }
 
   /**
    * Determine if a character is a valid digit in the current radix.
@@ -1410,19 +1645,7 @@ class Compiler {
    * @return true if the character represents a digit in given radix.
    */
   private boolean isDigit(final char ch, final int radix) {
-    char uc = Character.toUpperCase(ch);
-    int n = 0;
-    if (Character.isDigit(uc)) {
-      n = uc - '0';
-    } else if (Character.isAlphabetic(uc)) {
-      n = uc - 'A' + RADIX_DEC;
-    } else {
-      return false;
-    }
-    if (n < radix) {
-      return true;
-    }
-    return false;
+    return Character.forDigit(ch, radix) != '\u0000';
   }
 
   /**
