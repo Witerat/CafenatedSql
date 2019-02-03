@@ -422,6 +422,14 @@ class Processor {
   private Object data0;
   /** Cache second from top of data stack. */
   private Object data1;
+  /** First level cache control for control stack. */
+  private boolean ip0set;
+  /** First level cache value for control stack. */
+  private int ip0;
+  /** Second level cache control for control stack. */
+  private boolean ip1set;
+  /** Second level cache value for control stack. */
+  private int ip1;
 
 
   /**
@@ -445,6 +453,39 @@ class Processor {
     this.branch = branch0;
   }
 
+  /** First level ip cache.
+   * @return cache for return ip.
+   */
+  int getIp0() {
+    return ip0;
+  }
+  /** Next likely instruction.
+   * @return next likely instruction.
+   */
+  int getIp() {
+    return ip;
+  }
+  /** second level ip cache.
+   * @return cache for return ip.
+   */
+  int getIp1() {
+    return ip1;
+  }
+
+  /** next instruction pointer when control changed.
+   * @return next instruction to execute.
+   */
+  int getBranch() {
+    return branch;
+  }
+
+  /**
+   * The stack of ip return values.
+   * @return the stack of ip return values.
+   */
+  ArrayList<Integer> ipStack() {
+    return ipstack;
+  }
   /**
    * Branch to subroutine which will finish at an endCall.
    *
@@ -452,15 +493,50 @@ class Processor {
    *          the index of the first instruction.
    */
   void call(final int branch0) {
-    ipstack.add(ip);
+    if (!ip0set) {
+      ip0set = true;
+      ip0 = ip;
+    } else if (!ip1set) {
+      ip1set = ip0set;
+      ip1 = ip0;
+      ip0 = ip;
+    } else {
+      ipstack.add(ip1);
+      ip1 = ip0;
+      ip0 = ip;
+    }
     this.branch = branch0;
   }
 
   /**
    * force execution to continue at a previous stacked location.
+   * @throws ExpressionFailedException if {@link #ipstack} is empty - underflow.
    */
-  public void endCall() {
-    branch = ipstack.remove(ipstack.size() - 1);
+  public void endCall() throws ExpressionFailedException {
+    if (ip0set) {
+      branch = ip0;
+      ip0set = false;
+    } else if (ip1set) {
+      branch = ip1;
+      ip1set = false;
+    } else {
+      int size = ipstack.size();
+      if (size == 0) {
+        throw new ExpressionFailedException("Uncalled method execution.");
+      }
+      branch = ipstack.remove(size - 1);
+      --size;
+      if (size > 0) {
+        ip0 =  ipstack.remove(size - 1);
+        ip0set = true;
+        --size;
+      }
+      if (size > 0) {
+        ip1 =  ipstack.remove(size - 1);
+        ip1set = true;
+        --size;
+      }
+    }
   }
 
   /**
@@ -471,20 +547,34 @@ class Processor {
    */
   void execute() throws ExpressionFailedException {
     while (branch != Integer.MIN_VALUE) {
-      int i = ip;
-      if (branch == -1) {
-        ip++;
-      } else {
-        ip = branch;
-        i = ip;
-        branch = -1;
-      }
-      if (i >= code.length) {
+      int i = execute0();
+      if (i < 0) {
         break;
       }
       AbstractFetch op = code[i];
       op.fetch(this);
     }
+  }
+
+
+  /**
+   * instruction scheduling.
+   * @return next instruction.
+   * @throws ExpressionFailedException if fail.
+   */
+   int execute0() {
+    int i = ip;
+    if (branch == -1) {
+      ip++;
+    } else {
+      ip = branch;
+      i = ip;
+      branch = -1;
+    }
+    if (i >= code.length) {
+      return -1;
+    }
+    return i;
   }
 
   /**
