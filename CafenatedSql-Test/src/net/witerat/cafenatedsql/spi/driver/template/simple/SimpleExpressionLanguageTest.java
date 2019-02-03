@@ -37,7 +37,7 @@ public class SimpleExpressionLanguageTest {
     } catch (ExpressionFailedException e) {
       fail("Exception " + e.getClass().getName() + ": " + e.getMessage());
     }
-    assertEquals(Integer.valueOf(30000), r);
+    assertEquals(Float.valueOf(30000), r);
   }
 
   @Test
@@ -70,7 +70,7 @@ public class SimpleExpressionLanguageTest {
     });
     ExpressionFailedException fault = null;
     try {
-      fixture.evaluate("3", model);
+      fixture.evaluate("", model);
     } catch (ExpressionFailedException e) {
       fault = e;
     }
@@ -88,7 +88,7 @@ public class SimpleExpressionLanguageTest {
     });
     Object r = null;
     try {
-      r = fixture.evaluate("0o4", model);
+      r = fixture.evaluate("040", model);
       assertNotNull(r);
     } catch (ExpressionFailedException e) {
       fail("Exception " + e.getClass().getName() + ": " + e.getMessage());

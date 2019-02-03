@@ -674,6 +674,8 @@ class Compiler {
     private Stack<Object[]> priorities = new Stack<>();
     /** the plan under construction. */
     private ArrayList<AbstractFetch> plan = null;
+    /** the in fraction number state. */
+    private boolean inFrac;
     /**
      * The expression for parsing.
      * @return the expression being parsed.
@@ -1169,6 +1171,7 @@ class Compiler {
       do {
         relex = false;
         if (!inNumber) {
+          literalType = Integer.class;
           if (Character.isDigit(ch)) {
             inNumber = true;
             radix = Compiler.RADIX_DEC;
@@ -1177,14 +1180,21 @@ class Compiler {
             return;
           }
         } else if (expectSuffix) {
-          final Class<?> lt = numberTypeForSuffix(ch);
+          Class<?> lt = numberTypeForSuffix(ch);
           if (lt != null) {
             literalType = lt;
           }
 
           try {
-            literal = literalType.getMethod("valueOf", String.class).
-                invoke(null, expression.substring(tkStart, chx));
+            token = expression.substring(tkStart, chx);
+            try {
+              literal = literalType.getMethod(
+                  "decode", String.class).
+                  invoke(null, token);
+            } catch (NoSuchMethodException nsme) {
+              literal = literalType.getMethod(
+                  "valueOf", String.class).invoke(null, token);
+            }
           } catch (IllegalAccessException | IllegalArgumentException
               | InvocationTargetException | NoSuchMethodException
               | SecurityException e) {
@@ -1200,9 +1210,7 @@ class Compiler {
             relex = true;
           }
         } else if (expectPow10) {
-          if (expectESign) {
-            expectESign = false;
-            if (!Character.isDigit(ch)) {
+            if (Character.isDigit(ch)) {
               inPow10 = true;
               expectPow10 = false;
               relex = true;
@@ -1210,31 +1218,28 @@ class Compiler {
               throw new ExpressionFailedException(
                   "exponent expected in number");
             }
-          } else {
-            throw new IllegalStateException("Unexpected state");
-          }
         } else if (expectESign) {
+          literalType = Float.class;
           expectESign = false;
           if (ch == '-' || ch == '+') {
             eSign = ch;
-            expectPow10 = true;
           } else {
+            eSign = '+';
             relex = true;
           }
+          expectPow10 = true;
         } else if (expectE) {
           if (Character.toUpperCase(ch) == 'E') {
             expectE = false;
             expectESign = true;
+            literalType = Float.class;
           }
-        } else if (inMantissa) {
-          if (Character.forDigit(ch, radix) != '\u0000') {
-            relex = false;
-          } else if (Character.toUpperCase(ch) == 'E') {
+        } else if (inFrac) {
+          literalType = Float.class;
+          if (Character.isDigit(ch)) {
+            inFrac = true;
+          } else if ('E' == Character.toUpperCase(ch)) {
             expectESign = true;
-          } else if ("SLFD".indexOf(Character.toUpperCase(ch)) >= 0) {
-            expectSuffix = true;
-          } else {
-            expectSuffix = true;
           }
         } else if (expectRadix) {
           // TODO if radix symbol appears, handle it here, otherwise, set
@@ -1243,6 +1248,9 @@ class Compiler {
           radixBefore = true;
           inMantissa = true;
           switch (Character.toUpperCase(ch)) {
+          case '.':
+            inFrac = true;
+            break;
           case 'E':
             expectESign = true;
             radixBefore = false;
@@ -1262,12 +1270,30 @@ class Compiler {
             radixBefore = false;
             relex = true;
           }
+        } else if (inMantissa) {
+          if (isDigit(ch, radix)) {
+            relex = false;
+          } else if (Character.toUpperCase(ch) == 'E') {
+            expectESign = true;
+          } else if (Character.toUpperCase(ch) == '.') {
+            inFrac = true;
+          } else {
+            expectSuffix = true;
+            relex = true;
+          }
         } else if (inNumber) {
           if (Character.isDigit(ch)) {
+            if ('0' == ch) {
+              radix = RADIX_OCT;
+            }
             inMantissa = true;
             expectRadix = true;
             tkStart = chx;
-            relex = true;
+          } else if ('#' == ch) {
+            radix = RADIX_HEX;
+            inMantissa = true;
+          } else if ('.' == ch) {
+            inFrac = true;
           }
         } else {
           expectRadix = true;
@@ -1331,7 +1357,8 @@ class Compiler {
       case 'l': return Long.class;
       case 'f': return Float.class;
       case 'd': return Double.class;
-      default: return Integer.class;
+      case 'i': return Integer.class;
+      default: return null;
       }
     }
 
@@ -1468,6 +1495,22 @@ class Compiler {
     void parse() {
       produceToken(tkStart, chx, token);
 
+    }
+    /**
+     * Determine if a character is a valid digit in the current radix.
+     *
+     * @param ch0
+     *          the character to test
+     * @param radix0
+     *          the current radix
+     * @return true if the character represents a digit in given radix.
+     */
+    private boolean isDigit(final char ch0, final int radix0) {
+      int n = ch0 - '0';
+      if (n > Compiler.RADIX_DEC) {
+        n = Character.toUpperCase(ch0) - 'A' + Compiler.RADIX_DEC;
+      }
+      return n >= 0 && n < radix0;
     }
   }
   /**
@@ -1634,19 +1677,6 @@ class Compiler {
   }
 
 
-
-  /**
-   * Determine if a character is a valid digit in the current radix.
-   *
-   * @param ch
-   *          the character to test
-   * @param radix
-   *          the current radix
-   * @return true if the character represents a digit in given radix.
-   */
-  private boolean isDigit(final char ch, final int radix) {
-    return Character.forDigit(ch, radix) != '\u0000';
-  }
 
   /**
    * find token ordinal value.
