@@ -1608,7 +1608,7 @@ class Compiler {
    * Alternate implementation focused on a generalised token recognition
    * algorithm.
    * @param expression
-   *          The expression.
+   *          The expression to be compiled.
    * @param model
    *          the context model.
    * @return an execution plan.
