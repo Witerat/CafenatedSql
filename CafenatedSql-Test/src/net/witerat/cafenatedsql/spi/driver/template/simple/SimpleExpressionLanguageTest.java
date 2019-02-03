@@ -15,45 +15,85 @@ import net.witerat.cafenatedsql.spi.driver.template.simple.SimpleExpressionLangu
 public class SimpleExpressionLanguageTest {
 
   SimpleExpressionLanguage fixture;
+
   @Before
-  public void setup(){
-    fixture= new SimpleExpressionLanguage();
+  public void setup() {
+    fixture = new SimpleExpressionLanguage();
   }
+
   @Test
-  public void testEvaluate() {
-    TemplateEngineModel model=new SimpleModelFactory().newInstance(new Properties(){
+  public void testEvaluate30ki() {
+    TemplateEngineModel model = new SimpleModelFactory().newInstance(new Properties() {
       /** The serialVersionUID property. */
       private static final long serialVersionUID = 1L;
       {
         put("x", 5);
       }
     });
-    Object r=null;
+    Object r = null;
     try {
       r = fixture.evaluate("3e4", model);
       assertNotNull(r);
     } catch (ExpressionFailedException e) {
-      fail("Exception "+e.getClass().getName()+": "+e.getMessage());
+      fail("Exception " + e.getClass().getName() + ": " + e.getMessage());
     }
-    assertEquals(Integer.valueOf(30000),r);
+    assertEquals(Integer.valueOf(30000), r);
+  }
 
+  @Test
+  public void testEvaluate3i() {
+    TemplateEngineModel model = new SimpleModelFactory().newInstance(new Properties() {
+      /** The serialVersionUID property. */
+      private static final long serialVersionUID = 1L;
+      {
+        put("x", 5);
+      }
+    });
+    Object r = null;
     r = null;
     try {
       r = fixture.evaluate("3", model);
       assertNotNull(r);
     } catch (ExpressionFailedException e) {
-      fail("Exception "+e.getClass().getName()+": "+e.getMessage());
+      fail("Exception " + e.getClass().getName() + ": " + e.getMessage());
     }
-    assertEquals(Integer.valueOf(3),r);
-    
-    r = null;
+    assertEquals(Integer.valueOf(3), r);
+  }
+  @Test
+  public void testEvaluateEmpty() {
+    TemplateEngineModel model = new SimpleModelFactory().newInstance(new Properties() {
+      /** The serialVersionUID property. */
+      private static final long serialVersionUID = 1L;
+      {
+        put("x", 5);
+      }
+    });
+    ExpressionFailedException fault = null;
+    try {
+      fixture.evaluate("3", model);
+    } catch (ExpressionFailedException e) {
+      fault = e;
+    }
+    assertNotNull("plan from empty expression", fault);
+  }
+
+  @Test
+  public void testEvaluate0o4i() {
+    TemplateEngineModel model = new SimpleModelFactory().newInstance(new Properties() {
+      /** The serialVersionUID property. */
+      private static final long serialVersionUID = 1L;
+      {
+        put("x", 5);
+      }
+    });
+    Object r = null;
     try {
       r = fixture.evaluate("0o4", model);
       assertNotNull(r);
     } catch (ExpressionFailedException e) {
-      fail("Exception "+e.getClass().getName()+": "+e.getMessage());
+      fail("Exception " + e.getClass().getName() + ": " + e.getMessage());
     }
-    assertEquals(Integer.valueOf(32),r);
+    assertEquals(Integer.valueOf(32), r);
 
   }
 
