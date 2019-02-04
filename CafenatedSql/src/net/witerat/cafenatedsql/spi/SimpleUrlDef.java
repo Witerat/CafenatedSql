@@ -26,9 +26,11 @@ public class SimpleUrlDef implements UrlDef {
   /**
    * Produce the URL by expanding the content - injecting model elements and
    * including referenced macro and invoking template language mechanisms.
+   * This implementation uses the content from the tags of the XML template
+   * driver description file.
    *
    * @param engine
-   *          the engine
+   *          the template engine.
    * @param model
    *          the model
    * @return the string
