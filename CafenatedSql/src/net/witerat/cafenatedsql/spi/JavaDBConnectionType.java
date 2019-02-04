@@ -1,6 +1,9 @@
 package net.witerat.cafenatedsql.spi;
 
 import java.util.Collection;
+import java.util.HashMap;
+
+import javax.naming.OperationNotSupportedException;
 
 import net.witerat.cafenatedsql.api.driver.ConnectionType;
 import net.witerat.cafenatedsql.api.driver.ParameterType;
@@ -12,36 +15,19 @@ import net.witerat.cafenatedsql.spi.driver.Driver;
 import net.witerat.cafenatedsql.spi.driver.DriverLocator;
 
 /**
- * The Class JavaDBConnectionType.
+ * The class JavaDBConnectionType.
  */
 public final class JavaDBConnectionType
   implements ConnectionType, DriverLocator {
 
-  /** The driver loc. */
-  private DriverLocator driverLoc = new DriverLocator() {
-    @Override
-    public Driver getDriver() {
-      return JavaDBConnectionType.this.driver;
-    }
-  };
-
   /**
-   * The Class DefaultUrl.
+   * The Class {@linkplain DefaultUrlDef}.
    */
-  private final class DefaultUrl implements UrlDef, Content {
+  private final class DefaultUrlDef implements UrlDef, Content {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * net.witerat.cafenatedsql.api.driver.ParameterizedRequest#add(net.witerat.
-     * cafenatedsql.api.driver.ParameterType)
-     */
-    @Override
-    public void add(final ParameterType p) {
-      // TODO Auto-generated method stub
+    /** Map of configured parameters. */
+    private HashMap<String, ParameterType> parameters;
 
-    }
 
     /*
      * (non-Javadoc)
@@ -52,20 +38,25 @@ public final class JavaDBConnectionType
      */
     @Override
     public void add(final Content c) {
-      // TODO Auto-generated method stub
+      throw new RuntimeException(new OperationNotSupportedException(
+          "DefaultUrlDef content set by "
+          + "JavaDBConnectionType#template property."));
 
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see net.witerat.cafenatedsql.api.driver.UrlDef#setParameter(net.witerat.
+     * @see
+     * net.witerat.cafenatedsql.api.driver.ParameterizedRequest#add(net.witerat.
      * cafenatedsql.api.driver.ParameterType)
      */
     @Override
-    public void setParameter(final ParameterType type) {
-      // TODO Auto-generated method stub
-
+    public void add(final ParameterType p) {
+      if (parameters == null) {
+        parameters = new HashMap<>();
+      }
+      parameters.put(p.getName(), p);
     }
 
     /*
@@ -75,10 +66,8 @@ public final class JavaDBConnectionType
      */
     @Override
     public Collection<ParameterType> getParameters() {
-      // TODO Auto-generated method stub
-      return null;
+      return parameters.values();
     }
-
 
     /*
      * (non-Javadoc)
@@ -131,6 +120,18 @@ public final class JavaDBConnectionType
       sb.append(t.toString().substring(bi));
       return sb.toString();
     }
+
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see net.witerat.cafenatedsql.api.driver.UrlDef#setParameter(net.witerat.
+     * cafenatedsql.api.driver.ParameterType)
+     */
+    @Override
+    public void setParameter(final ParameterType type) {
+      add(type);
+    }
   }
 
   /** The Constant DERBY_SERVER. */
@@ -142,6 +143,21 @@ public final class JavaDBConnectionType
   public static final JavaDBConnectionType DERBY_JNDI =
       new JavaDBConnectionType("Derby Server", "connect to JNDI",
       "jdbc:derby://<JNDIname>)", null);
+
+  /** The driver locator. */
+  private DriverLocator driverLoc = new DriverLocator() {
+    /**
+     * This implementation gets the driver associated with this connection.
+     * type instance.
+     *
+     * @return the driver associated with this instanceof
+     *          {@link JavaDBConnectionType}.
+     */
+    @Override
+    public Driver getDriver() {
+      return JavaDBConnectionType.this.driver;
+    }
+  };
 
   /** The name. */
   private final String name;
@@ -156,7 +172,7 @@ public final class JavaDBConnectionType
   private final Driver driver;
 
   /** The url. */
-  private UrlDef url = new DefaultUrl();
+  private UrlDef url = new DefaultUrlDef();
 
   /** The dialect selector. */
   private DialectSelector dialectSelector;
@@ -182,6 +198,27 @@ public final class JavaDBConnectionType
     this.driver = driver0;
   }
 
+  /*
+   * (non-Javadoc)
+   *
+   * @see net.witerat.cafenatedsql.api.driver.ConnectionType#getDescription()
+   */
+  @Override
+  public String getDescription() {
+    return description;
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * net.witerat.cafenatedsql.api.driver.ConnectionType#getDialectSelector()
+   */
+  @Override
+  public DialectSelector getDialectSelector() {
+    return dialectSelector;
+  }
+
   /**
    * Gets the driver that created this connection.
    * @return The driver that created this connection.
@@ -189,6 +226,14 @@ public final class JavaDBConnectionType
    */
   public Driver getDriver() {
     return driver;
+  }
+
+  /**
+   * The driver Locator property.
+   * @return gets the driver locator.
+   */
+  public DriverLocator getDriverLoc() {
+    return driverLoc;
   }
 
   /*
@@ -199,16 +244,6 @@ public final class JavaDBConnectionType
   @Override
   public String getName() {
     return name;
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see net.witerat.cafenatedsql.api.driver.ConnectionType#getDescription()
-   */
-  @Override
-  public String getDescription() {
-    return description;
   }
 
   /*
@@ -225,17 +260,6 @@ public final class JavaDBConnectionType
    * (non-Javadoc)
    *
    * @see
-   * net.witerat.cafenatedsql.api.driver.ConnectionType#getDialectSelector()
-   */
-  @Override
-  public DialectSelector getDialectSelector() {
-    return dialectSelector;
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see
    * net.witerat.cafenatedsql.api.driver.ConnectionType#setDialectSelector(net.
    * witerat.cafenatedsql.spi.driver.DialectSelector)
    */
@@ -243,6 +267,14 @@ public final class JavaDBConnectionType
   public void setDialectSelector(final DialectSelector ds) {
     this.dialectSelector = ds;
 
+  }
+
+  /**
+   * Sets the driver locator.
+   * @param driverLoc0 the new locator.
+   */
+  protected void setDriverLoc(final DriverLocator driverLoc0) {
+    this.driverLoc = driverLoc0;
   }
 
   /*
