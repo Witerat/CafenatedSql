@@ -9,31 +9,102 @@ enum Ops {
   PARENC(18),
 
   /** Assignments. */
-  SET(16), SET_ADD(16), SET_SUB(16), SET_MUL(16), SET_DIV(16), SET_MOD(16),
-  /** Logical assignments. */
-  SET_AND(16), SET_XOR(16), SET_OR(16),
+  SET(16),
+  /** sddition assignment. */
+  SET_ADD(16),
+  /** Subtraction assignment. */
+  SET_SUB(16),
+  /** Multiplication assignment. */
+  SET_MUL(16),
+  /** Division assignment. */
+  SET_DIV(16),
+  /** Modulus assignment. */
+  SET_MOD(16),
+
+
+  /** And assignment. */
+  SET_AND(16),
+  /** Xor assignment. */
+  SET_XOR(16),
+  /** Or assignment. */
+  SET_OR(16),
   /** Shift assignments. */
-  SET_LSH(16), SET_RSH(16), SET_URS(16),
+  SET_LSH(16),
+  /** Right-shift assignment. */
+  SET_RSH(16),
+  /** Unsigned right-shift assignment. */
+  SET_URS(16),
+
 
   /** Type cast. */
   CAST(15),
-  /** Ternary operator. */
-  TERN2(14), TERN1(13),
-  /** Logical operators. */
-  ORL(12), ANDL(11), ORB(10), XORB(9), ANDB(8),
+  /** Ternary operator path splitter. */
+  TERN_PATHS(14),
+  /** Test operator. */
+  TERN_TEST(13),
 
-  /** Relational Operators. */
-  EQ(7), NE(7), LT(6), LE(6), GT(6), GE(6), INSTANCEOF(6),
-  /** Shift operators. */
-  LSHIFT(5), RSHIFT(5), URSHIFT(5),
-  /** Terms. */
-  ADDITION(4), SUBTRACTION(4),
+  /** Logical Or. */
+  ORL(12),
+  /** logical And. */
+  ANDL(11),
+  /** bitwise Or. */
+  ORB(10),
+  /** Bitwise exclusive-or. */
+  XORB(9),
+  /** Bitwise And.*/
+  ANDB(8),
+
+
+  /** Test equality. */
+  EQ(7),
+  /** Test inequality. */
+  NE(7),
+  /** Test less-then. */
+  LT(6),
+  /** Test Not greater. */
+  LE(6),
+  /** Test greater-than. */
+  GT(6),
+  /** Test not less than. */
+  GE(6),
+  /** Test type membership. */
+  INSTANCEOF(6),
+
+  /** Left Shift. */
+  LSHIFT(5),
+  /** Right shift. */
+  RSHIFT(5),
+  /** Unsigned shift. */
+  URSHIFT(5),
+
+  /** Addition. */
+  ADDITION(4),
+  /** Subtraction. */
+  SUBTRACTION(4),
+
   /** Products. */
-  MULTIPLICATION(3), DIVISION(3), MODULUS(3),
-  /** Unary operators. */
-  UINCR(2), UDECR(2), UPLUS(2), UMINUS(2), NOTB(2), NOTL(2),
+  MULTIPLICATION(3),
+  /** Division. */
+  DIVISION(3),
+  /** Modulus. */
+  MODULUS(3),
+
+  /** Increment.*/
+  UINCR(2),
+  /** Decrement.*/
+  UDECR(2),
+  /** unary plus. */
+  UPLUS(2),
+  /** unary minus. */
+  UMINUS(2),
+  /** Bitwise not. */
+  NOTB(2),
+  /** logical not.*/
+  NOTL(2),
   /** Counter operators.*/
-  INCR(1), DECR(1),
+  INCR(1),
+  /** Decrement. */
+  DECR(1),
 
   /** Values. */
   LITERAL(0) {
