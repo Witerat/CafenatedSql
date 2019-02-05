@@ -21,17 +21,17 @@ public class MockStatement implements Statement {
    */
   public MockStatement(final Connection connection0) {
     this.connection = connection0;
-    resultSetType=ResultSet.TYPE_FORWARD_ONLY;
-    resultSetConcurrency=ResultSet.CONCUR_READ_ONLY;
-    resultSetHoldability=ResultSet.CLOSE_CURSORS_AT_COMMIT;
+    resultSetType = ResultSet.TYPE_FORWARD_ONLY;
+    resultSetConcurrency = ResultSet.CONCUR_READ_ONLY;
+    resultSetHoldability = ResultSet.CLOSE_CURSORS_AT_COMMIT;
   }
   
   public MockStatement(final Connection connection0, final int resultSetType0,
       final int resultSetConcurrency0, final int resultSetHoldability0) {
     this.connection = connection0;
-    resultSetType=resultSetType0;
-    resultSetConcurrency=resultSetConcurrency0;
-    resultSetHoldability=resultSetHoldability0;
+    resultSetType = resultSetType0;
+    resultSetConcurrency = resultSetConcurrency0;
+    resultSetHoldability = resultSetHoldability0;
   }
   
   @Override
@@ -192,20 +192,17 @@ public class MockStatement implements Statement {
 
   @Override
   public int getResultSetConcurrency() throws SQLException {
-    // No-op
-    return 0;
+    return resultSetConcurrency;
   }
 
   @Override
   public int getResultSetHoldability() throws SQLException {
-    // No-op
-    return 0;
+    return resultSetHoldability;
   }
 
   @Override
   public int getResultSetType() throws SQLException {
-    // No-op
-    return 0;
+    return resultSetType;
   }
 
   @Override
