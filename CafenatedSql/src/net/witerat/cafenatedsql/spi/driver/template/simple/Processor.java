@@ -509,8 +509,9 @@ class Processor {
   }
 
   /**
-   * force execution to continue at a previous stacked location.
-   * @throws ExpressionFailedException if {@link #ipstack} is empty - underflow.
+   * Set execution to continue at a previously stacked location.
+   * @throws ExpressionFailedException if {@linkplain #ipstack} is empty
+   *    - underflow.
    */
   public void endCall() throws ExpressionFailedException {
     if (ip0set) {
@@ -558,9 +559,9 @@ class Processor {
 
 
   /**
-   * instruction scheduling.
-   * @return next instruction.
-   * @throws ExpressionFailedException if fail.
+   * Instruction scheduling.
+   * @return next instruction index or <code>-1</code> if execution should
+   *            terminate.
    */
    int execute0() {
     int i = ip;
