@@ -54,4 +54,10 @@ public interface TemplateEngineModel {
    */
   void set(String property, Object value);
 
+  /** the class of a property.
+   * @param property the name of the property.
+   * @return the type for the property.
+   * */
+  Class<?> getPropertyType(Object property);
+
 }
