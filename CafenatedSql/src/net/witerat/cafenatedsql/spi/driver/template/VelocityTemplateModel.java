@@ -130,4 +130,17 @@ public class VelocityTemplateModel implements TemplateEngineModel {
     ((AbstractContext) context).put(property, value);
 
   }
+
+  /* (non-Javadoc)
+   * @see net.witerat.cafenatedsql.api.driver.template
+   *    .TemplateEngineModel#getPropertyType(java.lang.Object)
+   */
+  @Override
+  public Class<?> getPropertyType(final Object property) {
+    try {
+      return context.get((String) property).getClass();
+    } catch (NullPointerException npe) {
+      return null;
+    }
+  }
 }
