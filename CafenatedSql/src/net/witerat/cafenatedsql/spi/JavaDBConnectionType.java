@@ -21,6 +21,25 @@ public final class JavaDBConnectionType
   implements ConnectionType, DriverLocator {
 
   /**
+   * This locator returns the Connectype's configured driver.
+   * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
+   *
+   */
+  private final class DefaultDriverLocator implements DriverLocator {
+    /**
+     * This implementation gets the driver associated with this connection.
+     * type instance.
+     *
+     * @return the driver associated with this instanceof
+     *          {@link JavaDBConnectionType}.
+     */
+    @Override
+    public Driver getDriver() {
+      return JavaDBConnectionType.this.driver;
+    }
+  }
+
+  /**
    * The Class {@linkplain DefaultUrlDef}.
    */
   private final class DefaultUrlDef implements UrlDef, Content {
@@ -145,19 +164,7 @@ public final class JavaDBConnectionType
       "jdbc:derby://<JNDIname>)", null);
 
   /** The driver locator. */
-  private DriverLocator driverLoc = new DriverLocator() {
-    /**
-     * This implementation gets the driver associated with this connection.
-     * type instance.
-     *
-     * @return the driver associated with this instanceof
-     *          {@link JavaDBConnectionType}.
-     */
-    @Override
-    public Driver getDriver() {
-      return JavaDBConnectionType.this.driver;
-    }
-  };
+  private DriverLocator driverLocator  = new DefaultDriverLocator();
 
   /** The name. */
   private final String name;
@@ -171,7 +178,7 @@ public final class JavaDBConnectionType
   /** The driver. */
   private final Driver driver;
 
-  /** The url. */
+  /** The url definition. */
   private UrlDef url = new DefaultUrlDef();
 
   /** The dialect selector. */
@@ -232,8 +239,8 @@ public final class JavaDBConnectionType
    * The driver Locator property.
    * @return gets the driver locator.
    */
-  public DriverLocator getDriverLoc() {
-    return driverLoc;
+  protected DriverLocator getDriverLocator() {
+    return driverLocator;
   }
 
   /*
@@ -273,8 +280,8 @@ public final class JavaDBConnectionType
    * Sets the driver locator.
    * @param driverLoc0 the new locator.
    */
-  protected void setDriverLoc(final DriverLocator driverLoc0) {
-    this.driverLoc = driverLoc0;
+  protected void setDriverLocator(final DriverLocator driverLoc0) {
+    this.driverLocator = driverLoc0;
   }
 
   /*
