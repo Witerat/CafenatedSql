@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import net.witerat.cafenatedsql.api.driver.template.ExpressionFailedException;
@@ -13,6 +14,24 @@ import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 
 /** The class Processor. */
 class Processor {
+  /**
+   * A halt instruction.
+   * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
+   */
+  public static class Halt extends AbstractFetch {
+
+    /* (non-Javadoc)
+     * @see net.witerat.cafenatedsql.spi.driver.template.simple.
+     * Processor.AbstractFetch#fetch(
+     *          net.witerat.cafenatedsql.spi.driver.template.simple.Processor)
+     */
+    @Override
+    Object fetch(final Processor processor) throws ExpressionFailedException {
+      processor.halt();
+      return null;
+    }
+
+  }
   /**
    * Abstract instruction.
    *
@@ -167,26 +186,20 @@ class Processor {
      * The name property - name of bean field.
      */
     private String name;
-    /**
-     * The bean property - the bean.
-     */
-    private Object bean;
 
     /**
      * Instantiate a(n) FieldFetch object.
      *
-     * @param bean0
-     *          the bean
      * @param name0
      *          the field name
      */
-    FeildFetch(final Object bean0, final String name0) {
-      bean = bean0;
+    FeildFetch(final String name0) {
       name = name0;
     }
 
     @Override
     Object fetch(final Processor processor) throws ExpressionFailedException {
+      Object bean = processor.pop();
       Class<?> c = bean.getClass();
       Field f;
       try {
@@ -195,7 +208,7 @@ class Processor {
         throw new ExpressionFailedException("Feild read", e);
       }
       try {
-        return f.get(bean);
+        return processor.push(f.get(bean));
       } catch (IllegalArgumentException | IllegalAccessException e) {
         throw new ExpressionFailedException("Field read", e);
       }
@@ -226,7 +239,7 @@ class Processor {
      */
     @Override
     Object fetch(final Processor processor) throws ExpressionFailedException {
-      processor.type = type;
+      processor.setType(type);
       processor.push(literal);
       return literal;
     }
@@ -253,14 +266,6 @@ class Processor {
    * Model property fetch instruction.
    */
   static class MapFetch extends AbstractFetch {
-    /**
-     * The name property - the name of the model object.
-     */
-    private String name;
-    /**
-     * The model property - the model from which the model object is extracted.
-     */
-    private Map<String, Object> model;
 
     /**
      * Instantiate a(n) ModelFetch object.
@@ -271,17 +276,24 @@ class Processor {
      *          property key
      */
     MapFetch(final Map<String, Object> model0, final String name0) {
-      model = model0;
-      name = name0;
     }
 
     @Override
     Object fetch(final Processor processor) throws ExpressionFailedException {
+      Map<Object, Object> model = null;
+      try {
+        @SuppressWarnings("unchecked")
+        Map<Object, Object> m = (Map<Object, Object>) processor.pop();
+        model = m;
+      } catch (ClassCastException cce) {
+        throw new ExpressionFailedException("not a map", cce);
+      }
+      Object key = processor.pop();
       if (model == null) {
         throw new ExpressionFailedException("no map",
             new NullPointerException());
       }
-      return model.get(name);
+      return processor.push(model.get(key));
     }
   }
 
@@ -289,22 +301,17 @@ class Processor {
    * Method invocation instruction.
    */
   static class MethodFetch extends AbstractFetch {
-    /**
-     * The name property - key to model property.
-     */
+    /** Declared type of target object. */
+    private Class<?> type;
+
+    /** The name property - key to model property. */
     private String name;
     /**
-     * The bean property.
-     */
-    private Object bean;
-    /**
-     * The args property - method signature arguments.
+     * The args property - method signature/formal arguments.
      */
     private Class<?>[] args;
-    /**
-     * The pars property - parameter expressions.
-     */
-    private AbstractFetch[] pars;
+    /** the number of informal parameters. */
+    private int count;
     /**
      * The method property - the target method to invoke.
      */
@@ -315,26 +322,25 @@ class Processor {
     private Exception fail;
 
     /**
-     * Instantiate a(n) MothodFetch object.
+     * Instantiate a MethodFetch object.
      *
-     * @param bean0
-     *          the bean
+     * @param type0
+     *          The declared type of object;
      * @param name0
      *          method name
      * @param args0
      *          formal parameters
-     * @param pars0
-     *          arguments
+     * @param count0
+     *          number of informal parameters;
      */
-    MethodFetch(final Object bean0, final String name0, final Class<?>[] args0,
-        final AbstractFetch[] pars0) {
-      bean = bean0;
+    MethodFetch(final Class<?> type0, final String name0,
+        final Class<?>[] args0, final int count0) {
+      count = count0;
+      type = type0;
       name = name0;
       args = args0;
-      pars = pars0;
-      Class<?> c = bean.getClass();
       try {
-        method = c.getMethod(name, args);
+        method = type0.getMethod(name, args);
       } catch (NoSuchMethodException | SecurityException e) {
         fail = e;
       }
@@ -345,12 +351,18 @@ class Processor {
       if (null != fail) {
         throw new ExpressionFailedException("Method acceess", fail);
       }
-      Object[] parVal = new Object[pars.length];
-      for (int p = 0; p < pars.length; p++) {
-        parVal[p] = pars[p].fetch(null);
-      }
+      Object[] parVal = new Object[count];
+      processor.pop(parVal);
+      Object bean = processor.pop();
+      type.cast(bean);
       try {
-        return method.invoke(bean, parVal);
+        final Object rv = method.invoke(bean, parVal);
+        final Class<?> rType = method.getReturnType();
+        processor.setType(rType);
+        if (rType != Void.TYPE) {
+          processor.push(rv);
+        }
+        return rv;
       } catch (IllegalAccessException | IllegalArgumentException
           | InvocationTargetException e) {
         throw new ExpressionFailedException("Method invocation", e);
@@ -493,6 +505,7 @@ class Processor {
    *          the index of the first instruction.
    */
   void call(final int branch0) {
+    ++ip;
     if (!ip0set) {
       ip0set = true;
       ip0 = ip;
@@ -510,7 +523,7 @@ class Processor {
 
   /**
    * Set execution to continue at a previously stacked location.
-   * @throws ExpressionFailedException if {@linkplain #ipstack} is empty
+   * @throws ExpressionFailedException if the stack is empty
    *    - underflow.
    */
   public void endCall() throws ExpressionFailedException {
@@ -522,20 +535,23 @@ class Processor {
       ip1set = false;
     } else {
       int size = ipstack.size();
-      if (size == 0) {
-        throw new ExpressionFailedException("Uncalled method execution.");
-      }
-      branch = ipstack.remove(size - 1);
-      --size;
-      if (size > 0) {
+      switch (size) {
+      case 0:
+        throw new ExpressionFailedException("Control stack underflow.");
+      case 1:
+        branch = ipstack.remove(size - 1);
+        break;
+      case 2:
+        branch = ipstack.remove(--size);
         ip0 =  ipstack.remove(size - 1);
         ip0set = true;
-        --size;
-      }
-      if (size > 0) {
-        ip1 =  ipstack.remove(size - 1);
+        break;
+      default:
+        branch = ipstack.remove(--size);
+        ip0 =  ipstack.remove(--size);
+        ip0set = true;
+        ip1 =  ipstack.remove(--size);
         ip1set = true;
-        --size;
       }
     }
   }
@@ -612,13 +628,17 @@ class Processor {
       o++;
     }
     if (!data1set) {
-      ii++;
+      if (ii > 0) {
+        ii++;
+      }
     } else {
       o++;
     }
     if (ii == 0) {
+      data0set = false;
       return data0;
     } else if (ii == 1) {
+      data1set = false;
       return data1;
     } else {
       int x = data.size() - i - o;
@@ -626,7 +646,7 @@ class Processor {
         return data.get(x);
       }
     }
-    throw new ExpressionFailedException("Stack under flow");
+    throw new ExpressionFailedException("Value stack underflow");
   }
 
   /**
@@ -652,12 +672,40 @@ class Processor {
   }
 
   /**
+   * Populate an array with value from the top of the stack.
+   * @param args An array to be populated from the stack.
+   * @throws ExpressionFailedException
+   *    if stack underflow.
+   */
+  void pop(final Object[] args) throws ExpressionFailedException {
+    if (args.length != 0) {
+      if (data1set) {
+        data.add(data1);
+      }
+      if (data0set) {
+        data.add(data0);
+      }
+      data1set = false;
+      data0set = false;
+      if (data.size() < args.length) {
+        data.clear();
+        throw new ExpressionFailedException("Stack under flow");
+      }
+      final List<Object> subList = data.subList(
+          data.size() - args.length,
+          data.size());
+      subList.toArray(args);
+      subList.clear();
+    }
+  }
+  /**
    * Put a data value on the data stack.
    *
    * @param value
-   *          the value to push
+   *          the value to push.
+   * @return the new top of stack value.
    */
-  public void push(final Object value) {
+  public Object push(final Object value) {
     if (!data0set) {
       data0 = value;
       data0set = true;
@@ -670,6 +718,7 @@ class Processor {
       data0 = value;
       data0set = true;
     }
+    return value;
   }
 
   /**
