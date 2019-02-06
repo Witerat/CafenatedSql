@@ -40,10 +40,6 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
   /** The connection type. */
   private ConnectionType connectionType;
 
-  /** The driver. */
-  private Driver driver;
-
-
   /**
    * Load from resource.
    *
@@ -69,14 +65,13 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
       properties.put(k, v);
     }
     return new SimpleConnectionFactory(properties);
-
   }
 
   /**
    * Load from resource stream.
    *
    * @param driver
-   *          the driver
+   *          the default driver
    * @param cl
    *          the cl
    * @param resourceName
@@ -90,6 +85,9 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
           throws IOException {
     InputStream in = cl.getResourceAsStream(resourceName);
     SimplePropertiesModel model = new SimplePropertiesModel();
+    if (driver != null) {
+      model.set(DRIVER, driver);
+    }
     model.getProperties().load(in);
     return new SimpleConnectionFactory(model.getProperties());
 
@@ -131,6 +129,10 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
     InputStream in = c.getClassLoader().getResourceAsStream(
         c.getName() + ".properties");
     SimplePropertiesModel model = new SimplePropertiesModel();
+    if (driver != null) {
+      model.set(DRIVER, driver);
+    }
+
     if (in == null) {
       model.getProperties().loadFromXML(in);
     } else {
@@ -163,6 +165,9 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
           throws InvalidPropertiesFormatException, IOException {
     InputStream in = cl.getResourceAsStream(resourceName);
     SimplePropertiesModel model = new SimplePropertiesModel();
+    if (driver != null) {
+      model.set(DRIVER, driver);
+    }
     model.getProperties().loadFromXML(in);
     return new SimpleConnectionFactory(model.getProperties());
   }
@@ -377,7 +382,6 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    */
   @Override
   public boolean isPropertyRequired(final Object property) {
-    // TODO Auto-generated method stub
     return false;
   }
 
