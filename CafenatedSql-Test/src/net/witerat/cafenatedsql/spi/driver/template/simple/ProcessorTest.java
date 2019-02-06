@@ -2,9 +2,12 @@ package net.witerat.cafenatedsql.spi.driver.template.simple;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+
 import org.junit.Test;
 
 import net.witerat.cafenatedsql.api.driver.template.ExpressionFailedException;
+import net.witerat.cafenatedsql.spi.driver.template.simple.Processor.Call;
 import net.witerat.cafenatedsql.spi.driver.template.simple.Processor.LiteralFetch;
 
 public class ProcessorTest {
@@ -47,6 +50,25 @@ public class ProcessorTest {
     assertEquals(4, processor.getIp0());
     assertEquals(1, processor.getIp1());
   }
+
+  @Test
+  public void testCallOp() {
+    Call call = new Processor.Call(7);
+    final Processor processor = new Processor(new Processor.AbstractFetch[]{
+        call, new Processor.Halt()
+    });
+    
+    
+    try {
+      processor.execute();
+    } catch (ExpressionFailedException e) {
+      fail("Exception: " + e.toString());
+    }
+    assertEquals(7, processor.getIp());
+    assertEquals(2, processor.getIp0());
+    
+  }
+
   @Test
   public void testEndCall5() {
     final Processor processor = new Processor(new Processor.AbstractFetch[]{});
@@ -237,6 +259,7 @@ public class ProcessorTest {
     assertEquals(2, processor.getIp());
     
   }
+  
   @Test
   public void testEndCall0() {
     Processor.EndCall ec = new Processor.EndCall();
@@ -257,7 +280,6 @@ public class ProcessorTest {
     }
     assertNull("Exception: " +((fault != null)?fault.toString():""), fault);
     assertEquals(1, processor.getIp());
-    
   }
 
   @Test 
@@ -583,5 +605,60 @@ public class ProcessorTest {
     }
     assertNotNull(fault);
     assertFalse(called[0]);
+  }
+  
+  @Test
+  public void testMap() {
+    Processor.MapFetch mf = new Processor.MapFetch();
+    Processor fixture = new Processor(new Processor.AbstractFetch[]{mf});
+    HashMap<String, String> map = new HashMap<>();
+    map.put("hello", "there");
+    fixture.push(map);
+    fixture.push("hello");
+    try {
+      fixture.execute();
+    } catch (ExpressionFailedException efe){
+      fail(efe.toString());
+    }
+    Object rValue = null;
+    try {
+      rValue = fixture.pop();
+    } catch (ExpressionFailedException e) {
+      fail(e.toString());
+    }
+    assertEquals("there", rValue);
+  }
+
+  @Test
+  public void testMapNoMap() {
+    Processor.MapFetch mf = new Processor.MapFetch();
+    Processor fixture = new Processor(new Processor.AbstractFetch[]{mf});
+    HashMap<String, String> map = new HashMap<>();
+    map.put("hello", "there");
+    fixture.push(null);
+    fixture.push("hello");
+    Exception fault = null;
+    try {
+      fixture.execute();
+    } catch (ExpressionFailedException efe){
+      fault = efe;
+    }
+    assertNotNull(fault);
+  }
+  @Test
+  public void testMapNotMap() {
+    Processor.MapFetch mf = new Processor.MapFetch();
+    Processor fixture = new Processor(new Processor.AbstractFetch[]{mf});
+    HashMap<String, String> map = new HashMap<>();
+    map.put("hello", "there");
+    fixture.push("bugger");
+    fixture.push("hello");
+    Exception fault = null;
+    try {
+      fixture.execute();
+    } catch (ExpressionFailedException efe){
+      fault = efe;
+    }
+    assertNotNull(fault);
   }
 }
