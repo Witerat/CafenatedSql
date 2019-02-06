@@ -10,6 +10,9 @@ public interface ConnectionFactory extends CafenatedFactory {
   /** The default property name for identifying a database. */
   String DATABASE_NAME = "DATABASE_NAME";
 
+  /** The property defining the driver. */
+  String DRIVER = "DRIVER";
+
   /** The property for holding the user name. */
   String USER_NAME = "USER";
 
