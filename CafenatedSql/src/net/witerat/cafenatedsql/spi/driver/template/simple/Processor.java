@@ -96,13 +96,14 @@ class Processor {
 
     @Override
     Object fetch(final Processor processor) throws ExpressionFailedException {
-      Object v = processor.operand(0);
+      Object v = processor.pop();
       if (v == null || (v instanceof Boolean && Boolean.FALSE.equals(v))
           || (v instanceof String && "".equals(v))
           || (v instanceof Number
               && ((v instanceof Float || v instanceof Double)
-                  && ((Number) v).doubleValue() == 0.0d
-                  || ((Number) v).longValue() == 0L))
+                  && ((Number) v).doubleValue() == 0.0d)
+              || (!(v instanceof Float || v instanceof Double)
+                  && ((Number) v).longValue() == 0L))
           || (v instanceof BigInteger && BigInteger.ZERO.equals(v))
           || (v instanceof BigDecimal && BigDecimal.ZERO.equals(v))) {
         return super.fetch(processor);
@@ -267,28 +268,16 @@ class Processor {
    */
   static class MapFetch extends AbstractFetch {
 
-    /**
-     * Instantiate a(n) ModelFetch object.
-     *
-     * @param model0
-     *          source model
-     * @param name0
-     *          property key
-     */
-    MapFetch(final Map<String, Object> model0, final String name0) {
-    }
-
     @Override
     Object fetch(final Processor processor) throws ExpressionFailedException {
-      Map<Object, Object> model = null;
+      Object key = processor.pop();
+      Map<?, ?> model;
       try {
-        @SuppressWarnings("unchecked")
-        Map<Object, Object> m = (Map<Object, Object>) processor.pop();
+        Map<?, ?> m = (Map<?, ?>) processor.pop();
         model = m;
       } catch (ClassCastException cce) {
         throw new ExpressionFailedException("not a map", cce);
       }
-      Object key = processor.pop();
       if (model == null) {
         throw new ExpressionFailedException("no map",
             new NullPointerException());
