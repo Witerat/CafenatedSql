@@ -111,4 +111,21 @@ public class SimplePropertiesModel implements TemplateEngineModel {
     return properties;
   }
 
+  /* (non-Javadoc)
+   * @see net.witerat.cafenatedsql.api.driver.template
+   * .TemplateEngineModel#getPropertyType(java.lang.Object)
+   */
+  @Override
+  public Class<?> getPropertyType(final Object property) {
+    if (properties.containsKey(property)) {
+      try {
+        return properties.get(property).getClass();
+      } catch (NullPointerException npe) {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
 }
