@@ -34,6 +34,7 @@ public class SimpleModelFactory implements TemplateModelFactory {
     protected Properties getProps() {
       return props;
     }
+
     /**
      * Instantiate a Model object.
      * @param properties Default properties for the model.
@@ -42,6 +43,7 @@ public class SimpleModelFactory implements TemplateModelFactory {
       props = new Properties(properties);
       defaults = properties;
     }
+
     @Override
     public Object getByExpression(final String expression) {
       if (getProps().containsKey(expression)) {
@@ -52,6 +54,7 @@ public class SimpleModelFactory implements TemplateModelFactory {
       }
       return defaults.get(expression);
     }
+
     @Override
     public Object get(final String property) {
       if (getProps().containsKey(property)) {
@@ -62,6 +65,7 @@ public class SimpleModelFactory implements TemplateModelFactory {
       }
       return defaults.get(property);
     }
+
     @Override
     public Object evaluateContextExpression(final String expression)
         throws ExpressionFailedException {
@@ -73,9 +77,23 @@ public class SimpleModelFactory implements TemplateModelFactory {
       }
       return defaults.get(expression);
     }
+
     @Override
     public void set(final String property, final Object value) {
       props.put(property, value);
+    }
+
+    /* (non-Javadoc)
+     * @see net.witerat.cafenatedsql.api.driver.template
+     *          .TemplateEngineModel#getPropertyType(java.lang.Object)
+     */
+    @Override
+    public Class<?> getPropertyType(final Object property) {
+      try {
+      return get((String) property).getClass();
+      } catch (NullPointerException npe) {
+        return null;
+      }
     }
   };
   /**
