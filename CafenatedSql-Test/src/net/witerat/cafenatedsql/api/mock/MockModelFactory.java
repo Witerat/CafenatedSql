@@ -40,6 +40,15 @@ public class MockModelFactory implements TemplateModelFactory {
       public Object evaluateContextExpression(String expression) throws ExpressionFailedException {
         return get0(expression);
       }
+
+      @Override
+      public Class<?> getPropertyType(Object property) {
+        Object obj = get0((String) property);
+        if (obj == null) {
+          return null;
+        }
+        return obj.getClass();
+      }
     };
   }
 
@@ -59,6 +68,7 @@ public class MockModelFactory implements TemplateModelFactory {
         }
         return model.get(property);
       }
+
       @Override
       public void set(String property, Object value) {
         map.put(property, value);
@@ -71,8 +81,16 @@ public class MockModelFactory implements TemplateModelFactory {
 
       @Override
       public Object evaluateContextExpression(String expression) throws ExpressionFailedException {
-        // TODO Auto-generated method stub
         return get0(expression);
+      }
+
+      @Override
+      public Class<?> getPropertyType(Object property) {
+        Object obj = get0((String) property);
+        if (obj == null) {
+          return null;
+        }
+        return obj.getClass();
       }
     };
   }
