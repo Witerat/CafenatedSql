@@ -7,6 +7,7 @@ package net.witerat.cafenatedsql.api;
 public interface EntityManager {
 
   /**
+   * Describe operations applicable to database entities..
    * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
    *
    */
