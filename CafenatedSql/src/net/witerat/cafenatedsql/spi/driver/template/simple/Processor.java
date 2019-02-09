@@ -97,18 +97,21 @@ class Processor {
     @Override
     Object fetch(final Processor processor) throws ExpressionFailedException {
       Object v = processor.pop();
-      if (v == null || (v instanceof Boolean && Boolean.FALSE.equals(v))
+      if ((v instanceof Boolean && Boolean.FALSE.equals(v))
           || (v instanceof String && "".equals(v))
+          || (v instanceof Character && Character.valueOf('\u0000').equals(v))
           || (v instanceof Number
-              && ((v instanceof Float || v instanceof Double)
+              && (((v instanceof Float || v instanceof Double)
                   && ((Number) v).doubleValue() == 0.0d)
               || (!(v instanceof Float || v instanceof Double)
-                  && ((Number) v).longValue() == 0L))
+                  && ((Number) v).longValue() == 0L)))
           || (v instanceof BigInteger && BigInteger.ZERO.equals(v))
-          || (v instanceof BigDecimal && BigDecimal.ZERO.equals(v))) {
+          || (v instanceof BigDecimal && BigDecimal.ZERO.equals(v))
+          || v == null) {
         return super.fetch(processor);
+      } else {
+        return processor;
       }
-      return processor;
     }
   }
 
@@ -156,7 +159,7 @@ class Processor {
 
     @Override
     Object fetch(final Processor processor) throws ExpressionFailedException {
-      Object v = processor.operand(0);
+      Object v = processor.peek();
       try {
         type.cast(v);
       } catch (ClassCastException e) {
@@ -182,7 +185,7 @@ class Processor {
    * Object field property fetch instruction.
    *
    */
-  static class FeildFetch extends AbstractFetch {
+  static class FieldFetch extends AbstractFetch {
     /**
      * The name property - name of bean field.
      */
@@ -194,7 +197,7 @@ class Processor {
      * @param name0
      *          the field name
      */
-    FeildFetch(final String name0) {
+    FieldFetch(final String name0) {
       name = name0;
     }
 
@@ -204,13 +207,14 @@ class Processor {
       Class<?> c = bean.getClass();
       Field f;
       try {
-        f = c.getField(name);
+        f = c.getDeclaredField(name);
       } catch (NoSuchFieldException | SecurityException e) {
-        throw new ExpressionFailedException("Feild read", e);
+        throw new ExpressionFailedException("Field read", e);
       }
       try {
         return processor.push(f.get(bean));
-      } catch (IllegalArgumentException | IllegalAccessException e) {
+      } catch (IllegalArgumentException | IllegalAccessException
+          | NullPointerException e) {
         throw new ExpressionFailedException("Field read", e);
       }
     }
@@ -378,9 +382,9 @@ class Processor {
      * Instantiate a(n) ModelFetch object.
      *
      * @param model0
-     *          source model
+     *          The data mode for the session.
      * @param name0
-     *          property key
+     *          property key to select bean frome the model..
      */
     ModelFetch(final TemplateEngineModel model0, final String name0) {
       model = model0;
@@ -399,7 +403,7 @@ class Processor {
       } else {
         processor.type = value.getClass();
       }
-      return value;
+      return processor.push(value);
     }
   }
 
@@ -639,7 +643,7 @@ class Processor {
   }
 
   /**
-   * Get top data stack value.
+   * Get top data stack value and remove it from the stack.
    *
    * @return top value of from the data stack.
    * @throws ExpressionFailedException
@@ -659,6 +663,26 @@ class Processor {
       return data.remove(data.size() - 1);
     }
   }
+  /**
+   * Get top data stack value, but leave that value on the stack.
+   *
+   * @return top value of from the data stack.
+   * @throws ExpressionFailedException
+   *           if stack is empty
+   */
+  public Object peek() throws ExpressionFailedException {
+    if (data0set) {
+      return data0;
+    } else if (data1set) {
+      return data1;
+    } else {
+      if (data.isEmpty()) {
+        throw new ExpressionFailedException("Stack under flow");
+      }
+      return data.get(data.size() - 1);
+    }
+  }
+
 
   /**
    * Populate an array with value from the top of the stack.
