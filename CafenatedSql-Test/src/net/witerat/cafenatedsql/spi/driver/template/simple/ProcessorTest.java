@@ -2,13 +2,19 @@ package net.witerat.cafenatedsql.spi.driver.template.simple;
 
 import static org.junit.Assert.*;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.Properties;
 
 import org.junit.Test;
 
 import net.witerat.cafenatedsql.api.driver.template.ExpressionFailedException;
+import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
+import net.witerat.cafenatedsql.api.mock.MockModelFactory;
 import net.witerat.cafenatedsql.spi.driver.template.simple.Processor.Call;
 import net.witerat.cafenatedsql.spi.driver.template.simple.Processor.LiteralFetch;
+import net.witerat.cafenatedsql.spi.driver.template.simple.fixtures.FieldFetchIAEFixture;
 
 public class ProcessorTest {
 
@@ -645,6 +651,7 @@ public class ProcessorTest {
     }
     assertNotNull(fault);
   }
+  
   @Test
   public void testMapNotMap() {
     Processor.MapFetch mf = new Processor.MapFetch();
@@ -660,5 +667,229 @@ public class ProcessorTest {
       fault = efe;
     }
     assertNotNull(fault);
+  }
+  
+  @Test
+  public void testFieldFetch(){
+    Object obj = new Object (){
+      @SuppressWarnings("unused")
+      public String field = "TheField";
+    };
+    Processor.FieldFetch  ff = new Processor.FieldFetch("field");
+    Processor processor = new Processor(new Processor.AbstractFetch[]{ff});
+    processor.push(obj);
+    Object rValue = null;
+    try {
+      processor.execute();
+      rValue = processor.pop();
+    } catch (ExpressionFailedException e) {
+      fail(e.toString());
+    }
+    assertEquals("TheField", rValue);
+  }
+  
+  @Test
+  public void testFieldFetchNSF(){
+    Object obj = new Object (){
+      @SuppressWarnings("unused")
+      public String field = "TheField";
+    };
+    Processor.FieldFetch  ff = new Processor.FieldFetch("wrongfield");
+    Processor processor = new Processor(new Processor.AbstractFetch[]{ff});
+    processor.push(obj);
+    Exception fault = null;
+    try {
+      processor.execute();
+    } catch (ExpressionFailedException e) {
+      fault = e;
+    }
+    assertNotNull(fault);
+  }
+
+  @Test
+  public void testFieldFetchIAE(){
+    Object obj = new FieldFetchIAEFixture();
+    Processor.FieldFetch  ff = new Processor.FieldFetch("field");
+    Processor processor = new Processor(new Processor.AbstractFetch[]{ff});
+    processor.push(obj);
+    Exception fault = null;
+    try {
+      processor.execute();
+    } catch (ExpressionFailedException e) {
+      fault = e;
+    }
+    assertNotNull(fault);
+  }
+
+  @Test
+  public void testCastFetch(){
+    Processor.CastFetch  cf = new Processor.CastFetch(String.class);
+    Processor processor = new Processor(new Processor.AbstractFetch[]{cf});
+    processor.push("hello");
+    Object rValue = null;
+    try {
+      processor.execute();
+      rValue = processor.pop();
+    } catch (ExpressionFailedException e) {
+      fail(e.toString());
+    }
+    assertEquals("hello", rValue);
+  }
+  
+  @Test
+  public void testCastFetchCCE(){
+    Processor.CastFetch  cf = new Processor.CastFetch(Number.class);
+    Processor processor = new Processor(new Processor.AbstractFetch[]{cf});
+    processor.push("hello");
+    Object rValue = null;
+    Exception fault = null;
+    try {
+      processor.execute();
+      rValue = processor.pop();
+    } catch (ExpressionFailedException e) {
+      fault = e;
+    }
+    assertNotNull(fault);
+    assertEquals(null, rValue);
+  }
+  
+  @Test
+  public void testPeek2(){
+    Processor processor = new Processor(new Processor.AbstractFetch[]{});
+    boolean complete = false;
+    processor.push("hello");
+    processor.push("there");
+    try {
+    Object rValue = processor.pop();
+    assertEquals("there", rValue);
+    rValue = processor.peek();
+    assertEquals("hello", rValue);
+    rValue = processor.pop();
+    assertEquals("hello", rValue);
+    complete = true;
+    } catch (ExpressionFailedException e) {
+      fail("exception"+e.toString());
+    } finally {
+      if (!complete){
+        fail("incomplete");
+      }
+    }
+  }
+
+  @Test
+  public void testPeek3(){
+    Processor processor = new Processor(new Processor.AbstractFetch[]{});
+    boolean complete = false;
+    processor.push("hello");
+    processor.push("there");
+    processor.push("Oh arrrrh!");
+    try {
+      Object rValue = processor.pop();
+      assertEquals("Oh arrrrh!", rValue);
+      rValue = processor.pop();
+      assertEquals("there", rValue);
+      rValue = processor.peek();
+      assertEquals("hello", rValue);
+      rValue = processor.pop();
+      assertEquals("hello", rValue);
+      complete = true;
+    } catch (ExpressionFailedException e) {
+      fail("exception"+e.toString());
+    } finally {
+      if (!complete){
+        fail("incomplete");
+      }
+    }
+  }
+
+  @Test
+  public void testPeek0(){
+    Processor processor = new Processor(new Processor.AbstractFetch[]{});
+    Exception fault = null;
+    try {
+    Object rValue = processor.peek();
+    assertEquals("hello", rValue);
+    } catch (ExpressionFailedException e) {
+      fault = e;
+    }
+    assertNotNull(fault);
+  }
+  
+  @Test public void testModelFetch(){
+    Properties properties = new Properties();
+    properties.put("bean", "theBean");
+    TemplateEngineModel model = new MockModelFactory().newInstance(properties); 
+    Processor.ModelFetch  mf = new Processor.ModelFetch(model, "bean");
+    Processor processor = new Processor(new Processor.AbstractFetch[]{mf});
+    Object rValue = null;
+    try {
+      processor.execute();
+      rValue = processor.pop();
+    } catch (ExpressionFailedException e) {
+      fail(e.toString());
+    }
+    assertEquals("theBean", rValue);
+  }
+
+  @Test public void testModelFetchNoModel() {
+    Processor.ModelFetch  mf = new Processor.ModelFetch(null, "bean");
+    Processor processor = new Processor(new Processor.AbstractFetch[]{mf});
+    Object rValue = null;
+    Exception fault = null;
+    try {
+      processor.execute();
+      rValue = processor.pop();
+    } catch (ExpressionFailedException e) {
+      fault = e;
+    }
+    assertNotNull(fault);
+    assertNull(rValue);
+  }
+
+  @Test public void testModelFetchNoBean() {
+    Properties properties = new Properties();
+    TemplateEngineModel model = new MockModelFactory().newInstance(properties); 
+    Processor.ModelFetch  mf = new Processor.ModelFetch(model, "bean");
+    Processor processor = new Processor(new Processor.AbstractFetch[]{mf});
+    Object rValue = Boolean.FALSE;
+    try {
+      processor.execute();
+      rValue = processor.pop();
+    } catch (ExpressionFailedException e) {
+      fail(e.toString());
+    }
+    assertEquals(null, rValue);
+  }
+
+  @Test
+  public void testBranchIfFalse() {
+    Object[][] fixtures = new Object[][]{
+      new Object[]{null,Boolean.FALSE, "", (short)0, 0l,(byte)0, 0, '\u0000',0.0f,0.0d,BigDecimal.ZERO, BigInteger.ZERO},
+      new Object[]{true, "stuff", (short)1,1l,(byte)1,1,'X',1.0f,1.0d, BigDecimal.ONE,BigInteger.ONE}
+    };
+    int ifx = 0, expectedIp=3;
+    for(Object[] fa:fixtures){
+      for(Object fav:fa) {
+        Processor.BranchIfFalse bif = new Processor.BranchIfFalse(3);
+        Processor.Halt halt= new Processor.Halt();
+        Processor processor = new Processor(new Processor.AbstractFetch[]{bif, halt,halt, halt});
+        processor.push(fav);
+        try {
+          processor.execute();
+        } catch (ExpressionFailedException e) {
+          fail("exception for value "+fav+": "+e.toString());
+        } catch (ClassCastException e) {
+          fail("exception for value "+fav+": "+e.toString());
+          
+        }
+        final String msg = "for value ".concat((fav==null?"null":("".equals(fav)?"empty string":fav.toString())))
+            .concat(" expected ")
+            .concat(""+expectedIp).concat(" but was ").concat(""+processor.getIp());
+        assertTrue(msg , 
+            expectedIp == processor.getIp());
+      }
+      assertTrue(ifx++<2);
+      expectedIp = 2;
+    }
   }
 }
