@@ -1,5 +1,9 @@
 package net.witerat.cafenatedsql.api;
 
+import java.beans.XMLDecoder;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -130,20 +134,25 @@ public abstract class Cafenated {
     } else if (resourcePath != null) {
       initByResource(resourcePath);
     } else {
-      initByResource(DEFAULT_RESOURCE);
+      initBySystemResource(DEFAULT_RESOURCE);
+      if (root == null) {
+        initByResource(DEFAULT_RESOURCE);
+      }
     }
-    try {
-      root = (ProviderRegistrar) Class.forName(
-          "net.witerat.cafenatedsql.spi.RootProviderRegistrar")
-        .newInstance();
-    } catch (InstantiationException | IllegalAccessException
-        | ClassNotFoundException e) {
-      logger.log(Level.SEVERE, "Initialisation fail.", e);
+    if (root == null) {
+      try {
+        root = (ProviderRegistrar) Class.forName(
+            "net.witerat.cafenatedsql.spi.RootProviderRegistrar")
+          .newInstance();
+      } catch (InstantiationException | IllegalAccessException
+          | ClassNotFoundException e) {
+        logger.log(Level.SEVERE, "Initialisation fail.", e);
+      }
     }
   }
 
   /**
-   * Initialise from JINDI binding.
+   * Initialise from JNDI binding.
    * @param jndiName0 the binding name.
    */
   private static void initJndi(final String jndiName0) {
@@ -159,9 +168,44 @@ public abstract class Cafenated {
   /**
    * @param resourcePath0 a resource to find a root configuration.
    */
+  private static void initBySystemResource(final String resourcePath0) {
+    InputStream is = ClassLoader.getSystemResourceAsStream(resourcePath0);
+    XMLDecoder xd = new java.beans.XMLDecoder(is);
+    try {
+      Object obj = xd.readObject();
+      root = (ProviderRegistrar) obj;
+    } catch (ArrayIndexOutOfBoundsException aioobe) {
+      logger.log(Level.INFO, "no system resource: " + resourcePath0, aioobe);
+    } finally {
+      xd.close();
+    }
+  }
+  /**
+   * @param resourcePath0 a resource to find a root configuration.
+   */
   private static void initByResource(final String resourcePath0) {
-    // TODO Auto-generated method stub
-
+    URL url = Cafenated.class.getResource(resourcePath0);
+    InputStream is  = null;
+    try {
+      is = url.openStream();
+      XMLDecoder xd = new java.beans.XMLDecoder(is);
+      try {
+        Object obj = xd.readObject();
+        root = (ProviderRegistrar) obj;
+      } finally {
+        xd.close();
+      }
+    } catch (IOException ioe) {
+      logger.log(Level.INFO, "failed to read resource", ioe);
+    } finally {
+      if (is != null) {
+        try {
+          is.close();
+        } catch (IOException ioe) {
+          logger.log(Level.INFO, "problem closing resource", ioe);
+        }
+      }
+    }
   }
 
   /**
