@@ -260,14 +260,6 @@ public class SimpleProvider implements Provider {
     return nounFactory;
   }
 
-  /**
-   * Gets the parameter factory.
-   *
-   * @return the parameter factory
-   */
-  public ParameterFactory getParamaterFactory() {
-    return parameterFactory;
-  }
 
   /*
    * (non-Javadoc)
