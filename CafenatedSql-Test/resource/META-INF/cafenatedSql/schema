@@ -1,0 +1,22 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<java version = "1.6.0_24" class = "java.beans.XMLDecoder">
+<object class="net.witerat.cafenatedsql.spi.RootProviderRegistrar" id="reg0">
+  <void method="registerProvider">
+  	<object class="net.witerat.cafenatedsql.spi.SimpleProvider">
+  	<property name="connectionFactory">
+  	  <object class="net.witerat.cafenatedsql.spi.SimpleConnectionFactory">
+  	    <property name="connectionType">
+  	      <object class="net.witerat.cafenatedsql.spi.JavaDBConnectionType" id="jdbc">
+  	      </object>
+  	    </property>
+  	  </object>
+  	</property>
+  	</object>
+  	<string>Witerat JavaDB Adapter</string>
+  	<string>2017</string>
+  	<string>Witerat JavaDB Adapter for Cafenated SQL</string>
+  	<string>Allow connectivity to JavaDB for DBNS design and management.</string>
+  	<string>witerat.net</string>
+  </void>
+</object>
+</java>
