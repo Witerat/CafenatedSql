@@ -8,6 +8,7 @@ import java.util.Stack;
 import org.junit.Before;
 import org.junit.Test;
 
+import net.witerat.cafenatedsql.api.driver.template.ExpressionFailedException;
 import net.witerat.cafenatedsql.spi.driver.template.simple.Compiler.CompileState;
 import net.witerat.cafenatedsql.spi.driver.template.simple.Processor.AbstractFetch;
 
@@ -203,7 +204,32 @@ public class CompileStateTest  {
 
   @Test
   public void testOnSymbol() {
-    fail("Not yet implemented");
+    for (Object[] sym:Compiler.SYMBOL_LIST){
+      String t = (String) sym[0];
+      TokenType tt = (TokenType) sym[1];
+      
+      CompileState cs = new Compiler().new CompileState();
+      cs.setExpression(t);
+      for(cs.setChx(0);cs.getChx()<=t.length();cs.setChx(cs.getChx()+1)){
+        try{
+          cs.setCh(t.charAt(cs.getChx()));
+        } catch (StringIndexOutOfBoundsException e){
+          cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+        }
+        try {
+          cs.onSymbol();
+        } catch (ExpressionFailedException e) {
+          fail("exception: "+ e.toString());
+        }
+        if (cs.isParse()){
+          break;
+        }
+      }
+      assertEquals(t, cs.getToken());
+      assertEquals(0, cs.getTkStart());
+      assertEquals(tt, cs.getSymbolTrial().getToken());
+      cs.setParse(false);
+    }
   }
 
   @Test
