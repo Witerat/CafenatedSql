@@ -1,10 +1,13 @@
 package net.witerat.cafenatedsql.api.driver;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
-public class DriverCreationExceptionTest extends DriverCreationException {
+/**
+ * Test exception creation.
+ * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
+ *
+ */
+public class DriverCreationExceptionTest {
 
   @Test
   public void testDriverCreationException() {
