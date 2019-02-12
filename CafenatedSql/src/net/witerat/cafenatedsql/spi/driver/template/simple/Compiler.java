@@ -75,17 +75,18 @@ class Compiler {
             SymbolTrei p = null;
             for (int c = 0; c < ss.length(); c++) {
               SymbolTrei t = null;
+              final char cc = ss.charAt(c);
               if (c == 0) {
-                t = get(ss.charAt(0));
+                t = get(cc);
               } else {
-                t = p.get(ss.charAt(0));
+                t = p.get(cc);
               }
               if (t == null) {
                 t = new SymbolTrei();
                 if (c == 0) {
-                  put(ss.charAt(0), t);
+                  put(cc, t);
                 } else {
-                  p.put(ss.charAt(0), t);
+                  p.put(cc, t);
                 }
               }
               if (c + 1 == ss.length()) {
@@ -585,7 +586,7 @@ class Compiler {
     /** token parsing. */
     private boolean parse;
     /** Index of the {@link #mark()} position. */
-    private int markX;
+    private int markX = -1;
     /** Column at {@link #mark()} position. */
     private int markColumn;
     /** line number at {@link #mark()} position. */
@@ -1337,7 +1338,7 @@ class Compiler {
      * @param ch2 character indicating radix.
      * @return radix value, <code>0</code> if not a radix indicator.
      */
-    private int charToRadix(final char ch2) {
+    protected int charToRadix(final char ch2) {
       switch (Character.toUpperCase(ch2)) {
       case 'B': return RADIX_BIN;
       case 'O': return RADIX_OCT;
@@ -1369,6 +1370,8 @@ class Compiler {
     protected void onSymbol() throws ExpressionFailedException {
       if (!inSymbol) {
         inSymbol = true;
+        token = null;
+        tkStart = chx;
       }
       SymbolTrei nextSymbolTrial;
       if (symbolTrial == null) {
@@ -1382,19 +1385,32 @@ class Compiler {
               "unrecognized symbol near " + ch + " character");
         } else {
           reset();
-          this.symbolTrial = nextSymbolTrial;
+          setParse(true);
         }
       } else {
         if (nextSymbolTrial.isEnd()) {
+          if (markX >= 0) {
+            unmark();
+          }
           mark();
           token = expression.substring(tkStart, chx + 1);
-        }
-        if (nextSymbolTrial.size() == 0) {
-          parse = true;
+          symbolTrial = nextSymbolTrial;
         }
       }
     }
-
+    /** set the parsing state.
+     * @param b true if commencing parsing.
+     */
+    protected void setParse(final boolean b) {
+      parse = b;
+      if (!b) {
+        expectE = false; expectESign = false; expectPow10 = false;
+        expectRadix = false; expectSuffix = false;
+        inFrac = false;  inFraction = false; inMantissa = false;
+        inNumber = false; inPow10 = false; inSymbol = false; inToken = false;
+        radixBefore = false; slashBefore = false;
+      }
+    }
     /**
      * Start look-ahead reading.
      */
@@ -1512,6 +1528,21 @@ class Compiler {
       }
       return n >= 0 && n < radix0;
     }
+
+    /**
+     * Get the parse state.
+     * @return true if a complete token has been anaylsed.
+     */
+    protected boolean isParse() {
+      return parse;
+    }
+    /**
+     * Get the analysed symbol.
+     * @return the symbol observed in the input stream.
+     */
+    protected SymbolTrei getSymbolTrial() {
+      return symbolTrial;
+    }
   }
   /**
    * Map symbol characters to tokens in a trei.
@@ -1615,7 +1646,7 @@ class Compiler {
    * @throws ExpressionFailedException
    *           on syntax.
    */
-  private AbstractFetch[] compile0(final String expression,
+  protected AbstractFetch[] compile0(final String expression,
       final TemplateEngineModel model) throws ExpressionFailedException {
     ArrayList<TokenPattern> probableTokens = new ArrayList<>();
     ArrayList<AbstractFetch> protoPlan = new ArrayList<>();
