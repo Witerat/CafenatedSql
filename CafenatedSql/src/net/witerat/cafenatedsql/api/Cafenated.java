@@ -67,38 +67,35 @@ public abstract class Cafenated {
         put(Cafenated.EXPRESSION_LANGUAGE, new SimpleExpressionLanguage());
       }
     });
+
   /**
-   * The TEMPLATE_ENGINE property. This property indexes the name of the
+   * The TEMPLATE_ENGINE property indexes the name of the
    * template engine associated with a provider or database.
    * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngine
    */
   public static final String TEMPLATE_ENGINE = "template_engine";
+
   /**
    * The EXPRESSION_LANGUAGE property.
    * @see net.witerat.cafenatedsql.api.driver.template.ExpressionLanguage
    */
   public static final String EXPRESSION_LANGUAGE = "expression_language";
-  /**
-   * The logger property.
-   */
+
+  /** The logger property. */
   private static Logger logger =
       Logger.getLogger(Cafenated.class.getName());
-  /**
-   * The DEFAULT_RESOURCE property.
-   */
+
+  /** The DEFAULT_RESOURCE property. */
   private static final String DEFAULT_RESOURCE =
       "/META-INF/cafenatedSql/schema";
-  /**
-   * The root property.
-   */
+
+  /** The root property referes to the {@link RootProviderRegistrar}. */
   private static ProviderRegistrar root;
-  /**
-   * The jndiName property.
-   */
+
+  /** The jndiName property. */
   private static String jndiName;
-  /**
-   * The resourcePath property.
-   */
+
+  /** The resourcePath property. */
   private static String resourcePath;
 
   /**
@@ -114,16 +111,33 @@ public abstract class Cafenated {
     }
     return root;
   }
-  /**
-   * bind the root registrar to a JNDI name.
-   * @param jndiName0 The jndi to bind with which the root registrar.
-   */
-  public void regsisterJNDI(final String jndiName0) {
 
+  /**
+   * Get the singleton root registrar.
+   * @param jndiName0 the name of the configuration.
+   * @return the root registrar.
+   */
+  public static ProviderRegistrar getInstance(final String jndiName0) {
+    if (root == null) {
+      initJndi(jndiName0);
+    }
+    if (root == null) {
+      throw new IllegalStateException("Initialisation failed");
+    }
+    return root;
   }
 
   /**
-   *
+   * bind the root registrar to a JNDI name.
+   * @param jndiName0 The jndi to bind with which the root registrar.
+   * @throws NamingException if JNDI rejects the request.
+   */
+  public void regsisterJNDI(final String jndiName0) throws NamingException {
+      new InitialContext().bind(jndiName0, root);
+  }
+
+  /**
+   * Initialise the registrar.
    */
   static void init() {
     if (root != null) {
@@ -159,13 +173,14 @@ public abstract class Cafenated {
     try {
       root = InitialContext.doLookup(jndiName0);
     } catch (NamingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.log(Level.INFO, "No jndi config for " + jndiName0, e);
     }
 
   }
 
   /**
+   * Load the {@link RootProviderRegistrar} configuration from a system
+   * resource.
    * @param resourcePath0 a resource to find a root configuration.
    */
   private static void initBySystemResource(final String resourcePath0) {
@@ -175,36 +190,25 @@ public abstract class Cafenated {
       Object obj = xd.readObject();
       root = (ProviderRegistrar) obj;
     } catch (ArrayIndexOutOfBoundsException aioobe) {
-      logger.log(Level.INFO, "no system resource: " + resourcePath0, aioobe);
+      logger.log(Level.INFO, "no system resource: " + resourcePath0);
     } finally {
       xd.close();
     }
   }
+
   /**
+   * Load the {@link RootProviderRegistrar} configuration from a resource.
    * @param resourcePath0 a resource to find a root configuration.
    */
   private static void initByResource(final String resourcePath0) {
     URL url = Cafenated.class.getResource(resourcePath0);
-    InputStream is  = null;
-    try {
-      is = url.openStream();
-      XMLDecoder xd = new java.beans.XMLDecoder(is);
-      try {
+    try (InputStream is = url.openStream()) {
+      try (XMLDecoder xd = new java.beans.XMLDecoder(is)) {
         Object obj = xd.readObject();
         root = (ProviderRegistrar) obj;
-      } finally {
-        xd.close();
       }
     } catch (IOException ioe) {
       logger.log(Level.INFO, "failed to read resource", ioe);
-    } finally {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (IOException ioe) {
-          logger.log(Level.INFO, "problem closing resource", ioe);
-        }
-      }
     }
   }
 
@@ -244,6 +248,7 @@ public abstract class Cafenated {
     Database db = p.getDatabaseFactory().newDatabase(model);
     return db;
   }
+
   /**
    * Gets new unconnected database using properties in the specified model.
    * @param props model of connection and other properties.
