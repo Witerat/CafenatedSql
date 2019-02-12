@@ -1,4 +1,4 @@
-package org.witerat.cafenated.driver;
+package net.witerat.cafenatedsql.spi.driver;
 
 import static org.junit.Assert.*;
 
