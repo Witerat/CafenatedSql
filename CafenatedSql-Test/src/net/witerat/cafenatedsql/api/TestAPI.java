@@ -58,7 +58,7 @@ public class TestAPI {
   public void testDatabase() {
     ProviderRegistrar reg = ProviderRegistrar.ROOT_REGISTRAR;
     Provider provider = reg.getProvider("mock");
-    ConnectionFactory cf = provider.getConnectionFactory("mock");
+    //ConnectionFactory cf = provider.getConnectionFactory("mock");
     Properties properties = new Properties();
     properties.putAll(mockConProp);
     TemplateEngineModel model = provider.getModelFactory().newInstance(properties);
