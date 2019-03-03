@@ -18,7 +18,7 @@ import net.witerat.cafenatedsql.spi.driver.tags.DialectTag;
 import net.witerat.cafenatedsql.spi.driver.tags.DriverTag;
 import net.witerat.cafenatedsql.spi.driver.tags.GrammarTag;
 import net.witerat.cafenatedsql.spi.driver.tags.NounTag;
-import net.witerat.cafenatedsql.spi.driver.tags.ParameterTag;
+import net.witerat.cafenatedsql.spi.driver.tags.ParamTag;
 import net.witerat.cafenatedsql.spi.driver.tags.UrlTag;
 import net.witerat.cafenatedsql.spi.driver.tags.VerbTag;
 
@@ -133,8 +133,8 @@ public class DriverBuilder {
    *          the params
    */
   private void buildParams(final ParameterizedRequest dd,
-      final Collection<ParameterTag> params) {
-    for (ParameterTag pt : params) {
+      final Collection<ParamTag> params) {
+    for (ParamTag pt : params) {
       ParameterType p = factory.newParameter();
       p.setName(pt.getName());
       p.setType(typeMapper.getType(pt.getType()));
