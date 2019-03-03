@@ -44,7 +44,7 @@ public class DefTag extends UrlTag {
   @XmlElementRefs({
       @XmlElementRef(name = "use", type = UseTag.class,
           namespace = "-//org.witerat/cafenated/sql"),
-      @XmlElementRef(name = "param", type = ParameterTag.class,
+      @XmlElementRef(name = "param", type = ParamTag.class,
           namespace = "-//org.witerat/cafenated/sql") })
   @XmlMixed
   public List<Object> getRawContent() {
