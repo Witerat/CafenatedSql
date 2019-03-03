@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * The Class DDL marks a dialect as definition language.
+ * The Class DdlTag marks a dialect as definition language.
  * @see DmlTag
  */
 @XmlType(name = "DDLType", namespace = "-//org.witerat/cafenated/sql")
-public class DDL {
+public class DdlTag {
 
   /** The implies commit. */
   private boolean impliesCommit;
 
   /** The parameters. */
-  private Collection<ParameterTag> parameters;
+  private Collection<ParamTag> parameters;
 
   /**
    * Checks if is implies commit.
@@ -45,7 +45,7 @@ public class DDL {
    * @return the parameters
    */
   @XmlTransient
-  public Collection<ParameterTag> getParameters() {
+  public Collection<ParamTag> getParameters() {
     return parameters;
   }
 
@@ -55,7 +55,7 @@ public class DDL {
    * @param parameters0
    *          the new parameters
    */
-  public void setParameters(final Collection<ParameterTag> parameters0) {
+  public void setParameters(final Collection<ParamTag> parameters0) {
     this.parameters = parameters0;
   }
 
