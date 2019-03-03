@@ -5,9 +5,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
+import net.witerat.cafenatedsql.api.EntityManager;
 import net.witerat.cafenatedsql.api.driver.ConnectionType;
 import net.witerat.cafenatedsql.api.driver.DialectDef;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
+import net.witerat.cafenatedsql.api.driver.DDLEditor;
 
 /**
  * The Class Driver represents a construct that provides abstraction of Data
@@ -96,5 +98,18 @@ public class Driver {
       }
       connectionTypesByMethod.put(ct.getName(), ct);
     }
+  }
+
+  /**
+   * Return an editor suitable for commiting shanges to the database.
+   * @param noun the ype of entity affected;
+   * @param operation the type of effect.
+   * @return an editor that can marshal changes, select or construct
+   *    templates for commitment to the underlying database.
+   */
+  public DDLEditor getEditor(final String noun,
+      final EntityManager.Calculus operation) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
