@@ -24,7 +24,7 @@ public class GrammarTag {
   private Collection<NounTag> nouns;
 
   /** The params. */
-  private Map<String, ParameterTag> params;
+  private Map<String, ParamTag> params;
 
   /**
    * Sets the noun.
@@ -80,7 +80,7 @@ public class GrammarTag {
    * @return the params
    */
   @XmlTransient
-  public Collection<ParameterTag> getParams() {
+  public Collection<ParamTag> getParams() {
     if (params == null) {
       params = new LinkedHashMap<>();
     }
@@ -93,9 +93,9 @@ public class GrammarTag {
    * @param p
    *          the new parameter
    */
-  @XmlElement(name = "param", type = ParameterTag.class,
+  @XmlElement(name = "param", type = ParamTag.class,
       namespace = "-//org.witerat/cafenated/sql")
-  void setParameter(final ParameterTag p) {
+  void setParameter(final ParamTag p) {
     if (params == null) {
       params = new LinkedHashMap<>();
     }
