@@ -4,8 +4,8 @@
 	xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xsd:element name="driver" type="csd:driverTag" />
-	<xsd:element name="param" type="csd:ParamType"/>
-	<xsd:element name="use" type="csd:UseType"/>
+	<xsd:element name="param" type="csd:paramTag"/>
+	<xsd:element name="use" type="csd:useTag"/>
 
 	<xsd:complexType name="driverTag">
 		<xsd:sequence>
@@ -13,11 +13,11 @@
 
 			<xsd:element name="template-engine" type="xsd:string" />
 
-			<xsd:element name="ddl" type="csd:DDLType"/>
-			<xsd:element name="dml" type="csd:DMLType"/>
-			
 			<xsd:element name="def" maxOccurs="unbounded" minOccurs="0" type="csd:DefType"/>
 
+			<xsd:element name="ddl" minOccurs="0" type="csd:DDLType"/>
+			<xsd:element name="dml" minOccurs="0" type="csd:DMLType"/>
+			
 			<xsd:element name="dialect" maxOccurs="unbounded" minOccurs="0" type="csd:DialectType" />
 
 			<xsd:element name="template" minOccurs="0" maxOccurs="unbounded">
@@ -32,7 +32,11 @@
 
 	<xsd:complexType name="ConnectionType">
 		<xsd:sequence>
-			<xsd:element name="dialect" type="csd:DialectType" />
+		   <xsd:choice>
+		   <xsd:element name="dialect" type="csd:DialectType" />
+		   <xsd:element name="use-dialect" type="csd:UseDialectType" />
+		   </xsd:choice>
+			
 			<xsd:element name="url" type="csd:UrlType" maxOccurs="unbounded" minOccurs="1" />
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" />
@@ -42,7 +46,7 @@
 
 	<xsd:complexType name="DDLType">
 		<xsd:sequence>
-			<xsd:element name="parameter" type="csd:ParamType" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="parameter" type="csd:paramTag" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="sql" type="csd:MacroType"/>
 		</xsd:sequence>
 		<xsd:attribute name="impliesCommit" type="boolean" default="true" />
@@ -69,14 +73,14 @@
 
 	<xsd:complexType name="DMLType">
 		<xsd:sequence>
-			<xsd:element name="parameter" type="csd:ParamType" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="parameter" type="csd:paramTag" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="sql" type="csd:MacroType"/>
 		</xsd:sequence>
 	</xsd:complexType>
 
 	<xsd:complexType name="GrammarType">
 		<xsd:sequence>
-			<xsd:element name="param" type="csd:ParamType" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="param" type="csd:paramTag" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="noun" maxOccurs="unbounded" type="csd:NounType" />
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" use="required"/>
@@ -85,7 +89,7 @@
 	<!-- define a macro that refers to other macros. -->
 	<xsd:complexType name="MacroType" mixed="true">
 		<xsd:sequence maxOccurs="unbounded" minOccurs="0">
-			<xsd:element name="use" type="csd:UseType" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="use" type="csd:useTag" maxOccurs="unbounded" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -118,13 +122,13 @@
 
 	<xsd:complexType name="NounType">
 		<xsd:sequence>
-			<xsd:element name='param' type='csd:ParamType' maxOccurs="unbounded" minOccurs="0" />
-			<xsd:element name="verb" maxOccurs="unbounded" type="csd:VerbType"/>
+			<xsd:element name='param' type='csd:paramTag' maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="verb" maxOccurs="unbounded" type="csd:verbTag"/>
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string"/>
 	</xsd:complexType>
 
-	<xsd:complexType name="ParamType">
+	<xsd:complexType name="paramTag">
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="type" type="xsd:string" use="optional" />
 		<xsd:attribute name="usual" type="xsd:string" use="optional" />
@@ -132,8 +136,10 @@
 	</xsd:complexType>
 	
 	<xsd:complexType name="TemplateTag">
-		<xsd:choice maxOccurs="unbounded" minOccurs="0">
-		</xsd:choice>
+		<xsd:sequence>
+			<xsd:element name='param' type='csd:paramTag' maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="use" minOccurs="0" maxOccurs="unbounded" type="csd:useTag" />
+		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" />
 	</xsd:complexType>
 
@@ -144,15 +150,21 @@
 	</xsd:complexType>
 
 	<xsd:complexType name="UrlType" mixed="true">
-		<xsd:sequence>
+		<xsd:sequence >
 			<xsd:choice maxOccurs="unbounded" minOccurs="0">
-				<xsd:element name="param" type="csd:ParamType" />
-				<xsd:element name="use" type="csd:UseType" />
+				<xsd:element name="param" type="csd:paramTag" />
+				<xsd:element name="use" type="csd:useTag" />
 			</xsd:choice>
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="UseType">
+	<xsd:complexType name="UseDialectType">
+		<xsd:attribute name="name" type="string" />
+		<xsd:attribute name="nameEx" type="string" />
+		<xsd:attribute name="default" type="string" />
+	</xsd:complexType>
+
+	<xsd:complexType name="useTag">
 		<xsd:attribute name="macro">
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
@@ -164,12 +176,12 @@
 		<xsd:attribute name="param" type="string"/>
 	</xsd:complexType>
 
-	<xsd:complexType name="VerbType" mixed="true">
-		<xsd:sequence maxOccurs="unbounded">
-			<xsd:element name='param' type='csd:ParamType' maxOccurs="unbounded" minOccurs="0" />
-			<xsd:element name="use" type="csd:UseType" />
+	<xsd:complexType name="verbTag" mixed="true">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded" >
+			<xsd:element name='param' type='csd:paramTag' minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name='use'   type='csd:useTag' />
 		</xsd:sequence>
-		<xsd:attribute name="name" type="xsd:string" />
+		<xsd:attribute name="name" type="string" />
 	</xsd:complexType>
 
-</xsd:schema>    
+</xsd:schema>
