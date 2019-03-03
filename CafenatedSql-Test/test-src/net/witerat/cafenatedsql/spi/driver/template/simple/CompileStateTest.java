@@ -179,7 +179,28 @@ public class CompileStateTest  {
 
   @Test
   public void testOnIdent() {
-    fail("Not yet implemented");
+    final String[] ta = new String[]{"flubbernuckle", "flubbernuckle.", "flubbernuckle "};
+    final String t0=ta[0];
+    for (String t:ta){
+      CompileState cs = new Compiler().new CompileState();
+      cs.setExpression(t);
+      for(cs.setChx(0);cs.getChx()<=t.length();cs.setChx(cs.getChx()+1)){
+        try{
+          cs.setCh(t.charAt(cs.getChx()));
+        } catch (StringIndexOutOfBoundsException e){
+          cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+        }
+        cs.onIdent();
+        if (cs.isParse()){
+          break;
+        }
+      }
+      assertTrue("parse not set", cs.isParse());
+      assertEquals(t0, cs.getToken());
+      assertEquals(0, cs.getTkStart());
+      assertEquals(TokenType.ID, cs.getSymbolTrial().getToken());
+      cs.setParse(false);
+    }
   }
 
   @Test
@@ -187,6 +208,35 @@ public class CompileStateTest  {
     fail("Not yet implemented");
   }
 
+  @Test
+  public void testOnKeyword() {
+    for (Object[] sym:Compiler.SYMBOL_LIST){
+      String t = (String) sym[0];
+      TokenType tt = (TokenType) sym[1];
+      
+      CompileState cs = new Compiler().new CompileState();
+      cs.setExpression(t);
+      for(cs.setChx(0);cs.getChx()<=t.length();cs.setChx(cs.getChx()+1)){
+        try{
+          cs.setCh(t.charAt(cs.getChx()));
+        } catch (StringIndexOutOfBoundsException e){
+          cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+        }
+        try {
+          cs.onSymbol();
+        } catch (ExpressionFailedException e) {
+          fail("exception: "+ e.toString());
+        }
+        if (cs.isParse()){
+          break;
+        }
+      }
+      assertEquals(t, cs.getToken());
+      assertEquals(0, cs.getTkStart());
+      assertEquals(tt, cs.getSymbolTrial().getToken());
+      cs.setParse(false);
+    }
+  }
   @Test
   public void testOnLongComment() {
     fail("Not yet implemented");
