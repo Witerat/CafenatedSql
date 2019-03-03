@@ -3,7 +3,7 @@
 	xmlns="-//org.witerat/cafenated/sql"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:csd="-//org.witerat/cafenated/sql"
-	xsi:schemaLocation="-//org.witerat/cafenated/sql cafenated.xsd">
+	xsi:schemaLocation="-//org.witerat/cafenated/sql schemas/cafenated.xsd">
 	
 	<meta name="H2-Database" 
 		protocol="jdbc:h2:" 
@@ -17,14 +17,14 @@
 	<dialect id="h2">
 		<grammar name="ddl-common">
 			<noun name="Schema">
-				<param name="schema" type='string' />
+				<param name="schema" type='string'></param>
 				<verb name="create">
-					<param name="whenMissing" type="boolean" />
+					<param name="whenMissing" type="boolean"></param>
 					CREATE SCHEMA #if($!whenMissing) IF NOT EXISTS#{end}
 					${dialect.renderId($schema)};
 				</verb>
 				<verb name="drop">
-					<param name="whenPresent" type="boolean" />
+					<param name="whenPresent" type="boolean"></param>
 					DROP SCHEMA #if($!whenPresent) IF EXISTS#{end}
 					${dialect.renderId($schema)};
 				</verb>
@@ -32,7 +32,7 @@
 			<noun name="sequence">
 				<param name="sequenceName"></param>
 				<verb name="drop">
-					<param name="whenPresent" type="boolean" />
+					<param name="whenPresent" type="boolean"></param>
 					DROP SCHEMA #if($!whenPresent) IF EXISTS#{end}
 					${dialect.renderId($sequenceName)};
 				</verb>
@@ -41,10 +41,10 @@
 				<param name="userName" type="string" />
 
 				<verb name="create">
-					<param name="whenMissing" type="boolean" />
-					<param name="password" type="string" />
-					<param name="salt" type="string" />
-					<param name="hash" type="string" />
+					<param name="whenMissing" type="boolean"></param>
+					<param name="password" type="string"></param>
+					<param name="salt" type="string"></param>
+					<param name="hash" type="string"></param>
 					CREATE USER #if($!whenMissing) IF NOT EXISTS#{end}
 					${dialect.renderId($userName)}
 					#if($!password)
@@ -53,7 +53,7 @@
 					#if(isAdmin) ADMIN#end
 				</verb>
 				<verb name='drop'>
-					<param name="whenPresent" type="boolean" />
+					<param name="whenPresent" type="boolean"></param>
 					DROP USER #if($!whenPresent) IF EXISTS#{end}
 					$dialect.renderId(userName)
 				</verb>
@@ -61,46 +61,46 @@
 		</grammar>
 	</dialect>
 	<connection method="memory">
-		<dialect name="$mode" default='h2' />
+		<use-dialect name="$mode" default='h2' />
 		<url>
 			jdbc:h2:mem:
 			<use macro="params" />
 		</url>
 	</connection>
 	<connection method="memory-shared">
-		<dialect name="$mode" default='h2' />
+		<use-dialect name="$mode" default='h2' />
 		<url>
 			jdbc:h2:mem:$dbname
 			<use macro="params" />
 		</url>
 	</connection>
 	<connection method="disk">
-		<dialect name="$mode" default='h2' />
+		<use-dialect name="$mode" default='h2' />
 		<url>
 			jdbc:h2:file:$!{path}${dbName}
 			<use macro="params" />
 		</url>
 	</connection>
 	<connection method="zip">
-		<dialect name="$mode" default='h2' />
+		<use-dialect name="$mode" default='h2' />
 		<url>
 			jdbc:h2:zip:$!{path}!${dbName}
 			<use macro="params" />
 		</url>
 	</connection>
 	<connection method="secure-server">
-		<dialect name="$mode" default='h2' />
+		<use-dialect name="$mode" default='h2' />
 		<url>jdbc:h2:ssl://${host}#if(port):$port#{end};user="$userName",password="$password"
 			<use macro="params" />
 		</url>
 	</connection>
 	<connection method="server">
-		<dialect name="$mode" default='h2' />
+		<use-dialect name="$mode" default='h2' />
 		<url>jdbc:h2:tcp://${host}#if(port):$port#{end};user="$userName",password="$password"
 		</url>
 	</connection>
 	<connection method="server-memory">
-		<dialect name="$mode" default='h2' />
+		<use-dialect name="$mode" default='h2' />
 		<url>jdbc:h2:$host/mem:${dbname};<use macro="params" /></url>
 	</connection>
 </csd:driver>
