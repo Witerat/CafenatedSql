@@ -23,8 +23,16 @@ public class ConnectionTag implements Parameterized {
   /** The dialect. */
   private DialectTag dialect;
 
+  /** the named dialect. */
+  private UseDialectTag useDialect;
+
   /** The parameters descriptions. */
-  private Collection<ParameterTag> parameters;
+  private Collection<ParamTag> parameters;
+
+  /** local reference to driver, which the driver will set when the connection
+   * tag is added.
+   */
+  private DriverTag driverTag;
 
   /**
    * Gets the name of the connection method.
@@ -85,13 +93,47 @@ public class ConnectionTag implements Parameterized {
    * @return the dialect
    */
   public DialectTag getDialect() {
+    if (dialect == null) {
+      if (useDialect != null) {
+        dialect = driverTag.getDialectByName(useDialect.getName());
+        if (dialect == null) {
+          dialect = driverTag.getDialectByName(useDialect.getDefaultName());
+        }
+      }
+    }
     return dialect;
   }
 
   /**
    * {@inheritDoc}
    */
-  public Collection<ParameterTag> getParams() {
+  public Collection<ParamTag> getParams() {
     return parameters;
+  }
+
+  /**
+   * The dialectRefence.
+   * @return the dialectrefence or <code>null</code> if none set.
+   */
+  @XmlElement(name = "use-dialect", namespace = "-//org.witerat/cafenated/sql",
+      type = UseDialectTag.class)
+  public UseDialectTag getUseDialect() {
+    return useDialect;
+  }
+
+
+  /**
+   * Set dialect reference.
+   * @param useDialect0 the refernece.
+   */
+  public void setUseDialect(final UseDialectTag useDialect0) {
+    this.useDialect = useDialect0;
+  }
+
+  /**
+   * @param driverTag0 the driver parent.
+   */
+  public void setDriver(final DriverTag driverTag0) {
+    this.driverTag = driverTag0;
   }
 }
