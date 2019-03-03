@@ -25,7 +25,7 @@ public class DriverTag extends AbstractMacroLocator {
   private Map<String, ConnectionTag> connectionsByMethod;
 
   /** The ddl. */
-  private DDL ddl;
+  private DdlTag ddl;
 
   /** The dml. */
   private DmlTag dml;
@@ -66,7 +66,7 @@ public class DriverTag extends AbstractMacroLocator {
    * @return the ddl
    */
   @XmlElement(namespace = "-//org.witerat/cafenated/sql")
-  public DDL getDdl() {
+  public DdlTag getDdl() {
     return ddl;
   }
 
@@ -118,6 +118,7 @@ public class DriverTag extends AbstractMacroLocator {
       connectionsByMethod = new LinkedHashMap<>();
     }
     connectionsByMethod.put(connection.getMethod(), connection);
+    connection.setDriver(this);
   }
 
   /**
@@ -141,7 +142,7 @@ public class DriverTag extends AbstractMacroLocator {
    * @param ddl0
    *          the new ddl
    */
-  public void setDdl(final DDL ddl0) {
+  public void setDdl(final DdlTag ddl0) {
     this.ddl = ddl0;
   }
 
