@@ -14,13 +14,6 @@
           <target>1.8</target>
         </configuration>
       </plugin>
-      <plugin>
-      	<groupId>org.jvnet.jaxb2.maven2</groupId>
-      	<artifactId>maven-jaxb2-plugin</artifactId>
-      	<version>0.13.2</version>
-      	<configuration>
-      	</configuration>
-      </plugin>
     </plugins>
   </build>
   <dependencies>
