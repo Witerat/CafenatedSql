@@ -2,7 +2,7 @@ package net.witerat.cafenatedsql.api.driver;
 
 import java.util.Collection;
 
-import net.witerat.cafenatedsql.spi.driver.tags.ParameterTag;
+import net.witerat.cafenatedsql.spi.driver.tags.ParamTag;
 
 /**
  * The Interface Parameterized.
@@ -14,5 +14,5 @@ public interface Parameterized {
    *
    * @return the parameters
    */
-  Collection<ParameterTag> getParams();
+  Collection<ParamTag> getParams();
 }
