@@ -6,6 +6,11 @@
     <node name="platform">
       <attribute name="platform-id" value="generic_2_2"/>
     </node>
+    <node name="schemas">
+      <node name="schema-1">
+        <attribute name="location" value="platform:/resource/CafenatedSql/resource/net/witerat/cafenatedsql/spi/driver/tags/schemas/cafenated.xsd"/>
+      </node>
+    </node>
   </facet>
   <facet id="jpt.jpa">
     <node name="libprov">
