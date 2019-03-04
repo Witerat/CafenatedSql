@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 public class SqlTemplate {
 
   /** The parameters. */
-  private Map<String, ParameterTag> parametersByName;
+  private Map<String, ParamTag> parametersByName;
 
   /**
    * Gets the parameters.
@@ -22,7 +22,7 @@ public class SqlTemplate {
    * @return the parameters
    */
   @XmlTransient
-  public Collection<ParameterTag> getParameters() {
+  public Collection<ParamTag> getParameters() {
     if (parametersByName == null) {
       parametersByName = new LinkedHashMap<>();
     }
@@ -36,12 +36,12 @@ public class SqlTemplate {
    * @param parameters
    *          the new parameters
    */
-  public void setParameters(final Collection<ParameterTag> parameters) {
+  public void setParameters(final Collection<ParamTag> parameters) {
     if (parameters == null) {
       parametersByName = null;
     } else {
-      Map<String, ParameterTag> parsByName = new LinkedHashMap<>();
-      for (ParameterTag p : parameters) {
+      Map<String, ParamTag> parsByName = new LinkedHashMap<>();
+      for (ParamTag p : parameters) {
         parsByName.put(p.getName(), p);
       }
       parametersByName = parsByName;
@@ -53,7 +53,7 @@ public class SqlTemplate {
    * @param param
    *          a new parameter
    */
-  public void setParameter(final ParameterTag param) {
+  public void setParameter(final ParamTag param) {
     if (parametersByName == null) {
       parametersByName = new LinkedHashMap<>();
     }
