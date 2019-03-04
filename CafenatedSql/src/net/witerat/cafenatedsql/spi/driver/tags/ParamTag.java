@@ -5,11 +5,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * The Class ParameterTag describes a model parameter.
+ * The Class ParamTag describes a model parameter.
  */
 @XmlRootElement(name = "param")
-@XmlType(name = "ParamType", namespace = "-//org.witerat/cafenated/sql")
-public class ParameterTag {
+@XmlType
+public class ParamTag {
 
   /** The type. */
   private String type;
