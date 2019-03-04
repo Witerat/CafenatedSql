@@ -13,8 +13,8 @@ import net.witerat.cafenatedsql.spi.driver.Content;
  * The Class Use describes the inclusion of def content that stands in place of
  * the Use tag in the produced template.
  */
-@XmlType(name = "UseType", namespace = "-//org.witerat/cafenated/sql")
 @XmlRootElement(name = "use")
+@XmlType
 public class UseTag extends MacroTag {
 
   /**
