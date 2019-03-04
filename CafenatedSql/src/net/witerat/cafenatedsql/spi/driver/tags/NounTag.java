@@ -3,6 +3,7 @@ package net.witerat.cafenatedsql.spi.driver.tags;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -12,7 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * The Class NounTag.
  */
-@XmlType(name = "NounType", namespace = "-//org.witerat/cafenated/sql")
+@XmlType(name = "NounType")
 public class NounTag extends SqlTemplate {
 
   /**
@@ -51,17 +52,18 @@ public class NounTag extends SqlTemplate {
    */
 
   public void setName(final String name0) {
+    Logger.getAnonymousLogger().info("noun: " + name0);
     this.name = name0;
   }
 
   /**
    * {@inheritDoc}
    * @see net.witerat.cafenatedsql.spi.driver.tags.SqlTemplate#setParameter(
-   * net.witerat.cafenatedsql.spi.driver.tags.ParameterTag)
+   * net.witerat.cafenatedsql.spi.driver.tags.ParamTag)
    */
-  @XmlElement(name = "param", type = ParameterTag.class,
+  @XmlElement(name = "param", type = ParamTag.class,
       namespace = "-//org.witerat/cafenated/sql")
-  public void setParameter(final ParameterTag param) {
+  public void setParameter(final ParamTag param) {
     super.setParameter(param);
   }
 
