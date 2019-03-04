@@ -35,7 +35,7 @@ public class UrlTag extends MacroTag {
   /**
    * The parametersByName property.
    */
-  private Map<String, ParameterTag> parametersByName;
+  private Map<String, ParamTag> parametersByName;
 
   /**
    * Sets the macros.
@@ -65,14 +65,14 @@ public class UrlTag extends MacroTag {
   @XmlElementRefs({
       @XmlElementRef(name = "use", type = UseTag.class,
         namespace = "-//org.witerat/cafenated/sql"),
-      @XmlElementRef(name = "param", type = ParameterTag.class,
+      @XmlElementRef(name = "param", type = ParamTag.class,
         namespace = "-//org.witerat/cafenated/sql") })
   @XmlMixed
   public void setRawContent(final List<Object> raw) {
     LinkedList<Object> rawC = new LinkedList<Object>();
     for (Object o : raw) {
-      if (o instanceof ParameterTag) {
-        setParameter((ParameterTag) o);
+      if (o instanceof ParamTag) {
+        setParameter((ParamTag) o);
       } else {
         rawC.add(o);
       }
@@ -95,7 +95,7 @@ public class UrlTag extends MacroTag {
    * @param pt a parameter description.
    */
   @XmlTransient
-  private void setParameter(final ParameterTag pt) {
+  private void setParameter(final ParamTag pt) {
     if (parametersByName == null) {
       parametersByName = new LinkedHashMap<>();
     }
