@@ -63,8 +63,8 @@ public class VerbTag {
            type = UseTag.class, name = "use") })
   public void setRawContent(final Collection<Object> rawContent0) {
     Collection<Object> rc = new ArrayList<>();
-    Logger.getAnonymousLogger().log(Level.INFO,
-        ToStringBuilder.reflectionToString(rawContent0));
+//    Logger.getAnonymousLogger().log(Level.INFO,
+//        ToStringBuilder.reflectionToString(rawContent0));
     for (Object o : rawContent0) {
       if (o instanceof ParamTag) {
         setParameter((ParamTag) o);
@@ -73,9 +73,9 @@ public class VerbTag {
         rc.add(o);
       }
     }
-    Logger.getAnonymousLogger().log(Level.INFO,
-        MessageFormat.format("verb {0}: {1}\n",
-         this.name, ToStringBuilder.reflectionToString(rc)));
+//    Logger.getAnonymousLogger().log(Level.INFO,
+//        MessageFormat.format("verb {0}: {1}\n",
+//         this.name, ToStringBuilder.reflectionToString(rc)));
     this.rawContent = rc;
   }
   /**

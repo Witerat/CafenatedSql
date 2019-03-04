@@ -52,7 +52,7 @@ public class NounTag extends SqlTemplate {
    */
 
   public void setName(final String name0) {
-    Logger.getAnonymousLogger().info("noun: " + name0);
+//    Logger.getAnonymousLogger().info("noun: " + name0);
     this.name = name0;
   }
 
