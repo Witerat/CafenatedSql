@@ -8,9 +8,11 @@ import net.witerat.cafenatedsql.api.Cafenated;
 import net.witerat.cafenatedsql.api.ConnectionFactory;
 import net.witerat.cafenatedsql.api.Database;
 import net.witerat.cafenatedsql.api.DriverFactory;
+import net.witerat.cafenatedsql.api.EntityManager;
 import net.witerat.cafenatedsql.api.Provider;
 import net.witerat.cafenatedsql.api.Refactor;
 import net.witerat.cafenatedsql.api.Schema;
+import net.witerat.cafenatedsql.api.driver.DDLEditor;
 import net.witerat.cafenatedsql.api.driver.DriverCreationException;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 import net.witerat.cafenatedsql.spi.driver.Driver;
@@ -80,10 +82,11 @@ public class SimpleDatabase implements Database, SchemaManager {
      * @param obj
      */
     @Override
-    public void refactor(final String noun, final Calculus operation,
+    public void refactor(final String noun,
+        final EntityManager.Calculus operation,
         final Object obj) {
-      // TODO Auto-generated method stub
-
+      DDLEditor editor  = driver.getEditor(noun, operation);
+      editor.marshal(obj);
     }
   };
 
@@ -269,10 +272,17 @@ public class SimpleDatabase implements Database, SchemaManager {
         refactor0.getObject());
 
   }
-  @Override
-  public void refactor(final String noun, final Calculus operation,
-      final Object obj) {
-    // TODO Auto-generated method stub
 
+  /* (non-Javadoc)
+   * @see net.witerat.cafenatedsql.api
+   *    .EntityManager#refactor(java.lang.String,
+   *    EntityManager.Calculus, java.lang.Object)
+   */
+  @Override
+  public void refactor(final String noun,
+      final EntityManager.Calculus operation,
+      final Object obj) {
+    DDLEditor editor = driver.getEditor(noun, operation);
+    editor.marshal(obj);
   }
 }
