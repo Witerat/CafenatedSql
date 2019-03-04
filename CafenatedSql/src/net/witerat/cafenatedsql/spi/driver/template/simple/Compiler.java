@@ -1090,7 +1090,8 @@ class Compiler {
      */
     protected boolean onInLineComment() {
       if (inLineComment) {
-        if (ch == SimpleExpressionLanguage.CHAR_NIL) {
+        if (ch == SimpleExpressionLanguage.CHAR_NIL
+            ||  ch == Character.LINE_SEPARATOR) {
           inLineComment = false;
         } else {
           return true;
@@ -1112,10 +1113,9 @@ class Compiler {
           if (ch == '/') {
             inLongComment = false;
             return true;
-          } else {
-            starBefore = ch == '*';
           }
         }
+        starBefore = ch == '*';
       }
       return false;
     }

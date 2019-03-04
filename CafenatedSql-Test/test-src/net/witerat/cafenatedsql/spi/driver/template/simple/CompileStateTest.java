@@ -205,7 +205,28 @@ public class CompileStateTest  {
 
   @Test
   public void testOnInLineComment() {
-    fail("Not yet implemented");
+    String t = "blah **\n";
+    CompileState cs = new Compiler().new CompileState();
+    cs.setExpression(t);
+    int cycle = -1;
+    cs.setInLineComment(true);
+    for(cs.setChx(0); cs.getChx() <= t.length(); cs.setChx(cs.getChx()+1)){
+      ++cycle;
+      try{
+        cs.setCh(t.charAt(cs.getChx()));
+      } catch (StringIndexOutOfBoundsException e){
+        cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+      }
+
+      if(cs.onInLineComment()) {
+        assertTrue("cycle too high: "+cycle, cycle < 8);
+        continue;
+      }else {
+        assertTrue("cycle to low: "+cycle, cycle >= 8);
+        assertFalse(cs.isInLongComment());
+        break;
+      }
+    }
   }
 
   @Test
@@ -237,10 +258,106 @@ public class CompileStateTest  {
       cs.setParse(false);
     }
   }
+  /** test for straight forward end of comment. "/
   @Test
   public void testOnLongComment() {
-    fail("Not yet implemented");
+    String t = "blah *\/\n";";
+  */
+  @Test
+  public void testOnLongComment() {
+      String t = "blah */\n";
+    CompileState cs = new Compiler().new CompileState();
+    cs.setExpression(t);
+    int cycle = -1;
+    cs.setInLongComment(true);
+    for(cs.setChx(0); cs.getChx() <= t.length(); cs.setChx(cs.getChx()+1)){
+      ++cycle;
+      try{
+        cs.setCh(t.charAt(cs.getChx()));
+      } catch (StringIndexOutOfBoundsException e){
+        cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+      }
+
+      try {
+        if(!cs.onLongComment()) {
+          assertTrue("cycle too high: "+cycle, cycle < 6);
+          continue;
+        }else {
+          assertTrue("cycle to low: "+cycle, cycle >= 6);
+          assertFalse(cs.isInLongComment());
+          break;
+        }
+      } catch (ExpressionFailedException e) {
+        fail(("cycle: "+cycle)+e.getMessage());
+      };
+    }
   }
+  /** test for asterisk before comment end. **/
+  @Test
+  public void testOnLongComment2() {
+    String t = "blah **/\n";
+    CompileState cs = new Compiler().new CompileState();
+    cs.setExpression(t);
+    int cycle = -1;
+    cs.setInLongComment(true);
+    for(cs.setChx(0); cs.getChx() <= t.length(); cs.setChx(cs.getChx()+1)){
+      ++cycle;
+      try{
+        cs.setCh(t.charAt(cs.getChx()));
+      } catch (StringIndexOutOfBoundsException e){
+        cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+      }
+
+      try {
+        if(!cs.onLongComment()) {
+          assertTrue("cycle too high: "+cycle, cycle < 7);
+          continue;
+        }else {
+          assertTrue("cycle to low: "+cycle, cycle >= 7);
+          assertFalse(cs.isInLongComment());
+          break;
+        }
+      } catch (ExpressionFailedException e) {
+        fail(("cycle: "+cycle)+e.getMessage());
+      };
+    }
+  }
+  /** Test for unterminated comment 
+  @Test 
+  public void testOnLongComment3() {
+    String t = "blah **\n";
+  */
+  @Test
+  public void testOnLongComment3() {
+    String t = "blah **\n";
+    CompileState cs = new Compiler().new CompileState();
+    cs.setExpression(t);
+    int cycle = -1;
+    cs.setInLongComment(true);
+    for(cs.setChx(0); cs.getChx() <= t.length(); cs.setChx(cs.getChx()+1)){
+      ++cycle;
+      try{
+        cs.setCh(t.charAt(cs.getChx()));
+      } catch (StringIndexOutOfBoundsException e){
+        cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+      }
+
+      try {
+        if(!cs.onLongComment()) {
+          assertTrue("cycle too high: "+cycle, cycle < 8);
+          continue;
+        }else {
+          assertTrue("cycle to low: "+cycle, cycle >= 8);
+          assertFalse(cs.isInLongComment());
+          break;
+        }
+      } catch (ExpressionFailedException e) {
+        if(cycle!=8){
+          fail(("cycle: "+cycle)+e.getMessage());
+        }
+      };
+    }
+ }
 
   @Test
   public void testOnNumber() {
