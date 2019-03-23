@@ -174,7 +174,21 @@ public class CompileStateTest  {
 
   @Test
   public void testNumberTypeForSuffix() {
-    fail("Not yet implemented");
+    final Object[][] expect={
+        new Object[]{'s',Short.class}, 
+        new Object[]{'l',Long.class},
+        new Object[]{'i',Integer.class},
+        new Object[]{'d', Double.class},
+        new Object[]{'f',Float.class},
+        new Object[]{'b', Byte.class}
+        };
+    CompileState cs = new Compiler().new CompileState();
+    for (Object[] e:expect){
+      char es = (char) e[0];
+      Class<?> ec = (Class<?>) e[1];
+      Class<?> ac = cs.numberTypeForSuffix(es);
+      assertEquals("expected "+ac.getSimpleName()+"for "+es+": "+ac.getName(),ec, ac);
+    }
   }
 
   @Test
@@ -366,7 +380,102 @@ public class CompileStateTest  {
 
   @Test
   public void testOnSlashBefore() {
-    fail("Not yet implemented");
+    String t = "/";
+    CompileState cs = new Compiler().new CompileState();
+    cs.setExpression(t);
+    int cycle = -1;
+    cs.setSlashBefore(false);
+    for(cs.setChx(0); cs.getChx() < t.length(); cs.setChx(cs.getChx()+1)){
+      ++cycle;
+      try{
+        cs.setCh(t.charAt(cs.getChx()));
+      } catch (StringIndexOutOfBoundsException e){
+        cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+      }
+
+      final boolean r = cs.onSlashBefore();
+      switch (cycle) {
+      case 0:
+        assertTrue(cs.isSlashBefore());
+        assertFalse(r);
+        break;
+      }
+    }
+  }
+  @Test
+  public void testOnSlashBeforeSlash() {
+    String t = "/";
+    CompileState cs = new Compiler().new CompileState();
+    cs.setExpression(t);
+    int cycle = -1;
+    cs.setSlashBefore(true);
+    for(cs.setChx(0); cs.getChx() < t.length(); cs.setChx(cs.getChx()+1)){
+      ++cycle;
+      try{
+        cs.setCh(t.charAt(cs.getChx()));
+      } catch (StringIndexOutOfBoundsException e){
+        cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+      }
+
+      final boolean r = cs.onSlashBefore();
+      switch (cycle) {
+      case 0:
+        assertTrue(cs.isInLineComment());
+        assertTrue(r);
+        break;
+      }
+    }
+  }
+
+  @Test
+  public void testOnSlashBeforeOther() {
+    String t = "?";
+    CompileState cs = new Compiler().new CompileState();
+    cs.setExpression(t);
+    int cycle = -1;
+    cs.setSlashBefore(true);
+    for(cs.setChx(0); cs.getChx() < t.length(); cs.setChx(cs.getChx()+1)){
+      ++cycle;
+      try{
+        cs.setCh(t.charAt(cs.getChx()));
+      } catch (StringIndexOutOfBoundsException e){
+        cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+      }
+
+      final boolean r = cs.onSlashBefore();
+      switch (cycle) {
+      case 0:
+        assertFalse(cs.isInLineComment());
+        assertFalse(cs.isInLongComment());
+        assertFalse(r);
+        break;
+      }
+    }
+  }
+
+  @Test
+  public void testOnSlashBeforeStar() {
+    String t = "*";
+    CompileState cs = new Compiler().new CompileState();
+    cs.setExpression(t);
+    int cycle = -1;
+    cs.setSlashBefore(true);
+    for(cs.setChx(0); cs.getChx() < t.length(); cs.setChx(cs.getChx()+1)){
+      ++cycle;
+      try{
+        cs.setCh(t.charAt(cs.getChx()));
+      } catch (StringIndexOutOfBoundsException e){
+        cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+      }
+
+      final boolean r = cs.onSlashBefore();
+      switch (cycle) {
+      case 0:
+        assertTrue(cs.isInLongComment());
+        assertTrue(r);
+        break;
+      }
+    }
   }
 
   @Test
@@ -406,8 +515,38 @@ public class CompileStateTest  {
 
   @Test
   public void testOnWhiteSpace() {
-    fail("Not yet implemented");
+    String t = ". \t\n";
+    CompileState cs = new Compiler().new CompileState();
+    cs.setExpression(t);
+    int cycle = -1;
+    cs.setInLineComment(true);
+    for(cs.setChx(0); cs.getChx() < t.length(); cs.setChx(cs.getChx()+1)){
+      ++cycle;
+      try{
+        cs.setCh(t.charAt(cs.getChx()));
+      } catch (StringIndexOutOfBoundsException e){
+        cs.setCh(SimpleExpressionLanguage.CHAR_NIL);
+      }
+
+      final boolean r = cs.onWhiteSpace();
+      switch (cycle) {
+      case 0:
+        assertFalse(r);
+        break;
+      case 1:
+        assertTrue(r);
+        break;
+      case 2:
+        assertTrue(r);
+        break;
+      case 3:
+        assertFalse(cs.isInLineComment());
+        assertTrue(r);
+        break;
+      }
+    }
   }
+  
 
   @Test
   public void testParse() {
