@@ -1178,7 +1178,8 @@ class Compiler {
             radix = Compiler.RADIX_DEC;
             relex = true;
           } else {
-            return;
+            throw new ExpressionFailedException("not a number",
+                new NumberFormatException());
           }
         } else if (expectSuffix) {
           Class<?> lt = numberTypeForSuffix(ch);
@@ -1197,9 +1198,10 @@ class Compiler {
                   "valueOf", String.class).invoke(null, token);
             }
           } catch (IllegalAccessException | IllegalArgumentException
-              | InvocationTargetException | NoSuchMethodException
-              | SecurityException e) {
+               | NoSuchMethodException | SecurityException e) {
             throw new ExpressionFailedException(e);
+          } catch (InvocationTargetException ite) {
+            throw new ExpressionFailedException(ite.getCause());
           }
           prioritize(Ops.LITERAL, literal, literalType);
           parse = true;
