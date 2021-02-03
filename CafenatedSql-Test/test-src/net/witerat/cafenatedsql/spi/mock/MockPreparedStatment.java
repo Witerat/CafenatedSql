@@ -27,15 +27,16 @@ import java.util.logging.Logger;
 
 public class MockPreparedStatment implements PreparedStatement {
 
-  private Connection connection;
+//  private Connection connection;
   private String sql;
+  
 //  private int resultSetType;
 //  private int resultSetConcurrency;
 //  private int resultSetHoldability;
   private Logger logger = Logger.getLogger(this.getClass().getName());
 
   public MockPreparedStatment(final Connection connection0, final String sql0) {
-    this.connection = connection0;
+//    this.connection = connection0;
     this.sql = sql0;
 //    resultSetType = ResultSet.TYPE_FORWARD_ONLY;
 //    resultSetConcurrency = ResultSet.CONCUR_READ_ONLY;
@@ -44,7 +45,7 @@ public class MockPreparedStatment implements PreparedStatement {
 
   public MockPreparedStatment(Connection connection0, String sql0, int resultSetType0,
       int resultSetConcurrency0, int resultSetHoldability0) {
-    this.connection = connection0;
+//    this.connection = connection0;
     this.sql = sql0;
 //    resultSetType = resultSetType0;
 //    resultSetConcurrency = resultSetConcurrency0;
@@ -52,15 +53,15 @@ public class MockPreparedStatment implements PreparedStatement {
   }
 
   @Override
-  public ResultSet executeQuery(String sql) throws SQLException {
-    logger.log(Level.INFO, "executeQuery:" + sql);
+  public ResultSet executeQuery(String sql0) throws SQLException {
+    logger.log(Level.INFO, "executeQuery:" + ((null!=sql0)?sql:this.sql));
     return null;
   }
 
   @Override
-  public int executeUpdate(String sql) throws SQLException {
+  public int executeUpdate(String sql0) throws SQLException {
     // No-op
-    logger.log(Level.INFO, "executeUdpate:" + sql);
+    logger.log(Level.INFO, "executeUdpate:" + ((null!=sql0)?sql:this.sql));
     return 0;
   }
 
