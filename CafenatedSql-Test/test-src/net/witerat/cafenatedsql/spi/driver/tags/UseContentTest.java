@@ -70,7 +70,7 @@ public class UseContentTest extends UseContent {
           }
           
           @Override
-          public String produce(Object id, TemplateEngineModel model) {
+          public String produce(Object id, TemplateEngineModel tem) {
             StringBuilder product=new StringBuilder();
             boolean slashbefore=false;
             boolean dollarbefore=false;
@@ -113,7 +113,7 @@ public class UseContentTest extends UseContent {
                 if(c==0xffff) exend=i;
                 if( exend != -1) {
                   String expression = stringBuilder.substring(exstart, exend);
-                  Object value=model.getByExpression(expression);
+                  Object value=tem.getByExpression(expression);
                   product.append(value.toString());
                   exend = -1;
                   exstart = -1;
