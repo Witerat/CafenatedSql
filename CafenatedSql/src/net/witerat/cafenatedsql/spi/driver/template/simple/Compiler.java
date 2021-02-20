@@ -520,14 +520,6 @@ class Compiler {
    * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
    *
    */
-  /**
-   * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
-   *
-   */
-  /**
-   * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
-   *
-   */
   class CompileState {
     /** start of token. */
     private int tkStart = -1;
