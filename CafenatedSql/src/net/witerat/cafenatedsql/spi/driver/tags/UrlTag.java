@@ -122,8 +122,8 @@ public class UrlTag extends MacroTag {
     return content;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.spi.driver.tags.MacroTag#getParent()
    */
@@ -133,11 +133,13 @@ public class UrlTag extends MacroTag {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.spi.driver.tags.MacroTag#getText(net.witerat.
-   * cafenatedsql.api.driver.template.TemplateEngineModel)
+   * @see net.witerat.cafenatedsql.spi.driver.tags
+   *    .MacroTag#getText(
+   *            net.witerat.cafenatedsql.api.driver.template
+   *                    .TemplateEngineModel)
    */
   @Override
   public String getText(final TemplateEngineModel model0) {

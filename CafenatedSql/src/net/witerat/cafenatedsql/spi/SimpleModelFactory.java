@@ -149,18 +149,25 @@ public class SimpleModelFactory implements TemplateModelFactory {
    */
   private static Map<Provider, TemplateModelFactory>  factories =
       new LinkedHashMap<>();
-  /* (non-Javadoc)
-   * @see net.witerat.cafenatedsql.api.TemplateModelFactory#newInstance(
-   * java.util.Properties)
+
+  /**
+   * {@inheritDoc}
+   *
+   * @see net.witerat.cafenatedsql.api.TemplateModelFactory#
+   *    newInstance(java.util.Properties)
    */
   @Override
   public TemplateEngineModel newInstance(final Properties defaults) {
     return new ModelP(defaults);
   }
 
-  /* (non-Javadoc)
-   * @see net.witerat.cafenatedsql.api.TemplateModelFactory#newInstance(
-   * net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel)
+  /**
+   * {@inheritDoc}
+   *
+   * @see net.witerat.cafenatedsql.api.TemplateModelFactory#
+   *    newInstance(
+   *            net.witerat.cafenatedsql.api.driver.template
+   *                    .TemplateEngineModel)
    */
   @Override
   public TemplateEngineModel newInstance(final TemplateEngineModel model0) {

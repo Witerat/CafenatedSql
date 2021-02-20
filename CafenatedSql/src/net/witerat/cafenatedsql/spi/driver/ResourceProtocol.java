@@ -51,11 +51,11 @@ public class ResourceProtocol implements URLStreamHandlerFactory {
     PROTOCOL_HANDLERS.put(protocol, handler);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * java.net.URLStreamHandlerFactory#createURLStreamHandler(java.lang.String)
+   * @see java.net.URLStreamHandlerFactory#
+   *    createURLStreamHandler(java.lang.String)
    */
   @Override
   public URLStreamHandler createURLStreamHandler(final String protocol) {

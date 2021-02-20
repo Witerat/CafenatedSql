@@ -244,8 +244,8 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
     dataSource = boneCpSource;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.ConnectionFactory#connect()
    */
@@ -317,8 +317,8 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
     return connectionType;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see javax.sql.CommonDataSource#getLoginTimeout()
    */
@@ -327,8 +327,8 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
     return dataSource.getLoginTimeout();
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see javax.sql.CommonDataSource#getLogWriter()
    */
@@ -337,8 +337,8 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
     return dataSource.getLogWriter();
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see javax.sql.CommonDataSource#getParentLogger()
    */
@@ -347,11 +347,11 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
     return dataSource.getParentLogger();
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.api.ConnectionFactory#getProperty(java.lang.
-   * Object)
+   * @see net.witerat.cafenatedsql.api.ConnectionFactory#
+   *    getProperty(java.lang.Object)
    */
   @Override
   public Object getProperty(final Object property) {
@@ -385,8 +385,8 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
     return false;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
    */
@@ -411,8 +411,8 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
     this.connectionType = connectionType0;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see javax.sql.CommonDataSource#setLoginTimeout(int)
    */
@@ -422,8 +422,8 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
 
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see javax.sql.CommonDataSource#setLogWriter(java.io.PrintWriter)
    */
@@ -433,8 +433,8 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
 
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.ConnectionFactory#setProperty(java.lang.
    * Object, java.lang.Object)
@@ -457,8 +457,8 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
     properties.set(property, value);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see java.sql.Wrapper#unwrap(java.lang.Class)
    */

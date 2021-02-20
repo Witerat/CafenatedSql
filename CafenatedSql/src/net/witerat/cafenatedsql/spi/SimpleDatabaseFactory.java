@@ -11,9 +11,13 @@ import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
  */
 public class SimpleDatabaseFactory implements DatabaseFactory {
 
-  /* (non-Javadoc)
-   * @see net.witerat.cafenatedsql.api.DatabaseFactory#newDatabase(net.witerat
-   * .cafenatedsql.api.driver.template.TemplateEngineModel)
+  /**
+   * {@inheritDoc}
+   *
+   * @see net.witerat.cafenatedsql.api.DatabaseFactory#
+   *    newDatabase(
+   *            net.witerat.cafenatedsql.api.driver.template
+   *                    .TemplateEngineModel)
    */
   @Override
   public Database newDatabase(final TemplateEngineModel model)

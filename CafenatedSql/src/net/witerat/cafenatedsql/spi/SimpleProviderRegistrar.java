@@ -128,8 +128,8 @@ public class SimpleProviderRegistrar implements ProviderRegistrar {
     return vendorName.get(vendor0);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.ProviderRegistrar#getVendors()
    */

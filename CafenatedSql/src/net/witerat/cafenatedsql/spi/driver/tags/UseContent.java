@@ -75,8 +75,8 @@ public class UseContent extends MacroTag {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.spi.driver.tags.MacroTag#getParent()
    */
@@ -85,11 +85,13 @@ public class UseContent extends MacroTag {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.spi.driver.tags.MacroTag#getText(net.witerat.
-   * cafenatedsql.api.driver.template.TemplateEngineModel)
+   * @see net.witerat.cafenatedsql.spi.driver.tags
+   *    .MacroTag#getText(
+   *            net.witerat.cafenatedsql.api.driver.template
+   *                    .TemplateEngineModel)
    */
   @Override
   public String getText(final TemplateEngineModel model) {

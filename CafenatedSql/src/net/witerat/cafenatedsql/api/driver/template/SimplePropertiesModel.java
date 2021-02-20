@@ -34,11 +34,11 @@ public class SimplePropertiesModel implements TemplateEngineModel {
     properties = new Properties();
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
-   * getByExpression(java.lang.String)
+   *    getByExpression(java.lang.String)
    */
   @Override
   public Object getByExpression(final String name) {
@@ -49,32 +49,30 @@ public class SimplePropertiesModel implements TemplateEngineModel {
     }
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#get(java.
-   * lang.String)
+   * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
+   *    get(java.lang.String)
    */
   @Override
   public Object get(final String key) {
     return getProperties().getProperty(key);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#set(java.
-   * lang.String, java.lang.Object)
+   * @see net.witerat.cafenatedsql.api.driver.template
+   *    .TemplateEngineModel#set(java.lang.String, java.lang.Object)
    */
   @Override
   public void set(final String property, final Object value) {
     getProperties().setProperty(property, (String) value);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
    * evaluateContextExpression(java.lang.String)
@@ -111,7 +109,9 @@ public class SimplePropertiesModel implements TemplateEngineModel {
     return properties;
   }
 
-  /* (non-Javadoc)
+  /**
+   * {@inheritDoc}
+   *
    * @see net.witerat.cafenatedsql.api.driver.template
    * .TemplateEngineModel#getPropertyType(java.lang.Object)
    */

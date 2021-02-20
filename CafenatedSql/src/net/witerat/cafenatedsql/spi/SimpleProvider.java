@@ -156,8 +156,8 @@ public class SimpleProvider implements Provider {
     }
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getConnectionFactory()
    */
@@ -168,6 +168,7 @@ public class SimpleProvider implements Provider {
 
   /**
    * {@inheritDoc}
+   *
    * @see net.witerat.cafenatedsql.api.Provider#getConnectionFactory(
    *    java.lang.String)
    */
@@ -177,7 +178,9 @@ public class SimpleProvider implements Provider {
     return connectionFactory;
   }
 
-  /* (non-Javadoc)
+  /**
+   * {@inheritDoc}
+   *
    * @see net.witerat.cafenatedsql.api.Provider#getConnectionMethods()
    */
   @Override
@@ -186,7 +189,9 @@ public class SimpleProvider implements Provider {
     return null;
   }
 
-  /* (non-Javadoc)
+  /**
+   * {@inheritDoc}
+   *
    * @see net.witerat.cafenatedsql.api.Provider#getDatabaseFactory()
    */
   @Override
@@ -197,8 +202,8 @@ public class SimpleProvider implements Provider {
     return databaseFactory;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getDialectFactory()
    */
@@ -208,8 +213,8 @@ public class SimpleProvider implements Provider {
     return dialectFactory;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getDriverClass()
    */
@@ -218,8 +223,8 @@ public class SimpleProvider implements Provider {
     return driverClass;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getDriverFactory()
    */
@@ -228,8 +233,8 @@ public class SimpleProvider implements Provider {
     return driverFactory;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getGrammarFactory()
    */
@@ -240,6 +245,7 @@ public class SimpleProvider implements Provider {
 
   /**
    * {@inheritDoc}
+   *
    * @see net.witerat.cafenatedsql.api.Provider#getModelFactory()
    */
   @Override
@@ -250,8 +256,8 @@ public class SimpleProvider implements Provider {
     return modelFactory;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getNounFactory()
    */
@@ -261,8 +267,8 @@ public class SimpleProvider implements Provider {
   }
 
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getParameterFactory()
    */
@@ -271,8 +277,8 @@ public class SimpleProvider implements Provider {
     return parameterFactory;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getSchemaFactory()
    */
@@ -281,8 +287,8 @@ public class SimpleProvider implements Provider {
     return schemaFactory;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getTableFactory()
    */
@@ -291,8 +297,8 @@ public class SimpleProvider implements Provider {
     return tableFactory;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getUrlFactory()
    */
@@ -301,8 +307,8 @@ public class SimpleProvider implements Provider {
     return urlFactory;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getVerbFactory()
    */
@@ -311,8 +317,8 @@ public class SimpleProvider implements Provider {
     return verbFactory;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Provider#getViewFactory()
    */

@@ -22,11 +22,11 @@ public class Dialect implements ParameterizedRequest, DialectDef {
   /** The params. */
   private LinkedHashMap<String, ParameterType> params;
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.spi.driver.DialectDef#setName(java.lang.String)
+   * @see net.witerat.cafenatedsql.api.driver.DialectDef#
+   *    setName(java.lang.String)
    */
   @Override
   public void setName(final String id0) {
@@ -34,10 +34,10 @@ public class Dialect implements ParameterizedRequest, DialectDef {
 
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.spi.driver.DialectDef#getId()
+   * @see net.witerat.cafenatedsql.api.driver.DialectDef#getId()
    */
   @Override
   public String getId() {

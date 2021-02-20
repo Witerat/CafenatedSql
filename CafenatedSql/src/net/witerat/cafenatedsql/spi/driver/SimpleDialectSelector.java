@@ -33,12 +33,13 @@ public class SimpleDialectSelector implements DialectSelector {
     this.driverLoc = driverLoc0;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.spi.driver.DialectSelector#getDialect(net.witerat.
-   * cafenatedsql.api.driver.template.TemplateEngineModel)
+   * @see net.witerat.cafenatedsql.spi.driver.DialectSelector#
+   *    getDialect(
+   *            net.witerat.cafenatedsql.api.driver.template
+   *                    .TemplateEngineModel)
    */
   @Override
   public DialectDef getDialect(final TemplateEngineModel model) {

@@ -20,8 +20,8 @@ public class SimpleConnectionType implements ConnectionType {
   /** The url def. */
   private UrlDef urlDef;
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.driver.ConnectionType#getDescription()
    */
@@ -30,8 +30,8 @@ public class SimpleConnectionType implements ConnectionType {
     return description;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see
    * net.witerat.cafenatedsql.api.driver.ConnectionType#getDialectSelector()
@@ -41,8 +41,8 @@ public class SimpleConnectionType implements ConnectionType {
     return dialectSelector;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.driver.ConnectionType#getName()
    */
@@ -51,24 +51,24 @@ public class SimpleConnectionType implements ConnectionType {
     return name;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see
-   * net.witerat.cafenatedsql.api.driver.ConnectionType#setDialectSelector(net.
-   * witerat.cafenatedsql.spi.driver.DialectSelector)
+   * net.witerat.cafenatedsql.api.driver.ConnectionType#
+   *    setDialectSelector(net.witerat.cafenatedsql.spi.driver.DialectSelector)
    */
   @Override
   public void setDialectSelector(final DialectSelector dialectSelector0) {
     this.dialectSelector = dialectSelector0;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see
-   * net.witerat.cafenatedsql.api.driver.ConnectionType#setUrlDef(net.witerat.
-   * cafenatedsql.api.driver.UrlDef)
+   * net.witerat.cafenatedsql.api.driver.ConnectionType#
+   *    setUrlDef(net.witerat.cafenatedsql.api.driver.UrlDef)
    */
   @Override
   public void setUrlDef(final UrlDef url) {
@@ -76,8 +76,8 @@ public class SimpleConnectionType implements ConnectionType {
 
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.driver.ConnectionType#getUrlDef()
    */

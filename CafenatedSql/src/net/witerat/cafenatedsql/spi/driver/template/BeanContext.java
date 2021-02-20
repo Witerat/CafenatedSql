@@ -176,11 +176,11 @@ public class BeanContext extends VelocityContext {
     }
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * org.apache.velocity.VelocityContext#internalContainsKey(java.lang.Object)
+   * @see org.apache.velocity.VelocityContext#
+   *    internalContainsKey(java.lang.Object)
    */
   @Override
   public boolean internalContainsKey(final Object name) {
@@ -197,8 +197,8 @@ public class BeanContext extends VelocityContext {
     }
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see org.apache.velocity.VelocityContext#internalGet(java.lang.String)
    */
@@ -222,8 +222,8 @@ public class BeanContext extends VelocityContext {
     }
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see org.apache.velocity.VelocityContext#internalGetKeys()
    */
@@ -240,8 +240,8 @@ public class BeanContext extends VelocityContext {
     return hsNames.toArray();
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see org.apache.velocity.VelocityContext#internalPut(java.lang.String,
    * java.lang.Object)
@@ -274,8 +274,8 @@ public class BeanContext extends VelocityContext {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see org.apache.velocity.VelocityContext#internalRemove(java.lang.Object)
    */

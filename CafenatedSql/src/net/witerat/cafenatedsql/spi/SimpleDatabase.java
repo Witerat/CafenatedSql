@@ -188,20 +188,19 @@ public class SimpleDatabase implements Database, SchemaManager {
     this.connectionFactory = connectionFactory0;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.spi.SchemaManager#add(net.witerat.cafenatedsql.
-   * api.Schema)
+   * @see net.witerat.cafenatedsql.spi.SchemaManager#
+   *    add(net.witerat.cafenatedsql.api.Schema)
    */
   @Override
   public void add(final Schema schema) {
     schemas.add(schema);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.spi.SchemaManager#getSchema()
    */
@@ -211,8 +210,8 @@ public class SimpleDatabase implements Database, SchemaManager {
 
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.spi.SchemaManager#getSchema(java.lang.String)
    */
@@ -229,8 +228,8 @@ public class SimpleDatabase implements Database, SchemaManager {
     schemas.drop(schema);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Database#connect()
    */
@@ -239,8 +238,8 @@ public class SimpleDatabase implements Database, SchemaManager {
     connection = connectionFactory.connect();
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.Database#close()
    */
@@ -253,6 +252,7 @@ public class SimpleDatabase implements Database, SchemaManager {
 
   /**
    * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.api.Database#update()
    */
   @Override
   public void update() throws SQLException {
@@ -273,10 +273,14 @@ public class SimpleDatabase implements Database, SchemaManager {
 
   }
 
-  /* (non-Javadoc)
-   * @see net.witerat.cafenatedsql.api
-   *    .EntityManager#refactor(java.lang.String,
-   *    EntityManager.Calculus, java.lang.Object)
+  /**
+   * {@inheritDoc}
+   *
+   * @see net.witerat.cafenatedsql.api.EntityManager#
+   *    refactor(
+   *            java.lang.String,
+   *            EntityManager.Calculus,
+   *            java.lang.Object)
    */
   @Override
   public void refactor(final String noun,

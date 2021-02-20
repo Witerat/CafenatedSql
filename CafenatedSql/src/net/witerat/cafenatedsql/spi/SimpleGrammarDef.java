@@ -34,11 +34,11 @@ public class SimpleGrammarDef implements GrammarDef {
     nouns.put(nn.getName(), nn);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.GrammarDef#setName(java.lang.String)
+   * @see net.witerat.cafenatedsql.api.driver.GrammarDef#
+   *    setName(java.lang.String)
    */
   @Override
   public void setName(final String name0) {
@@ -46,8 +46,8 @@ public class SimpleGrammarDef implements GrammarDef {
 
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.driver.GrammarDef#getName()
    */

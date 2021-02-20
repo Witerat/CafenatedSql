@@ -32,11 +32,11 @@ public class SimpleMapModel implements TemplateEngineModel {
     properties = new LinkedHashMap<>();
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
-   * getByExpression(java.lang.String)
+   *    getByExpression(java.lang.String)
    */
   @Override
   public Object getByExpression(final String name) {
@@ -47,35 +47,33 @@ public class SimpleMapModel implements TemplateEngineModel {
     }
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#get(java.
-   * lang.String)
+   * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
+   *    get(java.lang.String)
    */
   @Override
   public Object get(final String key) {
     return properties.get(key);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#set(java.
-   * lang.String, java.lang.Object)
+   * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
+   *    set(java.lang.String, java.lang.Object)
    */
   @Override
   public void set(final String property, final Object value) {
     properties.put(property, (String) value);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
-   * evaluateContextExpression(java.lang.String)
+   *    evaluateContextExpression(java.lang.String)
    */
   @Override
   public Object evaluateContextExpression(final String expression)
@@ -83,9 +81,11 @@ public class SimpleMapModel implements TemplateEngineModel {
     return get(expression);
   }
 
-  /* (non-Javadoc)
-   * @see net.witerat.cafenatedsql.api.driver.template
-   *    .TemplateEngineModel#getPropertyType(java.lang.Object)
+  /**
+   * {@inheritDoc}
+   *
+   * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
+   *    getPropertyType(java.lang.Object)
    */
   @Override
   public Class<?> getPropertyType(final Object property) {

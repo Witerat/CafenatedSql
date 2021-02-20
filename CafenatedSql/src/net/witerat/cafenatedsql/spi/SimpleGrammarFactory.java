@@ -9,8 +9,8 @@ import net.witerat.cafenatedsql.api.driver.GrammarDef;
  */
 public class SimpleGrammarFactory implements GrammarFactory {
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.GrammarFactory#newGrammar()
    */

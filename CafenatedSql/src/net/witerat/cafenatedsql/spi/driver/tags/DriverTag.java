@@ -94,11 +94,10 @@ public class DriverTag extends AbstractMacroLocator {
     return dml;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * net.witerat.cafenatedsql.spi.driver.MacroLocator#getMacro(java.lang.String)
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.spi.driver.MacroLocator#
+   *    getMacro(java.lang.String)
    */
   @Override
   public MacroTag getMacro(final String name) {

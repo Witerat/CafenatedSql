@@ -40,11 +40,13 @@ public class DefaultDriverFactory implements DriverFactory {
     this.provider = provider0;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.api.DriverFactory#newDriver(net.witerat.
-   * cafenatedsql.api.driver.template.TemplateEngineModel)
+   * @see net.witerat.cafenatedsql.api.DriverFactory#
+   *    newDriver(
+   *            net.witerat.cafenatedsql.api.driver.template
+   *                    .TemplateEngineModel)
    */
   @Override
   public Driver newDriver(final TemplateEngineModel model)
@@ -67,12 +69,13 @@ public class DefaultDriverFactory implements DriverFactory {
     }
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.api.DriverFactory#newConnectionType(net.witerat.
-   * cafenatedsql.spi.driver.Driver, java.lang.String)
+   * @see net.witerat.cafenatedsql.api.DriverFactory#
+   *    newConnectionType(
+   *            net.witerat.cafenatedsql.spi.driver.Driver,
+   *            java.lang.String)
    */
   @Override
   public ConnectionType newConnectionType(final Driver driver,
@@ -80,12 +83,13 @@ public class DefaultDriverFactory implements DriverFactory {
     return driver.getConnectionType(method);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.api.DriverFactory#newDialectExpressionSelector(net
-   * .witerat.cafenatedsql.api.driver.ConnectionType, java.lang.String)
+   * @see net.witerat.cafenatedsql.api.DriverFactory#
+   *    newDialectExpressionSelector(
+   *            net.witerat.cafenatedsql.api.driver.ConnectionType,
+   *            java.lang.String)
    */
   @Override
   public DialectSelector newDialectExpressionSelector(
@@ -95,11 +99,13 @@ public class DefaultDriverFactory implements DriverFactory {
     return dynamicDialectSelector;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.api.DriverFactory#newDialectNameSelector(net.
-   * witerat.cafenatedsql.api.driver.ConnectionType, java.lang.String)
+   * @see net.witerat.cafenatedsql.api.DriverFactory#
+   *    newDialectNameSelector(
+   *            net.witerat.cafenatedsql.api.driver.ConnectionType,
+   *            java.lang.String)
    */
   @Override
   public DialectSelector newDialectNameSelector(final ConnectionType ct,
@@ -109,11 +115,13 @@ public class DefaultDriverFactory implements DriverFactory {
     return dynamicDialectSelector;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.api.DriverFactory#newGrammar(net.witerat.
-   * cafenatedsql.api.driver.DialectDef, java.lang.String)
+   * @see net.witerat.cafenatedsql.api.DriverFactory#
+   *    newGrammar(
+   *            net.witerat.cafenatedsql.api.driver.DialectDef,
+   *            java.lang.String)
    */
   @Override
   public GrammarDef newGrammar(final DialectDef dd, final String name) {
@@ -124,12 +132,13 @@ public class DefaultDriverFactory implements DriverFactory {
     return gd;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.api.DriverFactory#newVerb(net.witerat.cafenatedsql
-   * .api.driver.NounDef, java.lang.String)
+   * @see  net.witerat.cafenatedsql.api.DriverFactory#
+   *    newVerb(
+   *            net.witerat.cafenatedsql.api.driver.NounDef,
+   *            java.lang.String)
    */
   @Override
   public VerbDef newVerb(final NounDef nn, final String name) {
@@ -140,12 +149,13 @@ public class DefaultDriverFactory implements DriverFactory {
     return vd;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.api.DriverFactory#newNoun(net.witerat.cafenatedsql
-   * .api.driver.GrammarDef, java.lang.String)
+   * @see net.witerat.cafenatedsql.api.DriverFactory#
+   *    newNoun(
+   *            net.witerat.cafenatedsql.api.driver.GrammarDef,
+   *            java.lang.String)
    */
   @Override
   public NounDef newNoun(final GrammarDef gg, final String name) {
@@ -155,12 +165,13 @@ public class DefaultDriverFactory implements DriverFactory {
     return nd;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see
-   * net.witerat.cafenatedsql.api.DriverFactory#newDialectDefinition(net.witerat
-   * .cafenatedsql.spi.driver.Driver, java.lang.String)
+   * @see net.witerat.cafenatedsql.api.DriverFactory#
+   *    newDialectDefinition(
+   *            net.witerat.cafenatedsql.spi.driver.Driver,
+   *            java.lang.String)
    */
   @Override
   public DialectDef newDialectDefinition(
@@ -171,11 +182,11 @@ public class DefaultDriverFactory implements DriverFactory {
     return dd;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.api.DriverFactory#newUrlDef(net.witerat.
-   * cafenatedsql.api.driver.ConnectionType)
+   * @see net.witerat.cafenatedsql.api.DriverFactory#
+   *    newUrlDef(net.witerat.cafenatedsql.api.driver.ConnectionType)
    */
   @Override
   public UrlDef newUrlDef(final ConnectionType ct) {
@@ -183,8 +194,8 @@ public class DefaultDriverFactory implements DriverFactory {
     return uf.newUrl();
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * {@inheritDoc}
    *
    * @see net.witerat.cafenatedsql.api.DriverFactory#newParameter()
    */
