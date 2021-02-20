@@ -24,8 +24,8 @@ public class TypeMapper {
    */
   private static TypeMapper defaultMapper;
 
-  /** Initialise default type map. */
   {
+    // Default type to class map.
     String[][] type = {
         {"string", String.class.getName() },
         {"boolean", Boolean.class.getName() },
@@ -41,6 +41,7 @@ public class TypeMapper {
         {"double", Double.class.getName() },
         {"float", Float.class.getName() }
        };
+    // Initialise default type mapping.
     for (String[] m : type) {
       try {
         defaultTypes.put(m[0], Class.forName(m[1]));
