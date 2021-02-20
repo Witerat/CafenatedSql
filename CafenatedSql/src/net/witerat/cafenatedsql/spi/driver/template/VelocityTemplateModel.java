@@ -13,6 +13,8 @@ import org.apache.velocity.context.AbstractContext;
 
 /**
  * The Class VelocityTemplateModel.
+ * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
+ *
  */
 public class VelocityTemplateModel implements TemplateEngineModel {
 
@@ -71,11 +73,10 @@ public class VelocityTemplateModel implements TemplateEngineModel {
     return context;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
-   * evaluateContextExpression(java.lang.String)
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.api.driver.template
+   *    .TemplateEngineModel#evaluateContextExpression(java.lang.String)
    */
   @Override
   public Object evaluateContextExpression(final String expression)
@@ -91,11 +92,10 @@ public class VelocityTemplateModel implements TemplateEngineModel {
 
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
-   * getByExpression(java.lang.String)
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.api.driver.template
+   *    .TemplateEngineModel#getByExpression(java.lang.String)
    */
   @Override
   public Object getByExpression(final String expression) {
@@ -106,24 +106,21 @@ public class VelocityTemplateModel implements TemplateEngineModel {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#get(java.
-   * lang.String)
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.api.driver.template
+   *    .TemplateEngineModel#get(java.lang.String)
    */
   @Override
   public Object get(final String property) {
     return context.get(property);
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#set(java.
-   * lang.String, java.lang.Object)
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.api.driver.template
+   *      .TemplateEngineModel#set(
+   *            java.lang.String, java.lang.Object)
    */
   @Override
   public void set(final String property, final Object value) {
@@ -131,7 +128,8 @@ public class VelocityTemplateModel implements TemplateEngineModel {
 
   }
 
-  /* (non-Javadoc)
+  /**
+   * {@inheritDoc}
    * @see net.witerat.cafenatedsql.api.driver.template
    *    .TemplateEngineModel#getPropertyType(java.lang.Object)
    */
