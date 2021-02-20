@@ -28,24 +28,20 @@ public class VelocityTemplateEngine implements TemplateEngine {
   /** The an engine reference to maintain resource information. */
   private VelocityEngine engine;
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.template.TemplateEngine#injectFixture
-   * (java.lang.String, java.lang.String)
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.api.driver.template
+   *    .TemplateEngine#injectFixture(java.lang.String, java.lang.String)
    */
   @Override
   public void injectFixture(final String name, final String content) {
     fixtures.put(name, content);
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.template.TemplateEngine#define(java.
-   * lang.Object)
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.api.driver.template
+   *    .TemplateEngine#define(java.lang.Object)
    */
   @Override
   public void define(final Object id) {
@@ -64,9 +60,8 @@ public class VelocityTemplateEngine implements TemplateEngine {
     fixtures.remove(name);
   }
 
-  /*
-   * (non-Javadoc)
-   *
+  /**
+   * {@inheritDoc}
    * @see
    * net.witerat.cafenatedsql.api.driver.template.TemplateEngine#setModel(net.
    * witerat.cafenatedsql.api.driver.template.TemplateEngineModel)
@@ -76,9 +71,8 @@ public class VelocityTemplateEngine implements TemplateEngine {
     context = ((VelocityTemplateModel) tem).getVelocity();
   }
 
-  /*
-   * (non-Javadoc)
-   *
+  /**
+   * {@inheritDoc}
    * @see TemplateEngine#produce(Object, TemplateEngineModel)
    */
   @Override
