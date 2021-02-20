@@ -71,70 +71,71 @@ public class UseContentTest extends UseContent {
           
           @Override
           public String produce(Object id, TemplateEngineModel tem) {
-            StringBuilder product=new StringBuilder();
-            boolean slashbefore=false;
-            boolean dollarbefore=false;
-            boolean incurl=false;
-            boolean inname=false;
+            TemplateEngineModel tem0 = null == tem ? model : tem;
+            StringBuilder product = new StringBuilder();
+            boolean slashbefore = false;
+            boolean dollarbefore = false;
+            boolean incurl = false;
+            boolean inname = false;
             
-            int exstart=-1;
-            int exend=-1;
-            int txstart=-1;
-            int txend=-1;
-            for (int i=0; i<=stringBuilder.length();i++){
-              char c= i<stringBuilder.length()? stringBuilder.charAt(i): (char)0xffff;
+            int exstart = -1;
+            int txstart = -1;
+            int exend = -1;
+            int txend = -1;
+            for (int i = 0; i <= stringBuilder.length(); i++){
+              char c = i < stringBuilder.length() ? stringBuilder.charAt(i) : (char)0xffff;
               if(incurl) {
                 if (exstart == -1){
                   exstart=i;
                 }
                 if (c == '}' || c == 0xffff) {
-                  incurl=false;
-                  exend=i;
+                  incurl = false;
+                  exend = i;
                 }
               }
               if (dollarbefore){
-                if (c=='{'){
+                if (c == '{'){
                   incurl = true;
                 } else {
                   inname = true;
-                  exstart=i;
+                  exstart = i;
                 }
                 dollarbefore=false;
-              } else if (c=='$') {
-                dollarbefore=true;
+              } else if (c == '$') {
+                dollarbefore = true;
                 txend = i;
               }
               if((inname == true && dollarbefore)
                   || inname == false && incurl == true){
-                inname=true;
-                exstart=i;
+                inname = true;
+                exstart = i;
               }
               if(inname ) {
-                if(c==0xffff) exend=i;
+                if(c == 0xffff) exend=i;
                 if( exend != -1) {
                   String expression = stringBuilder.substring(exstart, exend);
-                  Object value=tem.getByExpression(expression);
+                  Object value = tem0.getByExpression(expression);
                   product.append(value.toString());
                   exend = -1;
                   exstart = -1;
                 }
               }else {
-                if(txstart==-1){
-                  txstart=i;
+                if(txstart == -1){
+                  txstart = i;
                 }
-                if (c=='\\') {
-                  if(txend==-1) txend=i;
+                if (c == '\\') {
+                  if(txend == -1) txend = i;
                   slashbefore = !slashbefore;
                 } else {
-                  slashbefore=false;
-                  if( c==-1){
-                    if(txstart!=-1) txend=i;
+                  slashbefore = false;
+                  if( c== -1){
+                    if(txstart != -1) txend = i;
                   }
                 }
-                if(txend!=-1){
+                if(txend != -1){
                   product.append(stringBuilder.substring(txstart, txend));
-                  txstart=-1;
-                  txend=-1;
+                  txstart = -1;
+                  txend = -1;
                 }
                 if (slashbefore){
                   if (c == -1) {
