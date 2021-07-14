@@ -2,7 +2,9 @@ package net.witerat.cafenatedsql.spi.driver.tags;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -238,6 +240,22 @@ public class DriverTag extends AbstractMacroLocator {
    */
   public void setTemplateEngine(final String templateEngine0) {
     this.templateEngine = templateEngine0;
+  }
+
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.spi.driver.tags.AbstractMacroLocator#
+   *    iterator()
+   */
+  @Override
+  public Iterator<MacroTag> iterator() {
+    LinkedList<MacroTag> llMt = new LinkedList<>();
+    for (DefTag dt : defs.values()) {
+      for (MacroTag mt : dt.getMacros()) {
+        llMt.add(mt);
+      }
+    }
+    return llMt.iterator();
   }
 
 }
