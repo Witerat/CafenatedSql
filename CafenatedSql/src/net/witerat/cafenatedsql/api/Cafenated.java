@@ -89,7 +89,7 @@ public abstract class Cafenated {
   private static final String DEFAULT_RESOURCE =
       "/META-INF/cafenatedSql/schema";
 
-  /** The root property referes to the {@link RootProviderRegistrar}. */
+  /** The root property refers to the {@link RootProviderRegistrar}. */
   private static ProviderRegistrar root;
 
   /** The jndiName property. */
