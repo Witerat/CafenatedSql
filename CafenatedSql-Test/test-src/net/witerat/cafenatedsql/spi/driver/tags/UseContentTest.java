@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -49,6 +50,21 @@ public class UseContentTest extends UseContent {
       @Override
       public MacroTag getMacro(String name) {
         return mockMacro;
+      }
+      public Iterator<MacroTag> iterator(){
+        final MacroTag mt = mockMacro;
+        return new Iterator<MacroTag>(){
+          boolean more = true;
+          @Override
+          public boolean hasNext() {
+            return more;
+          }
+          @Override
+          public MacroTag next() {
+            more = false;
+            return mt;
+          }
+        };
       }
     };
     useContent.setMacros(mockMacros);
@@ -189,6 +205,9 @@ public class UseContentTest extends UseContent {
   @Test
   public void testGetMacros() {
     assertSame(mockMacros, useContent.getMacros());
+    for(MacroTag mt:mockMacros){
+      assertNull(mt.getParent());
+    }
   }
 
   @Test
