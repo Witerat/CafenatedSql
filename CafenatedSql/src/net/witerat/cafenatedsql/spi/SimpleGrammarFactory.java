@@ -12,7 +12,8 @@ public class SimpleGrammarFactory implements GrammarFactory {
   /**
    * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.api.GrammarFactory#newGrammar()
+   * @see net.witerat.cafenatedsql.api.GrammarFactory#
+   *    newGrammar(DialectDef, String)
    */
   @Override
   public GrammarDef newGrammar(final DialectDef dialect, final String name) {
