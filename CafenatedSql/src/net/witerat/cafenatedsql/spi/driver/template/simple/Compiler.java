@@ -64,6 +64,10 @@ class Compiler {
       {"\"", TokenType.QUOTE}
 
   };
+  /**
+   * A symbol value for identifiers.
+   */
+  public static final SymbolTrei SYMBOL_ID = new SymbolTrei(TokenType.ID);
   /** A trei mapping characters to token types. */
   @SuppressWarnings("serial")
   private Map<Character, SymbolTrei> symbols =
@@ -1140,17 +1144,21 @@ class Compiler {
       if (inIdent) {
         if (!Character.isJavaIdentifierPart(ch)) {
           String tk = expression.substring(tkStart, chx);
-          if (countSymbolMatches(tk) == 1) {
-            if (findExactTokenIndex(tk) != -1) {
-              token = tk;
-            } else {
+          if ((countSymbolMatches(tk) == 1)
+            || (findExactTokenIndex(tk) == -1)) {
               ident = tk;
-            }
+              symbolTrial = SYMBOL_ID;
+          } else {
+              token = tk;
           }
           inToken = false;
           inIdent = false;
+          parse = true;
         }
         return true;
+      } else if (Character.isJavaIdentifierStart(ch)) {
+        inIdent = true;
+        tkStart = chx;
       }
       return false;
     }
@@ -1548,6 +1556,15 @@ class Compiler {
     /** the token for any completing pattern. */
     private TokenType token;
 
+    /**
+     * Instantiate a SymbolTrei object.
+     */
+    SymbolTrei() {
+      token = null;
+    }
+    private SymbolTrei(final TokenType tt) {
+      token = tt;
+    }
     /** The token if this character completes the symbol.
      *
      * @return Token for symbol if any, otherwise <code>null</code>.
