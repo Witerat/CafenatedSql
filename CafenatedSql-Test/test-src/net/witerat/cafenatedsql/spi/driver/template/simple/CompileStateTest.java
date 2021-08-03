@@ -2,6 +2,7 @@ package net.witerat.cafenatedsql.spi.driver.template.simple;
 
 import static org.junit.Assert.*;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -22,7 +23,7 @@ public class CompileStateTest  {
   
   @Test
   public void testEmit() {
-    fail("Not yet implemented");
+    fail("Test not yet implemented");
   }
 
   @Test
@@ -209,8 +210,9 @@ public class CompileStateTest  {
           break;
         }
       }
-      assertTrue("parse not set", cs.isParse());
-      assertEquals(t0, cs.getToken());
+      assertTrue(MessageFormat.format("parse not set(t=''{0}'')",t), cs.isParse());
+      assertNull(cs.getToken());
+      assertEquals(t0, cs.getIdent());
       assertEquals(0, cs.getTkStart());
       assertEquals(TokenType.ID, cs.getSymbolTrial().getToken());
       cs.setParse(false);
@@ -375,7 +377,7 @@ public class CompileStateTest  {
 
   @Test
   public void testOnNumber() {
-    fail("Not yet implemented");
+    fail("Test not yet implemented");
   }
 
   @Test
@@ -510,7 +512,7 @@ public class CompileStateTest  {
 
   @Test
   public void testOnToken() {
-    fail("Not yet implemented");
+    fail("Test not yet implemented");
   }
 
   @Test
