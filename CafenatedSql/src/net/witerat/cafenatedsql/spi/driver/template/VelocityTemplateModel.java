@@ -32,30 +32,33 @@ public class VelocityTemplateModel implements TemplateEngineModel {
   }
 
   /**
-   * Instantiates a new velocity template model.
+   * Instantiates a new empty velocity template model in the given parent scope.
    *
    * @param scope
-   *          the scope
+   *          A name/value pair model will be wrapped in a
+   *          <code>VelocityContext</code> and used as parent scope.
    */
   public VelocityTemplateModel(final VelocityContext scope) {
     context = new VelocityContext(scope);
   }
 
   /**
-   * Instantiates a new velocity template model.
+   * Instantiates a new velocity template model as a global scope.
    *
    * @param model
-   *          the model
+   *          A name/value pair model will be wrapped in a
+   *          <code>VelocityContext</code> and used as local scope.
    */
   public VelocityTemplateModel(final Map<String, Object> model) {
     context = new VelocityContext(model);
   }
 
   /**
-   * Instantiates a new velocity template model.
+   * Instantiates a new velocity template mode with a specified model within
+   * a given scope.
    *
    * @param model
-   *          the model
+   *          A name/value pair model
    * @param scope
    *          the scope
    */
@@ -67,7 +70,7 @@ public class VelocityTemplateModel implements TemplateEngineModel {
   /**
    * Gets the backing velocity context.
    *
-   * @return the velocity
+   * @return the velocity context object
    */
   public VelocityContext getVelocity() {
     return context;
