@@ -180,10 +180,10 @@ public class BeanContext extends VelocityContext {
    * {@inheritDoc}
    *
    * @see org.apache.velocity.VelocityContext#
-   *    internalContainsKey(java.lang.Object)
+   *    internalContainsKey(java.lang.String)
    */
   @Override
-  public boolean internalContainsKey(final Object name) {
+  public boolean internalContainsKey(final String name) {
     if (name == null) {
       return false;
     }
@@ -228,7 +228,7 @@ public class BeanContext extends VelocityContext {
    * @see org.apache.velocity.VelocityContext#internalGetKeys()
    */
   @Override
-  public Object[] internalGetKeys() {
+  public String[] internalGetKeys() {
     Field[] fa = type.getFields();
     HashSet<String> hsNames = new HashSet<String>();
     for (Field f : fa) {
@@ -237,7 +237,7 @@ public class BeanContext extends VelocityContext {
     for (Object fn : super.internalGetKeys()) {
       hsNames.add((String) fn);
     }
-    return hsNames.toArray();
+    return hsNames.toArray(new String[hsNames.size()]);
   }
 
   /**
@@ -249,8 +249,10 @@ public class BeanContext extends VelocityContext {
   @Override
   public Object internalPut(final String property, final Object value) {
     Field f;
+    Object old = null;
     try {
       f = type.getField(property);
+      old = f.get(bean);
       f.set(bean, value);
     } catch (NoSuchFieldException e) {
       return super.internalPut(property, value);
@@ -263,25 +265,30 @@ public class BeanContext extends VelocityContext {
           e);
       e.printStackTrace();
     } catch (IllegalArgumentException e) {
+      Logger log = Logger.getLogger(this.getClass().getName());
+      log.log(Level.INFO,
+          MessageFormat.format(
+              "Illegal argument for property setting for type {0}"
+                  + " - '{1}'  property",
+              type.getClass().getName(), property),
+          e);
       e.printStackTrace();
     } catch (IllegalAccessException e) {
+      Logger log = Logger.getLogger(this.getClass().getName());
+      log.log(Level.INFO,
+          MessageFormat.format(
+              "Illegal access for property setting for type {0}"
+                  + " - '{1}'  property",
+              type.getClass().getName(), property),
+          e);
       e.printStackTrace();
     } catch (NullPointerException e) {
       Logger log = Logger.getLogger(this.getClass().getName());
       log.log(Level.INFO,
           "no bean of type " + type.getClass().getName() + " set", e);
     }
-    return null;
+    return old;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @see org.apache.velocity.VelocityContext#internalRemove(java.lang.Object)
-   */
-  @Override
-  public Object internalRemove(final Object key) {
-    return super.internalRemove(key);
-  }
 
 }
