@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,9 +33,10 @@ class Processor {
     }
 
   }
+  
   /**
-   * Abstract instruction.
-   *
+   * The AbstractFetch class - an abstract instruction.
+
    */
   abstract static class AbstractFetch {
     /**
@@ -94,20 +96,37 @@ class Processor {
       super(branch0);
     }
 
+    
+    @SuppressWarnings("serial")
+    private static HashMap<Class<?>, Object[]> falseness = 
+        new HashMap<Class<?>, Object[]>(){
+      {
+        put(Boolean.class,    new Object[]{Boolean.FALSE});
+        put(Short.class,      new Object[]{new Short((short) 0)});
+        put(Long.class,       new Object[]{new Long((long) 0l)});
+        put(Integer.class,    new Object[]{new Integer((int) 0)});
+        put(Byte.class,       new Object[]{new Byte((byte) 0)});
+        put(String.class,     new Object[]{""});
+        put(Character.class,  new Object[]{'\u0000'});
+        put(Float.class,      new Object[]{0.0f, Float.NaN});
+        put(Double.class,     new Object[]{0.0d, Double.NaN});
+        put(BigInteger.class, new Object[]{BigInteger.ZERO});
+        put(BigDecimal.class, new Object[]{BigDecimal.ZERO});
+        
+      }
+    };
     @Override
     Object fetch(final Processor processor) throws ExpressionFailedException {
       Object v = processor.pop();
-      if ((v instanceof Boolean && Boolean.FALSE.equals(v))
-          || (v instanceof String && "".equals(v))
-          || (v instanceof Character && Character.valueOf('\u0000').equals(v))
-          || (v instanceof Number
-              && (((v instanceof Float || v instanceof Double)
-                  && ((Number) v).doubleValue() == 0.0d)
-              || (!(v instanceof Float || v instanceof Double)
-                  && ((Number) v).longValue() == 0L)))
-          || (v instanceof BigInteger && BigInteger.ZERO.equals(v))
-          || (v instanceof BigDecimal && BigDecimal.ZERO.equals(v))
-          || v == null) {
+      boolean j = null == v;
+      if (!j) {
+        for (Object z: falseness.get(v.getClass())) {
+          if (j |= z.equals(v)) {
+            break;
+          }
+        }
+      }
+      if (j) {
         return super.fetch(processor);
       } else {
         return processor;
