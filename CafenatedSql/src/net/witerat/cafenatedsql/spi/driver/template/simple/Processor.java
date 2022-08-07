@@ -238,6 +238,50 @@ class Processor {
       this.type = type0;
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof LiteralFetch)) {
+        return false;
+      }
+      LiteralFetch lf = (LiteralFetch) obj;
+      if (lf.literal == this.literal
+          && lf.type  == this.type) {
+        return true;
+      }
+      if (literal == null) {
+        return lf.literal == null;
+      }
+      if (type == null) {
+        return lf.type == null;
+      }
+      return literal.equals(lf.literal)
+          && type.equals(lf.type);
+    }
+
+
+    @Override
+    public int hashCode() {
+      final int lowBits = 28;
+      final int lowMask = (1 << lowBits) - 1;
+      final int prime = 13;
+      int hc = 0;
+      if (literal != null) {
+        int lhc = literal.hashCode();
+        lhc = (lhc >>> lowBits) ^ (lhc & lowMask) * prime;
+        hc += lhc;
+      }
+      if (type != null) {
+        int thc = type.hashCode();
+        thc = (thc >>> lowBits) ^ (thc & lowMask) * prime;
+        hc += thc;
+      }
+      return hc;
+    }
+
+
     /**
      * Fetch the literal and set its type.
      * @param processor The processing context.
