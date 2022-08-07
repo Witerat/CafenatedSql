@@ -16,14 +16,14 @@ import net.witerat.cafenatedsql.spi.driver.template.simple.Processor.AbstractFet
  *
  */
 class Compiler {
-  /** Decimal radix. */
-  private static final int RADIX_DEC = 10;
   /** Binary radix. */
-  private static final int RADIX_BIN = 2;
+  static final int RADIX_BIN = 2;
   /** Octal radix. */
-  private static final int RADIX_OCT = 8;
+  static final int RADIX_OCT = 8;
+  /** Decimal radix. */
+  static final int RADIX_DEC = 10;
   /** Hexadecimal radix. */
-  private static final int RADIX_HEX = 16;
+   static final int RADIX_HEX = 16;
   /** List of language symbols. */
   static final Object[][] SYMBOL_LIST = {
       {"!", TokenType.LNOT},
@@ -80,18 +80,11 @@ class Compiler {
             for (int c = 0; c < ss.length(); c++) {
               SymbolTrei t = null;
               final char cc = ss.charAt(c);
-              if (c == 0) {
-                t = get(cc);
-              } else {
-                t = p.get(cc);
-              }
+              Map<Character, SymbolTrei> m = c == 0 ? this : p;
+              t = m.get(cc);
               if (t == null) {
                 t = new SymbolTrei();
-                if (c == 0) {
-                  put(cc, t);
-                } else {
-                  p.put(cc, t);
-                }
+                m.put(cc, t);
               }
               if (c + 1 == ss.length()) {
                 t.setToken(st);
@@ -437,6 +430,7 @@ class Compiler {
         sf.use("statements"));
     sf.validate();
   }
+
   // enum SyntaxCondition{
   // ZERO_PLUS, ONE_PLUS, ITEM, GROUP, ONE_OF, ALL_OF
   // };
@@ -520,6 +514,23 @@ class Compiler {
      */
     abstract Object getToken(Object object);
   }
+
+  /**
+   * Process token event. push to a queue or compare with graph node.
+   * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
+   *
+   */
+   interface TokenProducer {
+
+    /**
+     * @param tkStart
+     * @param tkEnd
+     * @param token
+     */
+    void produceToken(int tkStart, int tkEnd, Object token);
+
+  }
+
   /**
    * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
    *
@@ -532,65 +543,77 @@ class Compiler {
     /** parsing symbol characters. */
     private boolean inSymbol = false;
     /** parsing line comment. */
-    private boolean inLineComment = false;
+    private  boolean inLineComment = false;
     /** parsing character after '/'. */
-    private boolean slashBefore = false;
+    private  boolean slashBefore = false;
     /** parsing a block comment. */
-    private boolean inLongComment = false;
+    private  boolean inLongComment = false;
     /** checking for end of block comment. */
-    private boolean starBefore = false;
+    private  boolean starBefore = false;
     /** parsing token characters. */
-    private boolean inToken = false;
+    private  boolean inToken = false;
     /** parsing number literal. */
-    private boolean inNumber = false;
+    private  boolean inNumber = false;
     /** parsing fraction part of number literal. */
-    private boolean inFraction = false;
+    private  boolean inFraction = false;
     /** can a radix indicator be expected. */
-    private boolean expectRadix = false;
+    private  boolean expectRadix = false;
     /** Radix indicator is specified. */
-    private boolean radixBefore = false;
+    private  boolean radixBefore = false;
     /** parsing significant digits. */
-    private boolean inMantissa = false;
+    private  boolean inMantissa = false;
     /** parsing exponent part. */
-    private boolean inPow10 = false;
+    private  boolean inPow10 = false;
     /** parsing E-notation. */
-    private boolean expectPow10 = false;
+    private  boolean expectPow10 = false;
     /** can E-notation start. */
-    private boolean expectE = false;
+    private  boolean expectE = false;
     /** can exponent sign be here. */
-    private boolean expectESign = false;
+    private  boolean expectESign = false;
     /** Literal value in parsing. */
-    private Object literal = null;
+    private  Object literal = null;
     /** Type of literal value. */
-    private Class<?> literalType = null;
+    private  Class<?> literalType = null;
     /** exponent sign. */
-    private char eSign = ' ';
+    private  char eSign = ' ';
     /** Radix, default is decimal. */
-    private int radix = RADIX_DEC;
+    private  int radix = Compiler.RADIX_DEC;
     /** the token. */
-    private String token = null;
-    /** the identifier. */
-    private String ident = null;
+    private  String token = null;
+    /** default Observer of token production. */
+    private TokenProducer defaultTokenProducer = new TokenProducer() {
+      @Override
+      public void produceToken(final int tkStart0,
+          final int tkEnd0, final Object token0) {
+      }
+    };
+
+
+    /** Observer of token production. */
+    private TokenProducer tokenProducer = defaultTokenProducer;
+
+    /** The identifier. */
+    private  String ident = null;
     /** Index of current character. */
     private int chx = -1;
-    /** the current character. */
-    private char ch = SimpleExpressionLanguage.CHAR_NIL;
-    /** the parse expression. */
-    private String expression = null;
+    /** The current character. */
+    private  char ch = SimpleExpressionLanguage.CHAR_NIL;
+    /** The parse expression. */
+    private  String expression = null;
     /** Current symbol. */
-    private Compiler.SymbolTrei symbolTrial;
+    private  SymbolTrei symbolTrial;
     /** token parsing. */
-    private boolean parse;
+    private  boolean parse;
     /** Index of the {@link #mark()} position. */
-    private int markX = -1;
+    private  int markX = -1;
     /** Column at {@link #mark()} position. */
-    private int markColumn;
+    private  int markColumn;
     /** line number at {@link #mark()} position. */
-    private int markLine;
+    private  int markLine;
     /**
      * The line property.
      */
-    private int line = 1;
+    private  int line = 1;
     // enum SyntaxCondition{
     // ZERO_PLUS, ONE_PLUS, ITEM, GROUP, ONE_OF, ALL_OF
     // };
@@ -627,7 +650,7 @@ class Compiler {
     /**
      * The column property.
      */
-    private int column = 0;
+    private  int column = 0;
     // enum SyntaxCondition{
     // ZERO_PLUS, ONE_PLUS, ITEM, GROUP, ONE_OF, ALL_OF
     // };
@@ -664,22 +687,24 @@ class Compiler {
     /**
      * The crBefore property.
      */
-    private boolean crBefore = false;
+    private  boolean crBefore = false;
     /** Numeric literal type suffix. */
-    private boolean expectSuffix;
+    private  boolean expectSuffix;
     /** operator precedence control operation ordering.*/
-    private Stack<Object[]> priorities = new Stack<>();
+    private  Stack<Object[]> priorities = new Stack<>();
     /** the plan under construction. */
     private ArrayList<AbstractFetch> plan = null;
     /** the in fraction number state. */
     private boolean inFrac;
-    /**
+
+     /**
      * The expression for parsing.
      * @return the expression being parsed.
      */
     protected String getExpression() {
       return expression;
     }
+
     /**
      * Set expression for parsing.
      * @param expression0 the new expression for parsing.
@@ -687,6 +712,7 @@ class Compiler {
     protected void setExpression(final String expression0) {
       this.expression = expression0;
     }
+
     /**
      * token position.
      * @return index to start of token.
@@ -694,6 +720,7 @@ class Compiler {
     protected int getTkStart() {
       return tkStart;
     }
+
     /**
      * the pending operations for the plan.
      *  @return an array of {@Link Ops} that represent the order
@@ -702,6 +729,7 @@ class Compiler {
     protected Stack<Object[]> getPriorities() {
       return priorities;
     }
+
     /**
      * Set pending operations for the plan.
      *  @param  priorities0 an array of {@Link Ops} that represent the order
@@ -710,6 +738,7 @@ class Compiler {
     protected void setPriorities(final Stack<Object[]> priorities0) {
       this.priorities = priorities0;
     }
+
     /**
      * The plan.
      * @return the plan
@@ -717,6 +746,7 @@ class Compiler {
     protected ArrayList<AbstractFetch> getPlan() {
       return plan;
     }
+
     /**
      * Set the execution plan.
      * @param plan0 the new plan.
@@ -732,6 +762,7 @@ class Compiler {
     protected void setTkStart(final int tkStart0) {
       this.tkStart = tkStart0;
     }
+
     /**
      * is parsing an identifier.
      * @return true if parsing an identifier.
@@ -739,6 +770,7 @@ class Compiler {
     protected boolean isInIdent() {
       return inIdent;
     }
+
     /**
      * set is parsing an identifier.
      * @param inIdent0 the new inIdent state.
@@ -746,12 +778,14 @@ class Compiler {
     protected void setInIdent(final boolean inIdent0) {
       this.inIdent = inIdent0;
     }
+
     /**
      * is parsing a symbol.
      * @return true if parsing a symbol.
      */
     protected boolean isInSymbol() {
       return inSymbol;
+
     }
     /**
      * Set is parsing a symbol.
@@ -760,6 +794,7 @@ class Compiler {
     protected void setInSymbol(final boolean inSymbol0) {
       this.inSymbol = inSymbol0;
     }
+
     /**
      * is parsing a line comment.
      * @return true if parsing a line comment.
@@ -767,6 +802,7 @@ class Compiler {
     protected boolean isInLineComment() {
       return inLineComment;
     }
+
     /**
      * set is parsing a line comment.
      * @param inLineComment0 the new inLineComment start.
@@ -774,6 +810,7 @@ class Compiler {
     protected void setInLineComment(final boolean inLineComment0) {
       this.inLineComment = inLineComment0;
     }
+
     /**
      * a slash was the previous character.
      * @return true if slash was the previous character.
@@ -788,6 +825,7 @@ class Compiler {
     protected void setSlashBefore(final boolean slashBefore0) {
       this.slashBefore = slashBefore0;
     }
+
     /**
      * parsing a block comment.
      * @return true if parsing a block comment.
@@ -795,6 +833,7 @@ class Compiler {
     protected boolean isInLongComment() {
       return inLongComment;
     }
+
     /**
      * set parsing a block comment.
      * @param inLongComment0 The new inLongComment state.
@@ -802,6 +841,7 @@ class Compiler {
     protected void setInLongComment(final boolean inLongComment0) {
       this.inLongComment = inLongComment0;
     }
+
     /**
      * is star previous character.
      * @return true if star was previous character.
@@ -809,6 +849,7 @@ class Compiler {
     protected boolean isStarBefore() {
       return starBefore;
     }
+
     /**
      * set is star previous character.
      * @param starBefore0 the new starBefore state
@@ -816,6 +857,7 @@ class Compiler {
     protected void setStarBefore(final boolean starBefore0) {
       this.starBefore = starBefore0;
     }
+
     /**
      * is in token parsing.
      * @return true if in token parsing.
@@ -823,6 +865,7 @@ class Compiler {
     protected boolean isInToken() {
       return inToken;
     }
+
     /**
      * set in token parsing.
      * @param inToken0 the new inToken state.
@@ -830,6 +873,7 @@ class Compiler {
     protected void setInToken(final boolean inToken0) {
       this.inToken = inToken0;
     }
+
     /**
      * is in number.
      * @return is in number.
@@ -837,6 +881,7 @@ class Compiler {
     protected boolean isInNumber() {
       return inNumber;
     }
+
     /**
      * Set is in number.
      * @param inNumber0 the new is in Number state.
@@ -844,6 +889,7 @@ class Compiler {
     protected void setInNumber(final boolean inNumber0) {
       this.inNumber = inNumber0;
     }
+
     /**
      * is in fraction.
      * @return is in fraction.
@@ -851,6 +897,7 @@ class Compiler {
     protected boolean isInFraction() {
       return inFraction;
     }
+
     /**
      * Set in fraction.
      * @param inFraction0 the new in fraction state.
@@ -858,6 +905,7 @@ class Compiler {
     protected void setInFraction(final boolean inFraction0) {
       this.inFraction = inFraction0;
     }
+
     /**
      * expect radix.
      * @return true if expect radix specifier.
@@ -865,6 +913,7 @@ class Compiler {
     protected boolean isExpectRadix() {
       return expectRadix;
     }
+
     /**
      * Set Expect radix.
      * @param expectRadix0 the new expect radix state.
@@ -872,6 +921,7 @@ class Compiler {
     protected void setExpectRadix(final boolean expectRadix0) {
       this.expectRadix = expectRadix0;
     }
+
     /**
      * is radix before.
      * @return true if radix before.
@@ -893,6 +943,7 @@ class Compiler {
     protected boolean isInMantissa() {
       return inMantissa;
     }
+
     /**
      * Set in mantissa.
      * @param inMantissa0 the new in mantissa state
@@ -900,6 +951,7 @@ class Compiler {
     protected void setInMantissa(final boolean inMantissa0) {
       this.inMantissa = inMantissa0;
     }
+
     /**
      * in pow10.
      * @return true if in pow10.
@@ -907,6 +959,7 @@ class Compiler {
     protected boolean isInPow10() {
       return inPow10;
     }
+
     /**
      * Set in pow10.
      * @param pInPow10 the new in Pow10 state.
@@ -914,6 +967,7 @@ class Compiler {
     protected void setInPow10(final boolean pInPow10) {
       this.inPow10 = pInPow10;
     }
+
     /**
      * is expect pow10.
      * @return is expect pow10.
@@ -921,6 +975,7 @@ class Compiler {
     protected boolean isExpectPow10() {
       return expectPow10;
     }
+
     /**
      * Set expect pow10.
      * @param pExpectPow10 the new expect pow10 state.
@@ -928,6 +983,7 @@ class Compiler {
     protected void setExpectPow10(final boolean pExpectPow10) {
       this.expectPow10 = pExpectPow10;
     }
+
     /**
      * is expect E.
      * @return true if expect E.
@@ -935,6 +991,7 @@ class Compiler {
     protected boolean isExpectE() {
       return expectE;
     }
+
     /**
      * Set expect E.
      * @param expectE0 the new Expect E state.
@@ -942,6 +999,7 @@ class Compiler {
     protected void setExpectE(final boolean expectE0) {
       this.expectE = expectE0;
     }
+
     /**
      * is expect E Sign.
      * @return true if expect E Sign.
@@ -949,6 +1007,7 @@ class Compiler {
     protected boolean isExpectESign() {
       return expectESign;
     }
+
     /**
      * Set the expectESign state.
      * @param expectESign0 the new expectESign state.
@@ -956,6 +1015,7 @@ class Compiler {
     protected void setExpectESign(final boolean expectESign0) {
       this.expectESign = expectESign0;
     }
+
     /**
      * The literal.
      * @return the literal.
@@ -963,6 +1023,7 @@ class Compiler {
     protected Object getLiteral() {
       return literal;
     }
+
     /**
      * Set the Literal.
      * @param literal0 the new literal.
@@ -970,6 +1031,7 @@ class Compiler {
     protected void setLiteral(final Object literal0) {
       this.literal = literal0;
     }
+
     /**
      * The current Literal type.
      * @return the current literal type.
@@ -977,6 +1039,7 @@ class Compiler {
     protected Class<?> getLiteralType() {
       return literalType;
     }
+
     /**
      * Set the literal's type.
      * @param literalType0 the new type of the literal.
@@ -984,6 +1047,7 @@ class Compiler {
     protected void setLiteralType(final Class<?> literalType0) {
       this.literalType = literalType0;
     }
+
     /**
      * the eSign.
      * @return the exponent sign.
@@ -991,6 +1055,7 @@ class Compiler {
     protected char geteSign() {
       return eSign;
     }
+
     /**
      * Set the eSign.
      * @param eSign0 the eSign.
@@ -998,6 +1063,7 @@ class Compiler {
     protected void seteSign(final char eSign0) {
       this.eSign = eSign0;
     }
+
     /**
      * The radix.
      * @return the radix.
@@ -1005,6 +1071,7 @@ class Compiler {
     protected int getRadix() {
       return radix;
     }
+
     /**
      * Set the radix.
      * @param radix0 the new radix
@@ -1012,6 +1079,7 @@ class Compiler {
     protected void setRadix(final int radix0) {
       this.radix = radix0;
     }
+
     /**
      * the token.
      * @return the token.
@@ -1019,6 +1087,7 @@ class Compiler {
     protected String getToken() {
       return token;
     }
+
     /**
      * Set the token.
      * @param token0 the new token.
@@ -1026,13 +1095,15 @@ class Compiler {
     protected void setToken(final String token0) {
       this.token = token0;
     }
+
     /**
-     * the ident.
-     * @return the ident.
+     * The ident property - the name of an identifier.
+     * @return The ident.
      */
     protected String getIdent() {
       return ident;
     }
+
     /**
      * Set ident.
      * @param ident0 the new ident.
@@ -1040,13 +1111,15 @@ class Compiler {
     protected void setIdent(final String ident0) {
       this.ident = ident0;
     }
+
     /**
-     * the current character index.
+     * The current character index.
      * @return the current character index.
      */
     protected int getChx() {
       return chx;
     }
+
     /**
      * Set the new character index.
      * @param chx0 the new character index.
@@ -1054,12 +1127,14 @@ class Compiler {
     protected void setChx(final int chx0) {
       this.chx = chx0;
     }
+
     /** the current character.
      * @return The current character
      */
     protected char getCh() {
       return ch;
     }
+
     /**
      * Set current character.
      * @param ch0 the new current character.
@@ -1067,6 +1142,7 @@ class Compiler {
     protected void setCh(final char ch0) {
       this.ch = ch0;
     }
+
     /**
      * parse whitespace character.
      * @return true if current character is white space.
@@ -1080,6 +1156,7 @@ class Compiler {
       }
       return false;
     }
+
     /**
      * Parse an in-line comment.
      * @return true if parsing an in-line comment content.
@@ -1095,6 +1172,7 @@ class Compiler {
       }
       return false;
     }
+
     /**
      * Parse a long comment.
      * @return true if parsing a long comment content.
@@ -1136,6 +1214,7 @@ class Compiler {
       }
       return false;
     }
+
     /**
      * Parse an identifier.
      * @return true if the current character should be ignored.
@@ -1147,7 +1226,7 @@ class Compiler {
           if ((countSymbolMatches(tk) == 1)
             || (findExactTokenIndex(tk) == -1)) {
               ident = tk;
-              symbolTrial = SYMBOL_ID;
+              symbolTrial = Compiler.SYMBOL_ID;
           } else {
               token = tk;
           }
@@ -1162,6 +1241,7 @@ class Compiler {
       }
       return false;
     }
+
     /**
      * Parse number formats.
      * @throws ExpressionFailedException if improper numeric input.
@@ -1245,7 +1325,7 @@ class Compiler {
             expectESign = true;
           }
         } else if (expectRadix) {
-          // TODO if radix symbol appears, handle it here, otherwise, set
+          // Test for appearance of radix symbol, handle it here, otherwise, set
           // <code>relex</code> to handle down-stream pattern.
           expectRadix = false;
           radixBefore = true;
@@ -1254,6 +1334,7 @@ class Compiler {
           case '.':
             inFrac = true;
             break;
+          // Scientific notation
           case 'E':
             expectESign = true;
             radixBefore = false;
@@ -1261,13 +1342,13 @@ class Compiler {
             eSign = '+';
             break;
           case 'X':
-            radix = RADIX_HEX;
+            radix = Compiler.RADIX_HEX;
             break;
           case 'O':
-            radix = RADIX_OCT;
+            radix = Compiler.RADIX_OCT;
             break;
           case 'B':
-            radix = RADIX_BIN;
+            radix = Compiler.RADIX_BIN;
             break;
           default:
             radixBefore = false;
@@ -1275,6 +1356,7 @@ class Compiler {
           }
         } else if (inMantissa) {
           if (isDigit(ch, radix)) {
+            // by default number are integral, not real.
             relex = false;
           } else if (Character.toUpperCase(ch) == 'E') {
             expectESign = true;
@@ -1287,13 +1369,13 @@ class Compiler {
         } else if (inNumber) {
           if (Character.isDigit(ch)) {
             if ('0' == ch) {
-              radix = RADIX_OCT;
+              radix = Compiler.RADIX_OCT;
             }
             inMantissa = true;
             expectRadix = true;
             tkStart = chx;
           } else if ('#' == ch) {
-            radix = RADIX_HEX;
+            radix = Compiler.RADIX_HEX;
             inMantissa = true;
           } else if ('.' == ch) {
             inFrac = true;
@@ -1304,6 +1386,7 @@ class Compiler {
         }
       } while (relex);
     }
+
     /**
      * Push operation onto operation stack export higher priority operations on
      * stack to execution plan.
@@ -1329,7 +1412,7 @@ class Compiler {
     /**
      * Flush the priorities queue.
      */
-    private void prioritize() {
+    void prioritize() {
       while (!priorities.isEmpty()) {
           emit(priorities.pop());
       }
@@ -1342,9 +1425,9 @@ class Compiler {
      */
     protected int charToRadix(final char ch2) {
       switch (Character.toUpperCase(ch2)) {
-      case 'B': return RADIX_BIN;
-      case 'O': return RADIX_OCT;
-      case 'X': return RADIX_HEX;
+      case 'B': return Compiler.RADIX_BIN;
+      case 'O': return Compiler.RADIX_OCT;
+      case 'X': return Compiler.RADIX_HEX;
       default: return 0;
       }
     }
@@ -1400,6 +1483,7 @@ class Compiler {
         }
       }
     }
+
     /** set the parsing state.
      * @param b true if commencing parsing.
      */
@@ -1413,10 +1497,11 @@ class Compiler {
         radixBefore = false; slashBefore = false;
       }
     }
+
     /**
      * Start look-ahead reading.
      */
-    private void mark() {
+    protected void mark() {
       if (markX != -1) {
         throw new IllegalStateException("Mark already active.");
       }
@@ -1456,7 +1541,7 @@ class Compiler {
      * @param aCh
      *          the current character.
      */
-    private void updateLocus(final char aCh) {
+    protected void updateLocus(final char aCh) {
       if (!crBefore) {
         if (aCh == '\r') {
           line++;
@@ -1483,35 +1568,38 @@ class Compiler {
     void onToken() throws ExpressionFailedException {
       if (tkStart == -1) {
         tkStart = chx;
-        inToken = true;
-        if (Character.isJavaIdentifierStart(ch)) {
-          inIdent = true;
-        } else if (inNumber || Character.isDigit(ch)) {
-          onNumber();
-        } else {
-          inSymbol = true;
-          // TODO analyse first symbol character.
+      }
+      ch = getChar(expression, chx);
+      inToken = true;
+      if (Character.isJavaIdentifierStart(ch)) {
+        inIdent = true;
+      } else if (inNumber || Character.isDigit(ch)) {
+        onNumber();
+      } else {
+        inSymbol = true;
+      }
+    }
+
+    /**
+     * Converts an array of Objects into an abstractFetch sequence then
+     * appends the sequence to the execution plan.
+     * @param op an operation.
+     */
+    void emit(final Object[] op) {
+      if (op != null) {
+        Ops ops = (Ops) op[0];
+        AbstractFetch[] af = ops.encode(op);
+        for (AbstractFetch f:af) {
+          plan.add(f);
         }
       }
     }
 
     /**
-     *
-     * @param op an operation.
-     */
-    void emit(final Object[] op) {
-      Ops ops = (Ops) op[0];
-      AbstractFetch[] af = ops.encode(op);
-      for (AbstractFetch f:af) {
-        plan.add(f);
-      }
-    }
-
-    /**
-     * parse the current token.
+     * Parse the current token.
      */
     void parse() {
-      produceToken(tkStart, chx, token);
+      Compiler.this.produceToken(this, tkStart, chx, token);
 
     }
     /**
@@ -1524,16 +1612,13 @@ class Compiler {
      * @return true if the character represents a digit in given radix.
      */
     private boolean isDigit(final char ch0, final int radix0) {
-      int n = ch0 - '0';
-      if (n > Compiler.RADIX_DEC) {
-        n = Character.toUpperCase(ch0) - 'A' + Compiler.RADIX_DEC;
-      }
-      return n >= 0 && n < radix0;
+      int d = Character.digit(ch0, radix0);
+      return d != -1;
     }
 
     /**
      * Get the parse state.
-     * @return true if a complete token has been anaylsed.
+     * @return true if a complete token has been analysed.
      */
     protected boolean isParse() {
       return parse;
@@ -1545,7 +1630,35 @@ class Compiler {
     protected SymbolTrei getSymbolTrial() {
       return symbolTrial;
     }
-  }
+
+    /**
+     * @param tkStart0
+     * @param tkEnd0
+     * @param token0
+     */
+    public void produceToken(final int tkStart0, final int tkEnd0,
+        final Object token0) {
+      tokenProducer.produceToken(tkStart0, tkEnd0, token0);
+    }
+
+    /**
+     * Get the receiver of produce token events.
+     * @return a receiver of produce token events.
+     */
+    protected TokenProducer getTokenProducer() {
+      final TokenProducer tp = tokenProducer;
+      return tp == defaultTokenProducer ? null : tp;
+    }
+
+    /**
+     * @param tp
+     */
+    protected void setTokenProducer(final TokenProducer tp) {
+      this.tokenProducer = tp == null ? defaultTokenProducer : tp;
+    }
+
+  } // CompileState
+
   /**
    * Map symbol characters to tokens in a trei.
    * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
@@ -1562,10 +1675,17 @@ class Compiler {
     SymbolTrei() {
       token = null;
     }
-    private SymbolTrei(final TokenType tt) {
+
+    /**
+     * Instantiate a token symbol trei.
+     * @param tt token invocation o symbol
+     */
+    SymbolTrei(final TokenType tt) {
       token = tt;
     }
-    /** The token if this character completes the symbol.
+
+    /**
+     *  The token if this character completes the symbol.
      *
      * @return Token for symbol if any, otherwise <code>null</code>.
      */
@@ -1590,16 +1710,18 @@ class Compiler {
       return token != null;
     }
 
-  }
+  } //SymbolTrei
+
+
   /**
    * Compile an expression into an execution plan.
    * @param expression
    *          the expression to compile.
    * @param model
    *          the model providing input values to the expression.
-   * @return an execution plan
+   * @return an execution plan.
    * @throws ExpressionFailedException
-   *           if fail
+   *           if fail.
    */
   AbstractFetch[] compile(final String expression,
       final TemplateEngineModel model)
@@ -1636,7 +1758,7 @@ class Compiler {
       } else if (cs.parse) {
         cs.parse();
       } else {
-        throw new IllegalStateException("no recognised pattern near line:"
+        throw new IllegalStateException("Unrecognised pattern near line:"
           + cs.line + ", column: " + cs.column);
       }
     }
@@ -1678,7 +1800,7 @@ class Compiler {
         if (contPtns.isEmpty()) {
           if (probableTokens.size() >= 1) {
             TokenPattern pt = probableTokens.get(0);
-            produceToken(cs.tkStart, cs.chx, pt.getToken(models.get(pt)));
+            cs.produceToken(cs.tkStart, cs.chx, pt.getToken(models.get(pt)));
             models.clear();
           }
         }
@@ -1703,8 +1825,10 @@ class Compiler {
   }
 
   /**
-   * A token has been observed on the stream it will now analysed in context
-   * of the syntax.
+   * A token has been observed on the input stream, it will now be sent to
+   * the output. context of the syntax.
+   * @param cs
+   *          the compile state.
    * @param tkStart
    *          start of token.
    * @param tkEnd
@@ -1712,13 +1836,10 @@ class Compiler {
    * @param token
    *          the token.
    */
-  private void produceToken(final int tkStart, final int tkEnd,
-      final Object token) {
-    // TODO Auto-generated method stub
-
+  private void produceToken(final CompileState cs,
+      final int tkStart, final int tkEnd, final Object token) {
+         cs.tokenProducer.produceToken(tkStart, tkEnd, token);
   }
-
-
 
   /**
    * find token ordinal value.
@@ -1775,5 +1896,7 @@ class Compiler {
   }
 
 
-}
+} // Compiler
+
+
 
