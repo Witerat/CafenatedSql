@@ -12,6 +12,7 @@ import org.junit.Test;
 import net.witerat.cafenatedsql.api.driver.template.ExpressionFailedException;
 import net.witerat.cafenatedsql.spi.driver.template.simple.Compiler.CompileState;
 import net.witerat.cafenatedsql.spi.driver.template.simple.Processor.AbstractFetch;
+import net.witerat.cafenatedsql.spi.driver.template.simple.Processor.LiteralFetch;
 
 public class CompileStateTest  {
   CompileState fixture ;
@@ -23,7 +24,13 @@ public class CompileStateTest  {
   
   @Test
   public void testEmit() {
-    fail("Test not yet implemented");
+    final Object[] ZERO={Ops.LITERAL,Integer.valueOf(0), Integer.class};
+    final AbstractFetch[] expected = {new LiteralFetch(Integer.valueOf(0), Integer.class)};
+    fixture.setPlan(new ArrayList<AbstractFetch>());
+    fixture.emit(ZERO);
+    Object[] result=fixture.getPlan().toArray();
+    int hc=result[0].hashCode();
+    assertArrayEquals(expected, result);
   }
 
   @Test
@@ -377,7 +384,19 @@ public class CompileStateTest  {
 
   @Test
   public void testOnNumber() {
-    fail("Test not yet implemented");
+    fixture.setExpression("token\r");
+    fixture.setChx(0);
+    Object fault = null;
+    try {
+      fixture.onNumber();
+    } catch (ExpressionFailedException e) {
+      fault = e;
+    }
+    assertNull(fault);
+    assertTrue(fixture.isInToken());
+    assertFalse(fixture.isInNumber());
+    assertFalse(fixture.isInSymbol());
+    
   }
 
   @Test
@@ -512,7 +531,20 @@ public class CompileStateTest  {
 
   @Test
   public void testOnToken() {
-    fail("Test not yet implemented");
+    fixture.setExpression("token\r");
+    fixture.setChx(0);
+    Object fault = null;
+    try {
+      fixture.onToken();
+    } catch (ExpressionFailedException e) {
+      fault = e;
+    }
+    assertNull(fault);
+    assertTrue(fixture.isInToken());
+    assertFalse(fixture.isInNumber());
+    assertFalse(fixture.isInSymbol());
+    
+    //fail("Not yet implemented");
   }
 
   @Test
@@ -552,7 +584,11 @@ public class CompileStateTest  {
 
   @Test
   public void testParse() {
-    fail("Not yet implemented");
+    fixture.setExpression("token\r");
+    fixture.setChx(0);
+    fixture.parse();
+    assertEquals("token", fixture.getToken());
+    //fail("Not yet implemented");
   }
 
   @Test
