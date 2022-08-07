@@ -9,11 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The Class TypeMapper.
+ * The TypeMapper class.
  */
 public class TypeMapper {
 
-  /** The types. */
+  /** The name type mapping. */
   private Map<String, Class<?>> types = new HashMap<>();
 
   /** The default types. */
@@ -62,18 +62,20 @@ public class TypeMapper {
   }
 
   /**
-   * Gets the type.
+   * Gets the type mapped to the specified name. Uses local mapping, then
+   *  parent scope, then class loader to determine which <code>Class</code>
+   *  object to reurnt.
    *
    * @param typeName
-   *          the type name
-   * @return the type
+   *          A type identifier.
+   * @return the requested type.
    */
   public Class<?> getType(final String typeName) {
     if (types.containsKey(typeName)) {
       return types.get(typeName);
     }
     if (defaultTypes.containsKey(typeName)) {
-      return defaultTypes.get(typeName);
+      return getDefault().getType(typeName);
     }
     try {
       return Class.forName(typeName);
@@ -97,11 +99,30 @@ public class TypeMapper {
    * Register type.
    *
    * @param t
-   *          the t
+   *          A type identifier
    * @param c
-   *          the c
+   *          A class object representing type..
+   * @throws IllegalAccessException
+   *            Attempt to modify default types.
    */
-  public void registerType(final String t, final Class<?> c) {
+  public void registerType(final String t, final Class<?> c) throws IllegalAccessException {
+    if (this == defaultMapper) {
+      throw new IllegalAccessException("Default mapper cannot be moidifed");
+    }
     types.put(t, c);
+  }
+  /**
+   * Remove type.
+   *
+   * @param t
+   *          A type identifier
+   * @throws IllegalAccessException
+   *            Attempt to modify default types.
+   */
+  public void registerType(final String t) throws IllegalAccessException {
+    if (this == defaultMapper) {
+      throw new IllegalAccessException("Default mapper cannot be moidifed");
+    }
+    types.remove(t);
   }
 }
