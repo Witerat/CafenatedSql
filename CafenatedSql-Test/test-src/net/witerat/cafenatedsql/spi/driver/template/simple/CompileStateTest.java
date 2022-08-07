@@ -384,7 +384,7 @@ public class CompileStateTest  {
 
   @Test
   public void testOnNumber() {
-    fixture.setExpression("token\r");
+    fixture.setExpression("0\r");
     fixture.setChx(0);
     Object fault = null;
     try {
