@@ -54,7 +54,7 @@ public class VelocityTemplateEngine implements TemplateEngine {
    * templating.
    *
    * @param name
-   *          The name of the fixtre to be removed.
+   *          The name of the fixture to be removed.
    */
   public void removeFixture(final String name) {
     fixtures.remove(name);
