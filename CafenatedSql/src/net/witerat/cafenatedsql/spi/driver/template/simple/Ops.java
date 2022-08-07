@@ -133,7 +133,7 @@ enum Ops {
   private final int nPriority;
 
   /**
-   * Get the precedence of the operation.
+   * Get the precedence value of this operation.
    * @return this operation's precedence.
    */
   int precedence() {
