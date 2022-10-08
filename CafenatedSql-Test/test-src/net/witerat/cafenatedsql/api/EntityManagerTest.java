@@ -12,7 +12,8 @@ public class EntityManagerTest {
   @Test
   public void testRefactor() {
     // no-op - target method is abstract.
-    Logger.getAnonymousLogger().log(Level.INFO, "targt method is abstract");
+    Logger.getLogger(getClass().getName()).log(Level.INFO, "target method is abstract");
+    
   }
 
   @Test 
