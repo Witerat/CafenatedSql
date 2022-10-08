@@ -15,7 +15,7 @@ import net.witerat.cafenatedsql.spi.driver.Driver;
 import net.witerat.cafenatedsql.spi.driver.DriverLocator;
 
 /**
- * The class JavaDBConnectionType.
+ * The JavaDBConnectionType class.
  */
 public final class JavaDBConnectionType
   implements ConnectionType, DriverLocator {
@@ -48,12 +48,10 @@ public final class JavaDBConnectionType
     private HashMap<String, ParameterType> parameters;
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * net.witerat.cafenatedsql.api.driver.UrlDef#add(net.witerat.cafenatedsql.
-     * spi.driver.Content)
+    /**
+     * {@inheritDoc}
+     * @see net.witerat.cafenatedsql.api.driver.UrlDef
+     *  #add(net.witerat.cafenatedsql.spi.driver.Content)
      */
     @Override
     public void add(final Content c) {
@@ -63,12 +61,10 @@ public final class JavaDBConnectionType
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * net.witerat.cafenatedsql.api.driver.ParameterizedRequest#add(net.witerat.
-     * cafenatedsql.api.driver.ParameterType)
+    /**
+     * {@inheritDoc}
+     * @see net.witerat.cafenatedsql.api.driver.ParameterizedRequest
+     *   #add(net.witerat.cafenatedsql.api.driver.ParameterType)
      */
     @Override
     public void add(final ParameterType p) {
@@ -78,9 +74,8 @@ public final class JavaDBConnectionType
       parameters.put(p.getName(), p);
     }
 
-    /*
-     * (non-Javadoc)
-     *
+    /**
+     * {@inheritDoc}
      * @see net.witerat.cafenatedsql.api.driver.UrlDef#getParameters()
      */
     @Override
@@ -88,11 +83,10 @@ public final class JavaDBConnectionType
       return parameters.values();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see net.witerat.cafenatedsql.spi.driver.Content#getText(net.witerat.
-     * cafenatedsql.api.driver.template.TemplateEngineModel)
+    /**
+     * {@inheritDoc}
+     * @see net.witerat.cafenatedsql.spi.driver.Content#getText(
+     *     net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel)
      */
     @Override
     public String getText(final TemplateEngineModel model) {
@@ -141,11 +135,10 @@ public final class JavaDBConnectionType
     }
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see net.witerat.cafenatedsql.api.driver.UrlDef#setParameter(net.witerat.
-     * cafenatedsql.api.driver.ParameterType)
+    /**
+     * {@inheritDoc}
+     * @see net.witerat.cafenatedsql.api.driver.UrlDef
+     *   #setParameter(net.witerat.cafenatedsql.api.driver.ParameterType)
      */
     @Override
     public void setParameter(final ParameterType type) {
@@ -185,7 +178,7 @@ public final class JavaDBConnectionType
   private DialectSelector dialectSelector;
 
   /**
-   * Instantiates a new java DB connection type.
+   * Instantiates a new Java DB connection type.
    *
    * @param name0
    *          the name
@@ -205,9 +198,8 @@ public final class JavaDBConnectionType
     this.driver = driver0;
   }
 
-  /*
-   * (non-Javadoc)
-   *
+  /**
+   * {@inheritDoc}
    * @see net.witerat.cafenatedsql.api.driver.ConnectionType#getDescription()
    */
   @Override
@@ -215,11 +207,10 @@ public final class JavaDBConnectionType
     return description;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.ConnectionType#getDialectSelector()
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.api.driver.ConnectionType
+   *   #getDialectSelector()
    */
   @Override
   public DialectSelector getDialectSelector() {
@@ -243,9 +234,8 @@ public final class JavaDBConnectionType
     return driverLocator;
   }
 
-  /*
-   * (non-Javadoc)
-   *
+  /**
+   * {@inheritDoc}
    * @see net.witerat.cafenatedsql.api.driver.ConnectionType#getName()
    */
   @Override
@@ -253,9 +243,8 @@ public final class JavaDBConnectionType
     return name;
   }
 
-  /*
-   * (non-Javadoc)
-   *
+  /**
+   * {@inheritDoc}
    * @see net.witerat.cafenatedsql.api.driver.ConnectionType#getUrlDef()
    */
   @Override
@@ -263,12 +252,10 @@ public final class JavaDBConnectionType
     return url;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.ConnectionType#setDialectSelector(net.
-   * witerat.cafenatedsql.spi.driver.DialectSelector)
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.api.driver.ConnectionType
+   *   #setDialectSelector(net.witerat.cafenatedsql.spi.driver.DialectSelector)
    */
   @Override
   public void setDialectSelector(final DialectSelector ds) {
@@ -284,12 +271,10 @@ public final class JavaDBConnectionType
     this.driverLocator = driverLoc0;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * net.witerat.cafenatedsql.api.driver.ConnectionType#setUrlDef(net.witerat.
-   * cafenatedsql.api.driver.UrlDef)
+  /**
+   * {@inheritDoc}
+   * @see net.witerat.cafenatedsql.api.driver.ConnectionType
+   *   #setUrlDef(net.witerat.cafenatedsql.api.driver.UrlDef)
    */
   @Override
   public void setUrlDef(final UrlDef url0) {
