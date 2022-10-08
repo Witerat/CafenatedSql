@@ -18,13 +18,13 @@ import net.witerat.cafenatedsql.api.mock.MockModelFactory;
 public class UseContentTest extends UseContent {
 
   private UseContent useContent;
-  private AbstractMacroLocator mockMacros;
+  private AbstractDefLocator mockMacros;
 
   @Before
   public void setUp(){
     useContent = new UseContent();
-    mockMacros = new AbstractMacroLocator() {
-      MacroTag mockMacro = new MacroTag() {
+    mockMacros = new AbstractDefLocator() {
+      DefTag mockDef = new DefTag() {
         
         @Override
         public AbstractContent getParent() {
@@ -48,19 +48,19 @@ public class UseContentTest extends UseContent {
         }
       };
       @Override
-      public MacroTag getMacro(String name) {
-        return mockMacro;
+      public DefTag getDef(String name) {
+        return mockDef;
       }
-      public Iterator<MacroTag> iterator(){
-        final MacroTag mt = mockMacro;
-        return new Iterator<MacroTag>(){
+      public Iterator<DefTag> iterator(){
+        final DefTag mt = mockDef;
+        return new Iterator<DefTag>(){
           boolean more = true;
           @Override
           public boolean hasNext() {
             return more;
           }
           @Override
-          public MacroTag next() {
+          public DefTag next() {
             more = false;
             return mt;
           }
