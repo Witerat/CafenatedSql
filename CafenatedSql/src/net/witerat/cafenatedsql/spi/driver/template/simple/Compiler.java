@@ -3,17 +3,20 @@ package net.witerat.cafenatedsql.spi.driver.template.simple;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+
 
 import net.witerat.cafenatedsql.api.driver.template.ExpressionFailedException;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 import net.witerat.cafenatedsql.spi.driver.template.simple.Processor.AbstractFetch;
 
 /**
- * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
+ * The Compiler class. Misnomer actually a lexical analyser with bells on.
  *
+ * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
  */
 class Compiler {
   /** Binary radix. */
@@ -96,340 +99,9 @@ class Compiler {
       };
 
   {
-    SyntaxFactory sf = new SyntaxFactory();
-    sf.define("white",
-        sf.zeroOrMore(
-            sf.anyOf(
-                sf.character(' '),
-                sf.character('\n'),
-                sf.character('\r'),
-                sf.character('\t'))));
-    sf.define("imports",
-        sf.oneOrMore(
-            sf.token(TokenType.KIMPORT),
-            sf.oneOrLess(
-                sf.ident(),
-                sf.zeroOrMore(
-                    sf.token(TokenType.DOT),
-                    sf.ident()))));
-    sf.define("typeDef",
-        sf.use("classDef"),
-        sf.use("enumDef"),
-        sf.use("interfaceDef"));
-    sf.define("enumDef",
-        sf.token(TokenType.ENUM),
-        sf.ident(),
-        sf.token(TokenType.OCURL),
-        sf.use("enumValue"),
-        sf.zeroOrMore(sf.sequence(
-            sf.token(TokenType.COMMA),
-            sf.use("enumValue")
-            )),
-        sf.token(TokenType.SEMI),
-        sf.zeroOrMore(sf.use("classMember")),
-        sf.token(TokenType.CCURL)
-    );
-    sf.define("enumValue",
-        sf.ident(),
-        sf.oneOrLess(sf.use("formalParams")),
-        sf.oneOrLess(sf.sequence(
-            sf.token(TokenType.OCURL),
-            sf.zeroOrMore(sf.use("classMember")),
-            sf.token(TokenType.CCURL)
-            )
-        )
-    );
-    sf.define("expression",
-        sf.use("comparison"),
-        sf.oneOrLess(
-            sf.allOf(sf.token(TokenType.LOG_AND), sf.use("comparison")),
-            sf.allOf(sf.token(TokenType.LOG_OR), sf.use("comparison"))));
-    sf.define("comparison",
-        sf.oneOf(
-            sf.allOf(sf.token(TokenType.LNOT), sf.use("relation")),
-            sf.allOf(
-                sf.use("relation"),
-                sf.oneOf(
-                    sf.token(TokenType.LT),
-                    sf.token(TokenType.LTE),
-                    sf.token(TokenType.NE),
-                    sf.token(TokenType.EQU),
-                    sf.token(TokenType.GT),
-                    sf.token(TokenType.GTE),
-                    sf.sequence(
-                        sf.token(TokenType.TERN1),
-                        sf.use("relation"),
-                        sf.token(TokenType.COLON))),
-                sf.use("relation"))));
-    sf.define("relation",
-        sf.use("product"),
-        sf.oneOrLess(
-            sf.sequence(
-                sf.token(TokenType.BIT_OR), sf.use("product")),
-            sf.sequence(
-                sf.token(TokenType.BIT_AND), sf.use("product"))));
-    sf.define("product",
-        sf.use("sum"),
-        sf.oneOrLess(
-            sf.sequence(sf.token(TokenType.MULTIPLY), sf.use("sum")),
-            sf.sequence(sf.token(TokenType.MODULUS), sf.use("sum")),
-            sf.sequence(sf.token(TokenType.DIVIDE), sf.use("sum"))));
-    sf.define("sum", sf.use("term"),
-        sf.oneOrLess(sf.allOf(sf.token(TokenType.PLUS), sf.use("term")),
-            sf.sequence(sf.token(TokenType.MINUS), sf.use("term"))));
-    sf.define("term",
-        sf.oneOrLess(
-            sf.token(TokenType.MINUS), sf.token(TokenType.BIT_NOT)),
-        sf.oneOrLess(
-            sf.sequence(sf.token(TokenType.PLUS), sf.use("term")),
-            sf.sequence(sf.token(TokenType.MINUS), sf.use("term"))));
-
-    sf.define("return",
-        sf.oneOrLess(sf.use("expression")));
-    sf.define("switch",
-        sf.token(TokenType.SWITCH),
-        sf.token(TokenType.OPAREN),
-        sf.use("expression"),
-        sf.token(TokenType.CPAREN),
-        sf.token(TokenType.OCURL),
-        sf.oneOrMore(
-            sf.sequence(
-                sf.token(TokenType.CASE),
-                sf.use("expression"),
-                sf.token(TokenType.COLON),
-                sf.zeroOrMore(sf.use("statement")),
-            sf.sequence(
-                sf.token(TokenType.BREAK),
-                sf.token(TokenType.SEMI)))));
-    sf.define("classDef",
-      sf.oneOrLess(
-          sf.token(TokenType.PUBLIC),
-          sf.token(TokenType.PROTECTED)),
-      sf.oneOf(
-          sf.token(TokenType.ABSTRACT),
-          sf.token(TokenType.FINAL)
-      ),
-      sf.token(TokenType.CLASS),
-      sf.ident(),
-      sf.oneOrLess(
-          sf.sequence(
-              sf.token(TokenType.EXTENDS),
-              sf.ident()
-          )
-      ),
-      sf.oneOrLess(
-          sf.sequence(
-              sf.token(TokenType.IMPLEMENTS),
-              sf.ident(),
-              sf.zeroOrMore(
-                  sf.sequence(
-                      sf.token(TokenType.COMMA),
-                      sf.ident()
-                  )
-              ),
-              sf.token(TokenType.OCURL),
-              sf.zeroOrMore(sf.use("classMember")),
-              sf.token(TokenType.CCURL)
-          )
-       )
-    );
-    sf.define("classMember",
-        sf.oneOrLess(
-            sf.token(TokenType.PUBLIC),
-            sf.token(TokenType.PROTECTED),
-            sf.token(TokenType.PRIVATE)
-        ),
-        sf.oneOf(
-            sf.sequence(
-                sf.zeroOrMore(
-                    sf.token(TokenType.STATIC),
-                    sf.token(TokenType.FINAL)
-                ),
-                sf.use("type"),
-                sf.ident(),
-                sf.oneOrLess(
-                    sf.sequence(
-                        sf.token(TokenType.ASSIGN),
-                        sf.use("expression"),
-                        sf.token(TokenType.SEMI)
-                    )
-                )
-            ),
-            sf.sequence(
-                sf.token(TokenType.ABSTRACT),
-                sf.use("type"),
-                sf.ident(),
-                sf.use("formalParams"),
-                sf.token(TokenType.SEMI)
-            ),
-            sf.sequence(
-                sf.zeroOrMore(
-                    sf.oneOf(
-                        sf.token(TokenType.STATIC),
-                        sf.token(TokenType.FINAL)
-                    )
-                ),
-                sf.use("type"),
-                sf.ident(),
-                sf.use("formalParams"),
-                sf.token(TokenType.OCURL),
-                sf.use("statement"),
-                sf.token(TokenType.CCURL)
-            )
-        )
-    );
-    sf.define("formalParams",
-        sf.token(TokenType.OPAREN),
-        sf.zeroOrMore(sf.sequence(
-            sf.use("type"),
-            sf.ident(),
-            sf.oneOrLess(sf.token(TokenType.ELIPSIS)),
-            sf.zeroOrMore(sf.sequence(
-                sf.token(TokenType.COMMA),
-                sf.use("type"),
-                sf.ident(),
-                sf.oneOrLess(sf.token(TokenType.ELIPSIS))
-            ))
-        )),
-        sf.token(TokenType.CPAREN)
-    );
-    sf.define("type",
-        sf.oneOf(
-            sf.ident(),
-            sf.token(TokenType.TBOOLEAN),
-            sf.token(TokenType.TBYTE),
-            sf.token(TokenType.TSHORT),
-            sf.token(TokenType.TINT),
-            sf.token(TokenType.TLONG),
-            sf.token(TokenType.TCHAR),
-            sf.token(TokenType.TFLOAT),
-            sf.token(TokenType.TDOUBLE),
-            sf.token(TokenType.TCHAR)
-        ),
-        sf.zeroOrMore(sf.sequence(
-            sf.token(TokenType.OSQUARE),
-            sf.token(TokenType.CSQUARE)
-        ))
-    );
-    sf.define("interfaceDef",
-        sf.token(TokenType.KINTERFACE),
-        sf.ident(),
-        sf.use("extendsClause"),
-        sf.token(TokenType.OCURL),
-        sf.zeroOrMore(
-            sf.use("interfaceMember")),
-        sf.token(TokenType.CCURL));
-    sf.define("extendsClause",
-        sf.zeroOrMore(
-            sf.sequence(
-                sf.token(TokenType.EXTENDS),
-                sf.ident(),
-                sf.zeroOrMore(
-                    sf.token(TokenType.COMMA),
-                    sf.ident()
-                )
-            )
-        )
-    );
-    sf.define("interfaceMember",
-        sf.use("type"),
-        sf.ident(),
-        sf.oneOf(
-            sf.sequence(
-                sf.token(TokenType.ASSIGN),
-                sf.use("expression"),
-                sf.token(TokenType.SEMI)
-            ),
-            sf.sequence(
-                sf.use("formalParams"),
-                sf.token(TokenType.SEMI)
-            )
-        )
-    );
-    sf.define("types",
-        sf.zeroOrMore(
-            sf.use("typeDef")));
-    sf.define("for",
-        sf.token(TokenType.FOR),
-        sf.token(TokenType.OPAREN),
-        sf.oneOf(
-            sf.sequence(
-                sf.ident(),
-                sf.token(TokenType.COLON),
-                sf.use("expression")
-            ),
-            sf.sequence(
-                sf.ident(),
-                sf.ident(),
-                sf.token(TokenType.COLON),
-                sf.use("expression")
-            ),
-            sf.sequence(
-                sf.oneOrLess(sf.ident()),
-                sf.ident(),
-                sf.token(TokenType.ASSIGN),
-                sf.use("expression"),
-                sf.zeroOrMore(sf.sequence(
-                      sf.token(TokenType.COMMA),
-                      sf.ident(),
-                      sf.oneOrLess(sf.sequence(
-                          sf.token(TokenType.ASSIGN),
-                          sf.use("expression")
-                      ))
-                )),
-                sf.token(TokenType.SEMI),
-                sf.use("expression"),
-                sf.zeroOrMore(sf.sequence(
-                    sf.token(TokenType.COMMA),
-                    sf.use("expression")
-                )),
-                sf.token(TokenType.SEMI),
-                sf.use("expression"),
-                sf.zeroOrMore(sf.sequence(
-                    sf.token(TokenType.COMMA),
-                    sf.use("expression")
-                )),
-                sf.token(TokenType.CPAREN)
-            )
-
-        ),
-        sf.use("statement")
-    );
-    sf.define("try",
-        sf.token(TokenType.TRY),
-        sf.use("statement"),
-        sf.zeroOrMore(sf.sequence(
-            sf.token(TokenType.CATCH),
-            sf.use("statement")
-        )),
-        sf.oneOrLess(sf.sequence(
-            sf.token(TokenType.FINALLY),
-            sf.use("statement")
-        ))
-        );
-    sf.define("statement",
-        sf.oneOf(
-            sf.use("expression"),
-            sf.use("return"),
-            sf.use("switch"),
-            sf.use("for"),
-            sf.use("try"),
-            sf.sequence(
-                sf.token(TokenType.OCURL),
-                sf.use("statements"),
-                sf.token(TokenType.CCURL)
-            )
-        )
-    );
-    sf.define("statements",
-        sf.zeroOrMore(
-            sf.use("statement")));
-    sf.define("cafenated",
-        sf.use("imports"),
-        sf.use("types"),
-        sf.use("statements"));
-    sf.validate();
+    new SimpleSyntaxFactory();
   }
+
 
   // enum SyntaxCondition{
   // ZERO_PLUS, ONE_PLUS, ITEM, GROUP, ONE_OF, ALL_OF
@@ -465,9 +137,9 @@ class Compiler {
   // ;
 
   /**
+   * The TokenPattern class.
    *
    * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
-   *
    */
   abstract class TokenPattern {
     /**
@@ -516,26 +188,189 @@ class Compiler {
   }
 
   /**
-   * Process token event. push to a queue or compare with graph node.
-   * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
+   * The CompileState class.
    *
-   */
-   interface TokenProducer {
-
-    /**
-     * @param tkStart
-     * @param tkEnd
-     * @param token
-     */
-    void produceToken(int tkStart, int tkEnd, Object token);
-
-  }
-
-  /**
    * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
-   *
    */
   class CompileState {
+
+    /**
+     * The SimpleTokenProducer class.
+     *
+     * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
+     */
+    public class SimpleTokenProducer implements TokenProducer {
+
+      /**  The consumers listening to this producer. This will be
+       *  <code>null</code> of no consumers are registered */
+      private TokenConsumer[] consumers = null;
+
+      /**  The actual number of consumers. */
+      private int nConsumers = 0;
+
+      /**  The alpha value for Fibonacci sequence.
+       *   values are computed as:
+       *   <code>B<sub>(<i>n</i>+1)</sub>=a+b;</code>
+       *   and
+       *   <code>A<sub>(<i>n</i>-1)</sub>=b-a</code>
+       */
+      private int alpha = 0;
+
+      /**  The beta value for Fibonacci computing sequence values.
+       * @see #alpha */
+      private int beta = 1;
+
+      /**
+       * {@inheritDoc}
+       * @see TokenProducer#produceToken(int, int, java.lang.Object)
+       */
+      @Override
+      public void produceToken(final int tkStart0,
+          final int tkEnd0, final Object token0) {
+        // if (expression == null) {return null;}
+
+        // return expression.subSequence(tkStart0, tkEnd0);
+        if (null != consumers) {
+           for (TokenConsumer consumer: consumers) {
+            consumer.consumeToken(tkStart0, tkEnd0, token0);
+          }
+        }
+      }
+
+      /**
+       * {@inheritDoc}
+       * @see TokenProducer#addConsumer(TokenConsumer)
+       */
+      @Override
+      public void addConsumer(final TokenConsumer consumer) {
+         final TokenConsumer[] tc = {consumer};
+         addConsumer(tc);
+      }
+
+      /**
+       * Add a consumer.
+       *
+       * @param consumer And array of consumer objects to add
+       */
+      public void addConsumer(final TokenConsumer[] consumer) {
+        if (consumer == null || consumer.length == 0) {
+          return;
+        }
+        int l = consumers == null ? 0 : consumers.length;
+        int n = nConsumers + consumer.length;
+        int gamma = beta;
+        while (n >= gamma) {
+          gamma = (beta < FIB_THRESHOLD) ? beta + 1 : alpha + beta;
+          alpha = beta;
+          beta = gamma;
+        }
+
+        if (gamma > l) {
+          TokenConsumer[] tcs = new TokenConsumer[gamma];
+          if (null != consumers) {
+            System.arraycopy(consumers, 0, tcs, 0, consumers.length);
+          }
+          System.arraycopy(tcs, nConsumers, consumer, 0, consumer.length);
+          consumers = tcs;
+          nConsumers = n;
+        }
+      }
+
+      /**
+       * {@inheritDoc}
+       * @see TokenProducer#removeConsumer(TokenConsumer)
+       */
+      @Override
+      public void removeConsumer(final TokenConsumer consumer) {
+        final TokenConsumer[] tcs = {consumer};
+        removeConsumer(tcs);
+      }
+
+      /**
+       * Remove consumers.
+       *
+       * @param consumer an array of consumer objects to remove.
+       */
+      public void removeConsumer(final TokenConsumer[] consumer) {
+        if (consumers == null) {
+          return;
+        }
+
+        if (consumer == null || consumer.length == 0) {
+          return;
+        }
+
+        HashSet<TokenConsumer> h = new HashSet<>();
+        for (TokenConsumer tc : consumer) {
+          h.add(tc);
+        }
+
+        int k = 0;
+
+        //find the first item to delete
+        for ( ; k < consumers.length; k++) {
+          if (h.contains(consumers[k])) {
+            break;
+          }
+        }
+
+        for (int j = k + 1; j < nConsumers;) {
+
+          //scan span of delete-able items.
+          for ( ; j < nConsumers; j++) {
+            if (!h.contains(consumers[j])) {
+              break;
+            }
+          }
+
+          //scan span of keep-able items.
+          int j0 = j;
+          for (; j < nConsumers; j++) {
+            if (h.contains(consumers[j])) {
+              break;
+            }
+          }
+
+          //move the span of keep-able item to the start of delete-able items.
+          int ck = j0 - j; // count to keep
+          if (ck > 0) {
+            System.arraycopy(consumers, k, consumers, j0, ck);
+            k += ck;
+          }
+        }
+        nConsumers = k;
+        if (nConsumers == 0) {
+          alpha = 0;
+          beta = 1;
+          consumers = null;
+        } else {
+          while (alpha >= nConsumers) {
+            int gamma = (alpha <= FIB_THRESHOLD)
+                ? alpha - 1
+                : beta - alpha;
+            beta  = alpha;
+            alpha = gamma;
+          }
+          TokenConsumer[] tcs = new TokenConsumer[beta];
+          System.arraycopy(consumers, 0, tcs, 0, nConsumers);
+          consumers = tcs;
+        }
+      }
+    }
+
+    /**
+     * The SimpleTokenConsumer class.
+     */
+    class SimpleTokenConsumer implements TokenConsumer {
+      @Override
+      public void consumeToken(final int tkStart0, final int tkEnd0,
+          final Object token0) {
+
+      }
+    }
+
+    /** Use linear progression below this value, Fibonacci progression above. */
+    private static final int FIB_THRESHOLD = 3;
     /** start of token. */
     private int tkStart = -1;
     /** parsing indent spacing. */
@@ -581,13 +416,7 @@ class Compiler {
     /** the token. */
     private  String token = null;
     /** default Observer of token production. */
-    private TokenProducer defaultTokenProducer = new TokenProducer() {
-      @Override
-      public void produceToken(final int tkStart0,
-          final int tkEnd0, final Object token0) {
-      }
-    };
-
+    private TokenProducer defaultTokenProducer = new SimpleTokenProducer();
 
     /** Observer of token production. */
     private TokenProducer tokenProducer = defaultTokenProducer;
@@ -732,8 +561,8 @@ class Compiler {
 
     /**
      * Set pending operations for the plan.
-     *  @param  priorities0 an array of {@Link Ops} that represent the order
-     *          of pending operations.
+     *
+     * @param priorities0 the new priorities
      */
     protected void setPriorities(final Stack<Object[]> priorities0) {
       this.priorities = priorities0;
@@ -1216,7 +1045,10 @@ class Compiler {
     }
 
     /**
-     * Parse an identifier.
+     * Parse an identifier. If currently parsing an identifier, check to see
+     * if the the end of the idenfifier is reached. At the end of the
+     * identifier set the token value. If not parsing an identifier, check to
+     * see if the input contains a valid first character for identifiers.
      * @return true if the current character should be ignored.
      */
     protected boolean onIdent() {
@@ -1409,6 +1241,7 @@ class Compiler {
       }
       priorities.push(new Object[]{op, literal0, literalType0});
     }
+
     /**
      * Flush the priorities queue.
      */
@@ -1431,6 +1264,7 @@ class Compiler {
       default: return 0;
       }
     }
+
     /**
      * get type for literal type suffix.
      * @param suffix literal type indicator.
@@ -1484,7 +1318,8 @@ class Compiler {
       }
     }
 
-    /** set the parsing state.
+    /**
+     * Set the parsing state.
      * @param b true if commencing parsing.
      */
     protected void setParse(final boolean b) {
@@ -1535,6 +1370,7 @@ class Compiler {
       column = markColumn;
       markX = -1;
     }
+
     /**
      * Update line and column.
      *
@@ -1557,10 +1393,10 @@ class Compiler {
         } else if (aCh != '\n') {
           column++;
         }
-
         crBefore = false;
       }
     }
+
     /**
      * Lexical analysis of identifiers, symbols and numbers.
      * @throws ExpressionFailedException if character pattern is unrecognised.
@@ -1600,8 +1436,8 @@ class Compiler {
      */
     void parse() {
       Compiler.this.produceToken(this, tkStart, chx, token);
-
     }
+
     /**
      * Determine if a character is a valid digit in the current radix.
      *
@@ -1623,6 +1459,7 @@ class Compiler {
     protected boolean isParse() {
       return parse;
     }
+
     /**
      * Get the analysed symbol.
      * @return the symbol observed in the input stream.
@@ -1632,9 +1469,11 @@ class Compiler {
     }
 
     /**
-     * @param tkStart0
-     * @param tkEnd0
-     * @param token0
+     * Produce token.
+     *
+     * @param tkStart0 the tk start 0
+     * @param tkEnd0 the tk end 0
+     * @param token0 the token 0
      */
     public void produceToken(final int tkStart0, final int tkEnd0,
         final Object token0) {
@@ -1651,7 +1490,9 @@ class Compiler {
     }
 
     /**
-     * @param tp
+     * Assigns a token producer. The Token producer receives a sccession of
+     * token descriptions that may be consumed.
+     * @param tp A token producer.
      */
     protected void setTokenProducer(final TokenProducer tp) {
       this.tokenProducer = tp == null ? defaultTokenProducer : tp;
@@ -1774,7 +1615,7 @@ class Compiler {
    * @param expression
    *          The expression to be compiled.
    * @param model
-   *          the context model.
+   *          the context model holding input parameters for the expression.
    * @return an execution plan.
    * @throws ExpressionFailedException
    *           on syntax.
@@ -1838,7 +1679,7 @@ class Compiler {
    */
   private void produceToken(final CompileState cs,
       final int tkStart, final int tkEnd, final Object token) {
-         cs.tokenProducer.produceToken(tkStart, tkEnd, token);
+    cs.tokenProducer.produceToken(tkStart, tkEnd, token);
   }
 
   /**
