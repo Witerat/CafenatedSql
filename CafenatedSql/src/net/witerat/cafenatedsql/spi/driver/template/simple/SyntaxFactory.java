@@ -145,7 +145,7 @@ class SyntaxFactory {
       return null;
     }
   }
-  /** Invoke named syntax. */
+  /** Invocation Reference to a named syntax. */
   class UseSyntax extends Syntax {
     /** Cache of definition. */
     private Syntax definition;
@@ -235,7 +235,7 @@ class SyntaxFactory {
     }
 
     /**
-     * Instantiate a(n) SequenceGroup object.
+     * Instantiate a SequenceGroup object.
      * @param seq
      *          a sequence of patterns
      */
