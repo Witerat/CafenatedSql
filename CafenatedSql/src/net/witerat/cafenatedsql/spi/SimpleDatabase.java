@@ -14,6 +14,7 @@ import net.witerat.cafenatedsql.api.Refactor;
 import net.witerat.cafenatedsql.api.Schema;
 import net.witerat.cafenatedsql.api.driver.DDLEditor;
 import net.witerat.cafenatedsql.api.driver.DriverCreationException;
+import net.witerat.cafenatedsql.api.driver.ddl.SchemaManager;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 import net.witerat.cafenatedsql.spi.driver.Driver;
 
@@ -191,7 +192,7 @@ public class SimpleDatabase implements Database, SchemaManager {
   /**
    * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.spi.SchemaManager#
+   * @see net.witerat.cafenatedsql.api.driver.ddl.SchemaManager#
    *    add(net.witerat.cafenatedsql.api.Schema)
    */
   @Override
@@ -202,7 +203,7 @@ public class SimpleDatabase implements Database, SchemaManager {
   /**
    * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.spi.SchemaManager#getSchema()
+   * @see net.witerat.cafenatedsql.api.driver.ddl.SchemaManager#getSchema()
    */
   @Override
   public Schema getSchema() {
@@ -213,7 +214,8 @@ public class SimpleDatabase implements Database, SchemaManager {
   /**
    * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.spi.SchemaManager#getSchema(java.lang.String)
+   * @see net.witerat.cafenatedsql.api.driver.ddl.SchemaManager
+   *    #getSchema(java.lang.String)
    */
   @Override
   public Schema getSchema(final String name) {
