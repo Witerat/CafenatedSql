@@ -22,7 +22,7 @@ import net.witerat.cafenatedsql.spi.driver.Content;
 public class UrlTag extends MacroTag {
 
   /** The macros. */
-  private AbstractMacroLocator macros;
+  private AbstractDefLocator macros;
 
   /** The content. */
   private Collection<AbstractContent> content;
@@ -43,7 +43,7 @@ public class UrlTag extends MacroTag {
    * @param macros0
    *          the new macros
    */
-  public void setMacros(final AbstractMacroLocator macros0) {
+  public void setMacros(final AbstractDefLocator macros0) {
     this.macros = macros0;
   }
 
@@ -53,7 +53,7 @@ public class UrlTag extends MacroTag {
    * @return the macros
    */
   @XmlTransient
-  public AbstractMacroLocator getMacros() {
+  public AbstractDefLocator getMacros() {
     return macros;
   }
 
