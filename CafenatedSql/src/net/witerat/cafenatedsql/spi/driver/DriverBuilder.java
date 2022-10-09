@@ -31,19 +31,19 @@ import net.witerat.cafenatedsql.spi.driver.tags.VerbTag;
  */
 public class DriverBuilder {
 
-  /** The factory. */
+  /** The driver factory. */
   private DriverFactory factory;
 
   /** The type mapper. */
   private TypeMapper typeMapper;
 
   /**
-   * Builds the driver.
+   * Builds the driver. Sets up a driver with the specified connection methods.
    *
    * @param model
-   *          the model
+   *          A property model
    * @param spec
-   *          the spec
+   *          the specifying tag model.
    * @return the driver
    * @throws DriverCreationException
    *           the driver creation exception
@@ -71,10 +71,10 @@ public class DriverBuilder {
   }
 
   /**
-   * Builds a URL def.
+   * Builds a URL definition.
    *
    * @param ct
-   *          connection type under build
+   *          connection type to build
    * @param conTag
    *          the connection tage object.
    * @return connection url construction
@@ -99,7 +99,7 @@ public class DriverBuilder {
    * @param model
    *          the model
    * @param spec
-   *          the spec
+   *          the driver specification
    */
   private void buildDialects(final Driver driver,
       final TemplateEngineModel model, final DriverTag spec) {
@@ -127,21 +127,24 @@ public class DriverBuilder {
   /**
    * Builds the params.
    *
-   * @param dd
-   *          the dd
-   * @param params
-   *          the params
+   * @param formalPars
+   *          the formal parameter list.
+   * @param paramTags
+   *          the parameter description.
    */
-  private void buildParams(final ParameterizedRequest dd,
-      final Collection<ParamTag> params) {
-    for (ParamTag pt : params) {
+  private void buildParams(final ParameterizedRequest formalPars,
+      final Collection<ParamTag> paramTags) {
+    for (ParamTag pt : paramTags) {
       ParameterType p = factory.newParameter();
       p.setName(pt.getName());
-      p.setType(typeMapper.getType(pt.getType()));
+      final TypeMapper tm = typeMapper != null
+          ? typeMapper
+          : TypeMapper.getDefault();
+      p.setType(tm.getType(pt.getType()));
       p.setDefault(pt.getUsual());
       p.setOptional(pt.isOptional());
 
-      dd.add(p);
+      formalPars.add(p);
     }
 
   }
