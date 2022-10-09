@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import net.witerat.cafenatedsql.spi.driver.MacroLocator;
+import net.witerat.cafenatedsql.spi.driver.DefLocator;
 
 /**
  * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
@@ -12,23 +12,23 @@ import net.witerat.cafenatedsql.spi.driver.MacroLocator;
  *      fields.
  */
 @XmlTransient
-public abstract class AbstractMacroLocator implements MacroLocator,
-  Iterable<MacroTag> {
+public abstract class AbstractDefLocator implements DefLocator,
+  Iterable<DefTag> {
 
   /**
    * {@inheritDoc}
    *
-   * @see net.witerat.cafenatedsql.spi.driver.MacroLocator#
-   *    getMacro(java.lang.String)
+   * @see net.witerat.cafenatedsql.spi.driver.DefLocator#
+   *    getDef(java.lang.String)
    */
   @Override
-  public abstract MacroTag getMacro(String name);
+  public abstract DefTag getDef(String name);
 
   /**
    * {@inheritDoc}
    *
    * @see java.lang.Iterable#iterator()
    */
-  public abstract Iterator<MacroTag> iterator();
+  public abstract Iterator<DefTag> iterator();
 
 }
