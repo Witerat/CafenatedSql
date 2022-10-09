@@ -4,7 +4,7 @@ package net.witerat.cafenatedsql.spi.driver.template.simple;
 enum TokenType {
   /** An <i>identifier</i> token. */
   ID,
-  /** Logical not. */
+  /** Logical not. Also the first mapped to TokenType.SYMBOLS order.   */
   LNOT,
   /** Less Than. */
   LT,
