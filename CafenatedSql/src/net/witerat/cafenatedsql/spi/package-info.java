@@ -1,4 +1,4 @@
 /**
- * Standard package implementation.
+ * Standard package implementation for cafenated SQL.
  */
 package net.witerat.cafenatedsql.spi;
