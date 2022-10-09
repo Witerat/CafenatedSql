@@ -18,6 +18,11 @@ import org.apache.velocity.context.Context;
 
 public class BeanContext extends VelocityContext {
   /**
+   * The serialVersionUID property.
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
    * This type is used to indicate type will be inferred from a bean.
    *
    * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
