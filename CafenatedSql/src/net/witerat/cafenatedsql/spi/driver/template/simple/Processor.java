@@ -33,7 +33,7 @@ class Processor {
     }
 
   }
-  
+
   /**
    * The AbstractFetch class - an abstract instruction.
 
@@ -96,14 +96,15 @@ class Processor {
       super(branch0);
     }
 
-    
+
+    /**  The falseness constant. */
     @SuppressWarnings("serial")
-    private static HashMap<Class<?>, Object[]> falseness = 
-        new HashMap<Class<?>, Object[]>(){
+    private static final HashMap<Class<?>, Object[]> FALSENESS =
+        new HashMap<Class<?>, Object[]>() {
       {
         put(Boolean.class,    new Object[]{Boolean.FALSE});
         put(Short.class,      new Object[]{new Short((short) 0)});
-        put(Long.class,       new Object[]{new Long((long) 0l)});
+        put(Long.class,       new Object[]{new Long((long) 0L)});
         put(Integer.class,    new Object[]{new Integer((int) 0)});
         put(Byte.class,       new Object[]{new Byte((byte) 0)});
         put(String.class,     new Object[]{""});
@@ -112,16 +113,17 @@ class Processor {
         put(Double.class,     new Object[]{0.0d, Double.NaN});
         put(BigInteger.class, new Object[]{BigInteger.ZERO});
         put(BigDecimal.class, new Object[]{BigDecimal.ZERO});
-        
       }
     };
+
     @Override
     Object fetch(final Processor processor) throws ExpressionFailedException {
       Object v = processor.pop();
       boolean j = null == v;
       if (!j) {
-        for (Object z: falseness.get(v.getClass())) {
-          if (j |= z.equals(v)) {
+        for (Object z: FALSENESS.get(v.getClass())) {
+          j |= z.equals(v);
+          if (j) {
             break;
           }
         }
@@ -266,20 +268,24 @@ class Processor {
         return false;
       }
       LiteralFetch lf = (LiteralFetch) obj;
-      if (lf.literal == this.literal
-          && lf.type  == this.type) {
-        return true;
+      boolean le;
+      if (null == literal) {
+        le = null == lf.literal;
+      } else {
+        le = literal.equals(lf.literal);
       }
-      if (literal == null) {
-        return lf.literal == null;
-      }
-      if (type == null) {
-        return lf.type == null;
-      }
-      return literal.equals(lf.literal)
-          && type.equals(lf.type);
-    }
 
+      if (!le) {
+        return false;
+      }
+
+      if (null == type) {
+        return null == lf.type;
+      } else {
+        return type.equals(lf.type);
+      }
+
+    }
 
     @Override
     public int hashCode() {
