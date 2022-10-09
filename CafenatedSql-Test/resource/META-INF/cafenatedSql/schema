@@ -6,8 +6,13 @@
   	<property name="connectionFactory">
   	  <object class="net.witerat.cafenatedsql.spi.SimpleConnectionFactory">
   	    <property name="connectionType">
-  	      <object class="net.witerat.cafenatedsql.spi.JavaDBConnectionType" id="jdbc">
-  	      </object>
+  	      <object class="net.witerat.cafenatedsql.spi.JavaDBConnectionType" 
+  	              field ="DERBY_SERVER" id="jdbc">
+<!--   	        <string>JavaDB</string>
+  	        <string>Java DB/Derby</string>
+  	        <string>jdbc:javadb:&lt;server&gt;[:&lt;port&gt;]</string>
+  	        <object class="net.witerat.cafenatedsql.spi.driver.Driver" />-->
+  	      </object> 
   	    </property>
   	  </object>
   	</property>
