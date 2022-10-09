@@ -1,3 +1,7 @@
+/*
+ * @author nos $}John Hutcheson &lt;witerat.test@gmail.com&gt;
+ * @created 10-Sep-2022 00:37:54
+ */
 package net.witerat.cafenatedsql.spi;
 
 import com.jolbox.bonecp.BoneCPConfig;
@@ -7,15 +11,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.InvalidPropertiesFormatException;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.sql.DataSource;
+
+//import org.apache.geronimo.mail.util.StringBufferOutputStream;
 
 import net.witerat.cafenatedsql.api.ConnectionFactory;
 import net.witerat.cafenatedsql.api.driver.ConnectionType;
@@ -31,7 +40,24 @@ import net.witerat.cafenatedsql.spi.driver.Driver;
  *
  */
 public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
-  /** The properties. */
+  /** The properties. This property contains the property values that
+   * configure the underlyng connection protocol.
+   * @TODO The underlying {@link Properties} object is passed to the
+   *  BoneCP connection pool API in {@link #configureDataSource()}, limiting
+   *   name/value pairs to type string/string.
+   *  <table>
+   *  <tr>
+   *  <th>Plan "A"</th><td>Abstract out BoneCP and allow alternate connection
+   *   property modelling and connection strategy</td>
+   *  </tr><tr>
+   *  <th>Plan "B"</th><td>Down-grade to Properties</td>
+   *  </tr><tr>
+   *  <th>Plan "C"</th><td>Do nothing, allow other classes to address this
+   *  conflict.</td>
+   *  </tr>
+   *  </table>
+   *  @Date 10/9//2022 NZST.
+   */
   private TemplateEngineModel properties;
 
   /** The data source. */
@@ -40,23 +66,32 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
   /** The connection type. */
   private ConnectionType connectionType;
 
+  /** The log writer. */
+  private PrintWriter logWriter;
+
+  /** The parent log writer. */
+  private Logger parentLogWriter;
+
+  /** The login time out. */
+  private int loginTimeOut;
+
+  /** The names of required properties. */
+  private HashSet<String> requiredProperties = null;
+
   /**
    * Load from resource.
    *
-   * @param packageName
-   *          the package name
-   * @param resourceName
-   *          the resource name
-   * @return the simple connection factory
-   * @throws InvalidPropertiesFormatException
-   *           the invalid properties format exception
+   * @param bundleName
+   *     The resource bundle name.
+   * @return A simple connection factory with properties assigned from a
+   *     resource bundle.
    * @throws IOException
-   *           Signals that an I/O exception has occurred.
+   *     Signals that an I/O exception has occurred.
    */
   static SimpleConnectionFactory loadFromResource(
-      final String packageName, final String resourceName)
+      final String bundleName)
       throws InvalidPropertiesFormatException, IOException {
-    ResourceBundle bundle = ResourceBundle.getBundle(packageName);
+    ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.ROOT);
     Enumeration<String> keys = bundle.getKeys();
     Properties properties = new Properties();
     while (keys.hasMoreElements()) {
@@ -115,8 +150,8 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    *
    * @param driver
    *          the driver
-   * @param c
-   *          the c
+   * @param rClass
+   *          the class used to locate the resource.
    * @return the simple connection factory
    * @throws InvalidPropertiesFormatException
    *           the invalid properties format exception
@@ -124,20 +159,22 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    *           Signals that an I/O exception has occurred.
    */
   static SimpleConnectionFactory loadFromXMLResourceStream(
-      final Driver driver, final Class<?> c)
+      final Driver driver, final Class<?> rClass)
       throws InvalidPropertiesFormatException, IOException {
-    InputStream in = c.getClassLoader().getResourceAsStream(
-        c.getName() + ".properties");
+    String rName = //"/" +
+      rClass.getName().replace(".", "/") + ".properties";
+    Logger.getAnonymousLogger().info(rName);
+    InputStream in = rClass.getClassLoader().getResourceAsStream(rName);
     SimplePropertiesModel model = new SimplePropertiesModel();
     if (driver != null) {
       model.set(DRIVER, driver);
     }
 
-    if (in == null) {
+    if (in != null) {
       model.getProperties().loadFromXML(in);
     } else {
-      in = c.getClassLoader().getResourceAsStream(
-          c.getName() + ".properties.xml");
+      in = rClass.getClassLoader().getResourceAsStream(
+          rClass.getName().replace(".", "/") + ".properties.xml");
       model.getProperties().loadFromXML(in);
     }
 
@@ -264,11 +301,11 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    *
    * @return the new connection.
    * @throws SQLException
-   *           failure to coonect.
+   *           failure to connect.
    */
   public Connection connect0() throws SQLException {
-    SimplePropertiesModel properties0 = (SimplePropertiesModel) properties;
     validate();
+    SimplePropertiesModel properties0 = (SimplePropertiesModel) properties;
     if (dataSource == null) {
       try {
         configureDataSource();
@@ -276,13 +313,24 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
         throw new SQLException("Configuration failed", e);
       }
     }
-    if (properties0.getProperties().containsKey(USER_NAME)
-        || properties0.getProperties().containsKey(PASSWORD)) {
-      String un = properties0.getProperties().getProperty(USER_NAME);
-      String pw = properties0.getProperties().getProperty(PASSWORD);
-      return dataSource.getConnection(un, pw);
+    final Properties strProps = properties0.getProperties();
+    if (strProps.containsKey(USER_NAME)
+        || strProps.containsKey(PASSWORD)) {
+      String un = strProps.getProperty(USER_NAME);
+      String pw = strProps.getProperty(PASSWORD);
+      if (dataSource != null && dataSource != this) {
+        return dataSource.getConnection(un, pw);
+      } else {
+        String url = strProps.getProperty("connection_url");
+        return DriverManager.getConnection(url, un, pw);
+      }
     }
-    return dataSource.getConnection();
+    if (dataSource != null && dataSource != this) {
+      return dataSource.getConnection();
+    } else {
+      String url = strProps.getProperty("connection_url");
+      return DriverManager.getConnection(url);
+    }
   }
 
   /**
@@ -324,6 +372,10 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    */
   @Override
   public int getLoginTimeout() throws SQLException {
+    loginTimeOut = 0;
+    if (dataSource == this) {
+      return loginTimeOut;
+    }
     return dataSource.getLoginTimeout();
   }
 
@@ -334,6 +386,9 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    */
   @Override
   public PrintWriter getLogWriter() throws SQLException {
+    if (dataSource == this) {
+      return logWriter;
+    }
     return dataSource.getLogWriter();
   }
 
@@ -344,6 +399,9 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    */
   @Override
   public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    if (dataSource == this) {
+      return parentLogWriter;
+    }
     return dataSource.getParentLogger();
   }
 
@@ -355,7 +413,64 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    */
   @Override
   public Object getProperty(final Object property) {
-    return ((SimplePropertiesModel) properties).getProperties().get(property);
+      return getProperty((String) property);
+//    final String p = property == null ? null : property.toString();
+//    final String ser = (String)properties.get(p);
+//    Object value;
+//    if ("null".equals(ser)) {
+//      value = null;
+//    } else if ("true".equals(ser)) {
+//      value = Boolean.TRUE;
+//    } else if ("false".equals(ser)) {
+//      value = Boolean.FALSE;
+//    } else {
+//      final String sser = ser.substring(1);
+//      switch(ser.charAt(0)){
+//      case '\'':
+//        value = sser;
+//        break;
+//      case 'B':
+//        value = Byte.decode(sser);
+//        break;
+//      case 'S':
+//        value = Short.decode(sser);
+//        break;
+//      case 'I':
+//        value = Integer.decode(sser);
+//        break;
+//      case 'L':
+//        value = Long.decode(sser);
+//        break;
+//      case 'F':
+//        value = Float.valueOf(sser);
+//        break;
+//      case 'D':
+//        value = Double.valueOf(sser);
+//        break;
+//      case 'N':
+//        value = new BigInteger(sser);
+//        break;
+//      case 'G':
+//        value = new BigDecimal(sser);
+//        break;
+//      case '{':
+//        Decoder b64e = Base64.getDecoder();
+//        StringReader sr = new StringReader(sser);
+//        ByteArrayInputStream bais = new ByteArrayInputStream(ser.getBytes());
+//        try {
+//          ObjectInputStream ois = new ObjectInputStream(bais);
+//          value = ois.readObject();
+//        } catch (ClassNotFoundException|IOException e) {
+//          throw new RuntimeException(e);
+//        }
+//        break;
+//        default:
+//          throw new IllegalStateException(
+//            "type character not recognised "
+//              + Integer.toHexString(ser.codePointAt(0)));
+//      }
+//    }
+//    return value;
   }
 
   /**
@@ -382,7 +497,10 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    */
   @Override
   public boolean isPropertyRequired(final Object property) {
-    return false;
+    if (requiredProperties == null) {
+      return false;
+    }
+    return requiredProperties.contains(property);
   }
 
   /**
@@ -392,13 +510,13 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    */
   @Override
   public boolean isWrapperFor(final Class<?> arg0) throws SQLException {
+    if (null == dataSource) {
+      return false;
+    }
     if (arg0.isInstance(dataSource)) {
       return true;
     }
-    if (dataSource != null) {
-      return dataSource.isWrapperFor(arg0);
-    }
-    return false;
+    return dataSource.isWrapperFor(arg0);
   }
 
   /**
@@ -418,7 +536,10 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    */
   @Override
   public void setLoginTimeout(final int seconds) throws SQLException {
-    dataSource.setLoginTimeout(seconds);
+    loginTimeOut = seconds;
+    if (dataSource != this) {
+      dataSource.setLoginTimeout(seconds);
+    }
 
   }
 
@@ -428,9 +549,12 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    * @see javax.sql.CommonDataSource#setLogWriter(java.io.PrintWriter)
    */
   @Override
-  public void setLogWriter(final PrintWriter arg0) throws SQLException {
-    dataSource.setLogWriter(arg0);
-
+  public void setLogWriter(final PrintWriter pw) throws SQLException {
+    if (dataSource == this) {
+      logWriter = pw;
+    } else {
+      dataSource.setLogWriter(pw);
+    }
   }
 
   /**
@@ -442,6 +566,44 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
   @Override
   public void setProperty(final Object property, final Object value) {
     setProperty((String) property, value);
+//    String ser = null;
+//    if (value == null) {
+//      ser = "null";
+//    } else if (Boolean.TRUE.equals(value)) {
+//      ser = "true";
+//    } else if (Boolean.FALSE.equals(value)) {
+//      ser = "false";
+//    } else if (value instanceof String) {
+//      ser = "'"+value.toString();
+//    } else if (value instanceof Byte) {
+//      ser = "B"+Byte.toString((byte) value);
+//    } else if (value instanceof Short) {
+//      ser = "S"+Short.toString((short) value);
+//    } else if (value instanceof Integer) {
+//      ser = "I"+Integer.toString((int) value);
+//    } else if (value instanceof Long) {
+//      ser = "L"+Long.toString((long) value);
+//    } else if (value instanceof Float) {
+//      ser = "F"+Float.toString((float) value);
+//    } else if (value instanceof Double) {
+//      ser = "D"+Double.toString((double) value);
+//    } else if (value instanceof BigInteger) {
+//      ser = "N"+((BigInteger)value).toString(10);
+//    } else if (value instanceof BigDecimal) {
+//      ser = "G"+((BigDecimal)value).toString();
+//    }else {
+//      StringBuffer sb = new StringBuffer("{");
+//      StringBufferOutputStream sbos=new StringBufferOutputStream(sb);
+//      try {
+//        ObjectOutputStream oos=new ObjectOutputStream(sbos);
+//        oos.writeObject(value);
+//      } catch (IOException e) {
+//        throw new RuntimeException(e);
+//      }
+//      Encoder b64e = Base64.getEncoder();
+//      ser = b64e.encodeToString(sb.toString().getBytes());
+//    }
+//    setProperty((String) property, ser);
 
   }
 
@@ -449,9 +611,9 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
    * Assigns a new value to a property.
    *
    * @param property
-   *          the name of a property.
+   *          The name of a property.
    * @param value
-   *          the new value of the property.
+   *          A new value of the name property.
    */
   public void setProperty(final String property, final Object value) {
     properties.set(property, value);
@@ -475,9 +637,56 @@ public class SimpleConnectionFactory implements ConnectionFactory, DataSource {
   }
 
   /**
-   * Validate.
+   * Sets the property required.
+   *
+   * @param name
+   *          the property name
+   * @param mandate
+   *          the property's mandate
    */
-  private void validate() {
+  void setPropertyRequired(final String name, final boolean mandate) {
+    if (requiredProperties == null) {
+      if (!mandate) {
+        return;
+      }
+      requiredProperties = new HashSet<String>();
+    }
+    if (mandate) {
+      requiredProperties.add(name);
+    } else {
+      requiredProperties.remove(name);
+      if (requiredProperties.isEmpty()) {
+        requiredProperties = null;
+      }
+    }
+  }
+
+  /**
+   * Validate.
+   * @throws SQLException when at least one required property is not set.
+   */
+  private void validate() throws SQLException {
+    if (properties instanceof SimplePropertiesModel) {
+       SimplePropertiesModel spm = (SimplePropertiesModel) properties;
+       Properties p = spm.getProperties();
+       if (null != requiredProperties) {
+         for (String rp : requiredProperties) {
+           if (!p.containsKey(rp)) {
+             throw new SQLException("Missing required property: " + rp);
+           }
+         }
+       }
+    } else {
+      TemplateEngineModel p = properties;
+      if (null != requiredProperties) {
+        for (String rp : requiredProperties) {
+          if (null == p.get(rp)) {
+            throw new SQLException("Missing required property: " + rp);
+          }
+        }
+      }
+    }
   }
 
 }
+
