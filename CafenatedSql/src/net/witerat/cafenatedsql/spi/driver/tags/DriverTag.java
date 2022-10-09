@@ -1,3 +1,7 @@
+/*
+ * @author nos $}John Hutcheson &lt;witerat.test@gmail.com&gt;
+ * @created 04-Sep-2022 23:37:38
+ */
 package net.witerat.cafenatedsql.spi.driver.tags;
 
 import java.util.Collection;
@@ -12,10 +16,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * The Class DriverTag.
+ * The DriverTag class.
+ *
+ * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
  */
 @XmlRootElement(name = "driver", namespace = "-//org.witerat/cafenated/sql")
-public class DriverTag extends AbstractMacroLocator {
+public class DriverTag extends AbstractDefLocator {
 
   /** The definitions. */
   private Map<String, DefTag> defs;
@@ -26,10 +32,10 @@ public class DriverTag extends AbstractMacroLocator {
   /** The connections by method. */
   private Map<String, ConnectionTag> connectionsByMethod;
 
-  /** The ddl. */
+  /** The DDL. */
   private DdlTag ddl;
 
-  /** The dml. */
+  /** The DML. */
   private DmlTag dml;
 
   /** The meta property. */
@@ -63,9 +69,9 @@ public class DriverTag extends AbstractMacroLocator {
   }
 
   /**
-   * Gets the ddl.
+   * Gets the DDL.
    *
-   * @return the ddl
+   * @return the DDL
    */
   @XmlElement(namespace = "-//org.witerat/cafenated/sql")
   public DdlTag getDdl() {
@@ -86,9 +92,9 @@ public class DriverTag extends AbstractMacroLocator {
   }
 
   /**
-   * Gets the dml.
+   * Gets the DML.
    *
-   * @return the dml
+   * @return The DML.
    */
   @XmlElement(name = "dml", type = DmlTag.class,
       namespace = "-//org.witerat/cafenated/sql")
@@ -98,19 +104,22 @@ public class DriverTag extends AbstractMacroLocator {
 
   /**
    * {@inheritDoc}
-   * @see net.witerat.cafenatedsql.spi.driver.MacroLocator#
-   *    getMacro(java.lang.String)
+   * @see net.witerat.cafenatedsql.spi.driver.DefLocator
+   *    #getDef(java.lang.String)
    */
   @Override
-  public MacroTag getMacro(final String name) {
+  public DefTag getDef(final String name) {
+    if (defs == null) {
+      return null;
+    }
     return defs.get(name);
   }
 
   /**
-   * Sets the connections.
+   * Adds a connection description.
    *
    * @param connection
-   *          the new connection
+   *          A new connection description
    */
   @XmlElement(type = ConnectionTag.class, name = "connection",
       namespace = "-//org.witerat/cafenated/sql")
@@ -123,10 +132,10 @@ public class DriverTag extends AbstractMacroLocator {
   }
 
   /**
-   * Sets the dialect.
+   * Adds a dialect.
    *
    * @param dialect
-   *          the new dialect
+   *          A new dialect
    */
   @XmlElement(name = "dialect", type = DialectTag.class,
       namespace = "-//org.witerat/cafenated/sql")
@@ -138,30 +147,30 @@ public class DriverTag extends AbstractMacroLocator {
   }
 
   /**
-   * Sets the ddl.
+   * Sets the DDL for this driver description.
    *
    * @param ddl0
-   *          the new ddl
+   *          A new DDL.
    */
   public void setDdl(final DdlTag ddl0) {
     this.ddl = ddl0;
   }
 
   /**
-   * Sets the defs.
+   * Sets the macro definitions collection.
    *
    * @param defs0
-   *          the defs
+   *          the macro definitions.
    */
   public void setDefs(final Map<String, DefTag> defs0) {
     this.defs = defs0;
   }
 
   /**
-   * Set a def element.
+   * Add a macro definition element.
    *
    * @param def
-   *          a new def tag
+   *          A new macro definition tag.
    */
   @XmlElement(name = "def", type = DefTag.class,
       namespace = "-//org.witerat/cafenated/sql")
@@ -173,32 +182,34 @@ public class DriverTag extends AbstractMacroLocator {
   }
 
   /**
-   * Sets the dml.
+   * Sets the DML.
    *
    * @param dml0
-   *          the new dml
+   *          The new DML.
    */
-  public void setDml(final DmlTag dml0) {
+  @XmlElement(name = "dml", type = DmlTag.class,
+      namespace = "-//org.witerat/cafenated/sql")
+  public void setDML(final DmlTag dml0) {
     this.dml = dml0;
   }
 
   /**
    * Get a dialect for the given name.
    * @param name
-   *          name of dialect
-   * @return the dialect associated with name
+   *          The name of a dialect.
+   * @return The dialect associated with <code>name</code>.
    */
   public DialectTag getDialectByName(final String name) {
-    if (dialectsById != null) {
-      return dialectsById.get(name);
+    if (dialectsById == null) {
+      return null;
     }
-    return null;
+    return dialectsById.get(name);
   }
 
   /**
    * Gets the dialects.
    *
-   * @return the dialects
+   * @return The dialects.
    */
   public Collection<DialectTag> getDialects() {
     if (dialectsById == null) {
@@ -208,17 +219,21 @@ public class DriverTag extends AbstractMacroLocator {
   }
 
   /**
+   * Gets the meta tag.
+   *
    * @return The meta tag.
    */
-  @XmlElement(namespace = "-//org.witerat/cafenated/sql", type = MetaTag.class)
+  @XmlElement(namespace = "-//org.witerat/cafenated/sql",
+      type = MetaTag.class)
   public MetaTag getMeta() {
-    // TODO Auto-generated method stub
     return meta;
   }
 
   /**
+   * Sets the meta tag.
+   *
    * @param meta0
-   *          the meta tag.
+   *          The meta tag.
    */
   public void setMeta(final MetaTag meta0) {
     this.meta = meta0;
@@ -226,7 +241,8 @@ public class DriverTag extends AbstractMacroLocator {
 
   /**
    * Get identifier for the template engine.
-   * @return the template engine id.
+   *
+   * @return The template engine id.
    */
   @XmlElement(name = "template-engine", type = String.class,
       namespace = "-//org.witerat/cafenated/sql")
@@ -235,6 +251,8 @@ public class DriverTag extends AbstractMacroLocator {
   }
 
   /**
+   * Assigns the name of a template engine.
+   *
    * @param templateEngine0
    *          The template engine id.
    */
@@ -243,18 +261,16 @@ public class DriverTag extends AbstractMacroLocator {
   }
 
   /**
-   * {@inheritDoc}
-   * @see net.witerat.cafenatedsql.spi.driver.tags.AbstractMacroLocator#
-   *    iterator()
+   * Returns an iterator of {@link DefTag}s on this {@linkplain DriverTag}.
+   *
+   * @return An iterator of MacroTag objects.
+   * @see net.witerat.cafenatedsql.spi.driver.tags.AbstractDefLocator
+   *    #iterator()
    */
   @Override
-  public Iterator<MacroTag> iterator() {
-    LinkedList<MacroTag> llMt = new LinkedList<>();
-    for (DefTag dt : defs.values()) {
-      for (MacroTag mt : dt.getMacros()) {
-        llMt.add(mt);
-      }
-    }
+  public Iterator<DefTag> iterator() {
+    LinkedList<DefTag> llMt = new LinkedList<>();
+    llMt.addAll(defs.values());
     return llMt.iterator();
   }
 
