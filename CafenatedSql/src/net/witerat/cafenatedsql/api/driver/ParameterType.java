@@ -1,51 +1,57 @@
+/*
+ * @author nos John Hutcheson &lt;witerat.test@gmail.com&gt;
+ * @created 03-Sep-2022 12:36:01
+ */
 package net.witerat.cafenatedsql.api.driver;
 
 /**
- * The Interface ParameterType.
+ * The ParameterType interface.
+ *
+ * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
  */
 public interface ParameterType {
 
   /**
-   * Gets the default.
+   * Gets the current default value.
    *
-   * @return the default
+   * @return The default value.
    */
   Object getDefault();
 
   /**
-   * Gets the name.
+   * Gets this formal parameter's name.
    *
-   * @return the name
+   * @return the parameter name.
    */
   String getName();
 
   /**
    * Gets the type.
    *
-   * @return the type
+   * @return The formal type of the value.
    */
   Class<?> getType();
 
   /**
    * Checks if is optional.
    *
-   * @return true, if is optional
+   * @return true, if parameter is optional.
    */
   boolean isOptional();
 
   /**
-   * Sets the default.
+   * Sets the default value.
    *
    * @param difault
-   *          the new default
+   *          A new default value
    */
   void setDefault(Object difault);
 
   /**
-   * Sets the name.
+   * Sets this formal parameter's name.
    *
    * @param name
-   *          the new name
+   *          A new parameter name
    */
   void setName(String name);
 
@@ -53,7 +59,7 @@ public interface ParameterType {
    * Sets the optional.
    *
    * @param optional
-   *          the new optional
+   *          A new optional state
    */
   void setOptional(boolean optional);
 
@@ -61,7 +67,7 @@ public interface ParameterType {
    * Sets the type.
    *
    * @param type
-   *          the new type
+   *          A new formal type
    */
   void setType(Class<?> type);
 
