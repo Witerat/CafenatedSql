@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +31,7 @@ public class CompileStateTest  {
     fixture.emit(ZERO);
     Object[] result=fixture.getPlan().toArray();
     int hc=result[0].hashCode();
+    Logger.getAnonymousLogger().fine("hc: "+hc);
     assertArrayEquals(expected, result);
   }
 
@@ -201,12 +203,12 @@ public class CompileStateTest  {
 
   @Test
   public void testOnIdent() {
-    final String[] ta = new String[]{"flubbernuckle", "flubbernuckle.", "flubbernuckle "};
+    final String[] ta = new String[]{"flubbernuckle", "flubbernuckle.", "flubbernuckle ","int"};
     final String t0=ta[0];
     for (String t:ta){
       CompileState cs = new Compiler().new CompileState();
       cs.setExpression(t);
-      for(cs.setChx(0);cs.getChx()<=t.length();cs.setChx(cs.getChx()+1)){
+      for(cs.setChx(0); cs.getChx() <= t.length(); cs.setChx(cs.getChx()+1)){
         try{
           cs.setCh(t.charAt(cs.getChx()));
         } catch (StringIndexOutOfBoundsException e){
@@ -218,11 +220,13 @@ public class CompileStateTest  {
         }
       }
       assertTrue(MessageFormat.format("parse not set(t=''{0}'')",t), cs.isParse());
-      assertNull(cs.getToken());
-      assertEquals(t0, cs.getIdent());
-      assertEquals(0, cs.getTkStart());
-      assertEquals(TokenType.ID, cs.getSymbolTrial().getToken());
-      cs.setParse(false);
+      if(t.startsWith("flub")) {
+        assertNull(cs.getToken());
+        assertEquals(t0, cs.getIdent());
+        assertEquals(0, cs.getTkStart());
+        assertEquals(TokenType.ID, cs.getSymbolTrial().getToken());
+        cs.setParse(false);
+      }
     }
   }
 
@@ -588,7 +592,6 @@ public class CompileStateTest  {
     fixture.setChx(0);
     fixture.parse();
     assertEquals("token", fixture.getToken());
-    //fail("Not yet implemented");
   }
 
   @Test
