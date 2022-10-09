@@ -42,11 +42,12 @@ public class SimplePropertiesModel implements TemplateEngineModel {
    */
   @Override
   public Object getByExpression(final String name) {
+    Object v = null;
     try {
-      return evaluateContextExpression(name);
+      v = evaluateContextExpression(name);
     } catch (ExpressionFailedException e) {
-      return null;
     }
+    return v;
   }
 
   /**
@@ -80,11 +81,14 @@ public class SimplePropertiesModel implements TemplateEngineModel {
   @Override
   public Object evaluateContextExpression(final String expression)
       throws ExpressionFailedException {
+    Object v = null;
     ExpressionLanguage el = getExpressionLanguage();
     if (el != null) {
-      return el.evaluate(expression, this);
+      v = el.evaluate(expression, this);
+    } else {
+      v = get(expression);
     }
-    return get(expression);
+    return v;
   }
 
   /**
@@ -117,15 +121,14 @@ public class SimplePropertiesModel implements TemplateEngineModel {
    */
   @Override
   public Class<?> getPropertyType(final Object property) {
+    Class<?> t = null;
     if (properties.containsKey(property)) {
       try {
-        return properties.get(property).getClass();
+        t = properties.get(property).getClass();
       } catch (NullPointerException npe) {
-        return null;
       }
-    } else {
-      return null;
     }
+    return t;
   }
 
 }
