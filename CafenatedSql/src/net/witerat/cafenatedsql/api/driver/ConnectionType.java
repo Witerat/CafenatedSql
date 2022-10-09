@@ -3,14 +3,12 @@ package net.witerat.cafenatedsql.api.driver;
 import net.witerat.cafenatedsql.spi.driver.DialectSelector;
 
 /**
- * The Interface ConnectionType.
- *
- * @author John Hutcheson &lt;witerat.test@gmail.com&gt;
+ * The ConnectionType interface.
  */
 public interface ConnectionType {
 
   /**
-   * Gets the name for the type .
+   * Gets the name for the type.
    *
    * @return the name
    */
