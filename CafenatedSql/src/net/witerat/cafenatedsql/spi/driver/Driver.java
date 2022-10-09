@@ -101,8 +101,8 @@ public class Driver {
   }
 
   /**
-   * Return an editor suitable for commiting shanges to the database.
-   * @param noun the ype of entity affected;
+   * Return an editor suitable for committing changes to the database.
+   * @param noun the type of entity affected;
    * @param operation the type of effect.
    * @return an editor that can marshal changes, select or construct
    *    templates for commitment to the underlying database.
