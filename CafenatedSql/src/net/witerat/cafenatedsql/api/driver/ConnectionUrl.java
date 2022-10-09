@@ -8,10 +8,10 @@ import net.witerat.cafenatedsql.spi.driver.Content;
 public interface ConnectionUrl extends ParameterizedRequest {
 
   /**
-   * Adds a content element to a connect url.
+   * Adds a content element to a connection URL.
    *
    * @param c
-   *          the c
+   *          the content.
    */
   void add(Content c);
 
