@@ -21,13 +21,13 @@ public class UseTag extends MacroTag {
    * The macro locator the chooses the def content to be substituted for this
    * Use tag.
    */
-  private AbstractMacroLocator macros;
+  private AbstractDefLocator macros;
 
   /** The macro reference name. */
   private String macro;
 
   /**
-   * Gets the macro.
+   * Gets the macro name.
    *
    * @return the macro
    */
@@ -37,7 +37,7 @@ public class UseTag extends MacroTag {
   }
 
   /**
-   * Sets the macro.
+   * Sets the macro name.
    *
    * @param macro0
    *          the new macro
@@ -53,7 +53,7 @@ public class UseTag extends MacroTag {
    */
   @Override
   public Collection<AbstractContent> getContent() {
-    return macros.getMacro(macro).getContent();
+    return macros.getDef(macro).getContent();
   }
 
   /**
