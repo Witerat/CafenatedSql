@@ -24,12 +24,13 @@ import net.witerat.cafenatedsql.api.ViewFactory;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 
 /**
- * The Class SimpleProvider. This provider can be configured use a single object
- * to implement any or all of the factory services offers.
+ * The Class SimpleProvider. This provider can be configured use a single 
+ * object to implement any or all of the factory services offers. 
  */
 public class SimpleProvider implements Provider {
 
-  private final class ConfiguredModelFactory implements TemplateModelFactory {
+  private final class ConfiguredModelFactory
+    implements TemplateModelFactory {
 
     /** The target. */
     private TemplateModelFactory target;
