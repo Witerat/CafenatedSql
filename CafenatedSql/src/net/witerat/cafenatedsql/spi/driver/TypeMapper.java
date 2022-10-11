@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
+
 /**
  * The TypeMapper class.
  */
@@ -46,8 +47,7 @@ public class TypeMapper {
       try {
         defaultTypes.put(m[0], Class.forName(m[1]));
       } catch (ClassNotFoundException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+         throw new IllegalStateException(e);
       }
     }
 
@@ -58,7 +58,6 @@ public class TypeMapper {
    *
    */
   protected TypeMapper() {
-    // TODO Auto-generated constructor stub
   }
 
   /**
@@ -75,7 +74,7 @@ public class TypeMapper {
       return types.get(typeName);
     }
     if (defaultTypes.containsKey(typeName)) {
-      return getDefault().getType(typeName);
+      return defaultTypes.get(typeName);
     }
     try {
       return Class.forName(typeName);
@@ -105,7 +104,8 @@ public class TypeMapper {
    * @throws IllegalAccessException
    *            Attempt to modify default types.
    */
-  public void registerType(final String t, final Class<?> c) throws IllegalAccessException {
+  public void registerType(final String t, final Class<?> c)
+      throws IllegalAccessException {
     if (this == defaultMapper) {
       throw new IllegalAccessException("Default mapper cannot be moidifed");
     }
@@ -119,7 +119,7 @@ public class TypeMapper {
    * @throws IllegalAccessException
    *            Attempt to modify default types.
    */
-  public void registerType(final String t) throws IllegalAccessException {
+  public void removeType(final String t) throws IllegalAccessException {
     if (this == defaultMapper) {
       throw new IllegalAccessException("Default mapper cannot be moidifed");
     }
