@@ -6,7 +6,7 @@ import net.witerat.cafenatedsql.api.Cafenated;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngine;
 import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
 import net.witerat.cafenatedsql.spi.driver.Content;
-import net.witerat.cafenatedsql.spi.driver.MacroLocator;
+import net.witerat.cafenatedsql.spi.driver.DefLocator;
 
 /**
  * The Class UseContent represents a tag that indicates defined content
@@ -15,7 +15,7 @@ import net.witerat.cafenatedsql.spi.driver.MacroLocator;
 public class UseContent extends MacroTag {
 
   /** The macros. */
-  private AbstractMacroLocator macros;
+  private AbstractDefLocator macros;
 
   /** The macro. */
   private String macro;
@@ -45,8 +45,8 @@ public class UseContent extends MacroTag {
    * @param macros0
    *          the new macros
    */
-  public void setMacros(final AbstractMacroLocator macros0) {
-    this.macros = (AbstractMacroLocator) macros0;
+  public void setMacros(final AbstractDefLocator macros0) {
+    this.macros = (AbstractDefLocator) macros0;
   }
 
   /**
@@ -55,7 +55,7 @@ public class UseContent extends MacroTag {
    * @see net.witerat.cafenatedsql.spi.driver.tags.MacroTag#getContent()
    */
   public Collection<AbstractContent> getContent() {
-    return getMacros().getMacro(macro).getContent();
+    return getMacros().getDef(macro).getContent();
   }
 
   /**
@@ -64,13 +64,13 @@ public class UseContent extends MacroTag {
    * @return the macros
    */
 
-  public AbstractMacroLocator getMacros() {
+  public AbstractDefLocator getMacros() {
     if (macros != null) {
       return macros;
     }
     Content parent = getParent();
-    if (parent instanceof MacroLocator) {
-      return (AbstractMacroLocator) parent;
+    if (parent instanceof DefLocator) {
+      return (AbstractDefLocator) parent;
     }
     return null;
   }
