@@ -3,13 +3,19 @@ package net.witerat.cafenatedsql.api;
 import java.beans.XMLDecoder;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URL;
+import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import org.xml.sax.InputSource;
 
 import net.witerat.cafenatedsql.api.driver.DriverCreationException;
 import net.witerat.cafenatedsql.api.driver.template.SimplePropertiesModel;
@@ -22,36 +28,59 @@ import net.witerat.cafenatedsql.spi.driver.template.simple.SimpleExpressionLangu
  *
  */
 public abstract class Cafenated {
+
+  /**
+   * The URL_PROTOCOL constant.
+   */
+  private static final String URL_PROTOCOL = "url:";
+
+  /**
+   * The CAFENATED_RESOURCE path constant.
+   */
+  private static final String CAFENATED_RESOURCE = "META-INF/cafenatedSql";
+
+  /**
+   * The SCHEMA_KEY constant.
+   */
+  static final String SCHEMA_KEY = "schema";
+
   /**
    * Model property name for registered provider name.
    * @see String
    */
   public static final String PROVIDER_NAME = "provider_name";
+
   /**
    * Model property name for provider.
    * @See {@link Provider}
    */
   public static final String PROVIDER = "provider";
+
   /**
    * Model property name for connection method name.
    * @see String
    */
   public static final String CONNECTION_METHOD = "connection_method";
+
   /**
    * Model property name for connection.
    * @see  java.sql.Connection
    */
   public static final String CONNECTION = "connection";
+
+
   /**
    * Model property name for registered provider name.
    * @see String
    */
   public static final String DATABASE_NAME = "database_name";
+
   /**
    * Model property name for database.
    * @see Database
    */
   public static final String DATABASE = "database";
+
   /**
    * The DRIVER_NAME property.
    * @see String
@@ -128,11 +157,12 @@ public abstract class Cafenated {
   }
 
   /**
-   * bind the root registrar to a JNDI name.
+   * Bind the root registrar to a JNDI name.
    * @param jndiName0 The jndi to bind with which the root registrar.
    * @throws NamingException if JNDI rejects the request.
    */
-  public void regsisterJNDI(final String jndiName0) throws NamingException {
+  public void regsisterJNDI(final String jndiName0)
+      throws NamingException {
       new InitialContext().bind(jndiName0, root);
   }
 
@@ -148,8 +178,11 @@ public abstract class Cafenated {
     } else if (resourcePath != null) {
       initByResource(resourcePath);
     } else {
-      initBySystemResource(DEFAULT_RESOURCE);
-      if (root == null) {
+      try {
+        initBySystemResource(DEFAULT_RESOURCE);
+      } catch (MissingResourceException | NullPointerException
+//        | FileNotFoundException | MalformedURLException
+          | IOException e) {
         initByResource(DEFAULT_RESOURCE);
       }
     }
@@ -182,18 +215,66 @@ public abstract class Cafenated {
    * Load the {@link RootProviderRegistrar} configuration from a system
    * resource.
    * @param resourcePath0 a resource to find a root configuration.
+   * @throws IOException
+   * @throws MalformedURLException
+   * @throws MissingResourceException
    */
-  private static void initBySystemResource(final String resourcePath0) {
-    InputStream is = ClassLoader.getSystemResourceAsStream(resourcePath0);
+  private static void initBySystemResource(final String resourcePath0)
+      throws MissingResourceException,
+//        MalformedURLException, FileNotFoundException,
+        IOException {
+
+    InputSource is = getSystemSource(resourcePath0);
+    ResourceBundle rBundle = null;
+    if (is == null) {
+      rBundle = ResourceBundle.getBundle(
+          CAFENATED_RESOURCE,
+          Locale.ROOT);
+      Object o = rBundle.getObject(SCHEMA_KEY);
+      if (o instanceof String
+          && ((String) o).startsWith(URL_PROTOCOL)) {
+        o = new URL(((String) o).substring(URL_PROTOCOL.length()));
+      }
+      if (o instanceof URL) {
+        is = new InputSource(((URL) o).openStream());
+      } else if (o instanceof String) {
+        is = new InputSource(new StringReader((String) o));
+      }
+    }
+    if (is == null) {
+      throw new MissingResourceException(
+          "Missing system resource:",
+          rBundle == null ? "<no bundle>" : rBundle.getClass().getName(),
+          SCHEMA_KEY);
+    }
     XMLDecoder xd = new java.beans.XMLDecoder(is);
     try {
       Object obj = xd.readObject();
       root = (ProviderRegistrar) obj;
     } catch (ArrayIndexOutOfBoundsException aioobe) {
-      logger.log(Level.INFO, "no system resource: " + resourcePath0);
+      throw new MissingResourceException(
+          "No RegistrarProvider in schema: ",
+          resourcePath0, SCHEMA_KEY);
     } finally {
       xd.close();
     }
+  }
+
+  /**
+   * @param resourcePath0 path neme to resource.
+   * @return an {@link InputSource} for the stream at
+   *   <code>resourcePath0</code>, or <tt>null</tt> if no stream there.
+   */
+  private static InputSource getSystemSource(
+      final String resourcePath0) {
+    InputStream ris =
+        ClassLoader.getSystemResourceAsStream(resourcePath0);
+    InputSource is = null;
+    if (ris != null) {
+      is = new InputSource(ris);
+    }
+
+    return is;
   }
 
   /**
