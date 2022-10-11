@@ -1,3 +1,7 @@
+/*
+ * @author nos $}John Hutcheson &lt;witerat.test@gmail.com&gt;
+ * @created 16-Sep-2022 11:12:43
+ */
 package net.witerat.cafenatedsql.spi;
 
 import java.util.Properties;
@@ -24,6 +28,61 @@ import net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel;
  * to implement any or all of the factory services offers.
  */
 public class SimpleProvider implements Provider {
+
+  private final class ConfiguredModelFactory implements TemplateModelFactory {
+
+    /** The target. */
+    private TemplateModelFactory target;
+
+    /**
+     * Instantiates a new configured model factory.
+     *
+     * @param factory0
+     *          the target factory
+     */
+    private ConfiguredModelFactory(final CafenatedFactory factory0) {
+      target = (TemplateModelFactory) factory0;
+    }
+
+    @Override
+    public TemplateEngineModel newInstance(final Properties defaults) {
+      Properties defs = defaults;
+      if (null == defaults || !defaults.contains("provider")) {
+        defs = new Properties(defaults);
+        defs.put("provider", SimpleProvider.this);
+      }
+      if (null == defaults || !defaults.contains("connection_factory")) {
+        if (defs == defaults) {
+          defs = new Properties(defaults);
+        }
+        if (null != defaults && defaults.containsKey("connection_method")) {
+          String method = (String) defaults.get("connection_method");
+          defs.put("connection_factory", getConnectionFactory(method));
+        }
+      }
+      return target.newInstance(defs);
+    }
+
+    @Override
+    public TemplateEngineModel newInstance(
+        final TemplateEngineModel model) {
+      TemplateEngineModel defs = model;
+      if (model == null || model.get("provider") == null) {
+        defs = target.newInstance(model);
+        defs.set("provider", SimpleProvider.this);
+      }
+      if (null == model || model.get("connection_factory") == null) {
+        if (defs == model) {
+          defs = target.newInstance(model);
+        }
+        if (null != model && model.get("connection_method") != null) {
+          String method = (String) model.get("connection_method");
+          defs.set("connection_factory", getConnectionFactory(method));
+        }
+      }
+      return target.newInstance(defs);
+    }
+  }
 
   /** The connection factory. */
   private ConnectionFactory connectionFactory;
@@ -101,46 +160,7 @@ public class SimpleProvider implements Provider {
       dialectFactory = (DialectFactory) factory0;
     }
     if (factory0 instanceof TemplateModelFactory) {
-      modelFactory = new TemplateModelFactory() {
-        private TemplateModelFactory target = (TemplateModelFactory) factory0;
-        @Override
-        public TemplateEngineModel newInstance(final Properties defaults) {
-          Properties defs = defaults;
-          if (null == defaults || !defaults.contains("provider")) {
-            defs = new Properties(defaults);
-            defs.put("provider", SimpleProvider.this);
-          }
-          if (null == defaults || !defaults.contains("connection_factory")) {
-            if (defs == defaults) {
-              defs = new Properties(defaults);
-            }
-            if (null != defaults && defaults.containsKey("connection_method")) {
-              String method = (String) defaults.get("connection_method");
-              defs.put("connection_factory", getConnectionFactory(method));
-            }
-          }
-          return target.newInstance(defs);
-        }
-        @Override
-        public TemplateEngineModel newInstance(
-            final TemplateEngineModel model) {
-          TemplateEngineModel defs = model;
-          if (model == null || model.get("provider") == null) {
-            defs = target.newInstance(model);
-            defs.set("provider", SimpleProvider.this);
-          }
-          if (null == model || model.get("connection_factory") == null) {
-            if (defs == model) {
-              defs = target.newInstance(model);
-            }
-            if (null != model && model.get("connection_method") != null) {
-              String method = (String) model.get("connection_method");
-              defs.set("connection_factory", getConnectionFactory(method));
-            }
-          }
-          return target.newInstance(defs);
-        }
-      };
+      modelFactory = new ConfiguredModelFactory(factory0);
     }
     if (factory0 instanceof NounFactory) {
       nounFactory = (NounFactory) factory0;
@@ -174,7 +194,6 @@ public class SimpleProvider implements Provider {
    */
   @Override
   public ConnectionFactory getConnectionFactory(final String method0) {
-    // TODO Auto-generated method stub
     return connectionFactory;
   }
 
@@ -251,7 +270,7 @@ public class SimpleProvider implements Provider {
   @Override
   public TemplateModelFactory getModelFactory() {
     if (null == modelFactory) {
-      return SimpleModelFactory.get(this);
+      modelFactory = SimpleModelFactory.get(this);
     }
     return modelFactory;
   }
@@ -421,7 +440,7 @@ public class SimpleProvider implements Provider {
    * Sets the url factory.
    *
    * @param urlFactory0
-   *          the new url factory
+   *          the new URL factory
    */
   public void setUrlFactory(final URLFactory urlFactory0) {
     this.urlFactory = urlFactory0;
