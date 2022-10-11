@@ -8,6 +8,11 @@ import java.util.Map;
  */
 public class SimpleMapModel implements TemplateEngineModel {
 
+  /** Class of properties field. */
+  @SuppressWarnings("unchecked")
+  private static final Class<? extends Map<String, Object>>
+      PROPERTIES_CLASS =
+          (Class<? extends Map<String, Object>>) LinkedHashMap.class;
   /** The properties. */
   private final Map<String, Object> properties;
 
@@ -15,25 +20,39 @@ public class SimpleMapModel implements TemplateEngineModel {
    * Instantiates a new simple map model.
    *
    * @param p0
-   *          the p
+   *          A map of name value pairs.
    */
   SimpleMapModel(final Map<String, Object> p0) {
     Map<String, Object> p = p0;
     if (p == null) {
-      p = new LinkedHashMap<>();
+      p = allocate();
     }
     properties = p;
+  }
+
+  /**
+   * Allocate a map to hold properties.
+   * @return the map for properties.
+   */
+  private Map<String, Object> allocate() {
+    try {
+      return (Map<String, Object>) PROPERTIES_CLASS.newInstance();
+    } catch (InstantiationException | IllegalAccessException e) {
+      throw new RuntimeException("Failed to allocate property map", e);
+    }
   }
 
   /**
    * Instantiates a new simple map model.
    */
   public SimpleMapModel() {
-    properties = new LinkedHashMap<>();
+    properties = allocate();
   }
 
   /**
-   * {@inheritDoc}
+   * Fetch the value by evalution of and expression. This method uses
+   * {@link #evaluateContextExpression(String)} but returns <tt>null</tt>
+   * if an {@link ExpressionFailedException} is thrown.
    *
    * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
    *    getByExpression(java.lang.String)
@@ -63,10 +82,11 @@ public class SimpleMapModel implements TemplateEngineModel {
    *
    * @see net.witerat.cafenatedsql.api.driver.template.TemplateEngineModel#
    *    set(java.lang.String, java.lang.Object)
+   * @Todo Why was there a string cast of value?
    */
   @Override
   public void set(final String property, final Object value) {
-    properties.put(property, (String) value);
+    properties.put(property, value);
   }
 
   /**
@@ -78,7 +98,10 @@ public class SimpleMapModel implements TemplateEngineModel {
   @Override
   public Object evaluateContextExpression(final String expression)
       throws ExpressionFailedException {
-    return get(expression);
+    if (properties.containsKey(expression)) {
+      return properties.get(expression);
+    }
+    throw new ExpressionFailedException("No property named " + expression);
   }
 
   /**
