@@ -24,8 +24,7 @@ import net.witerat.cafenatedsql.spi.driver.tags.VerbTag;
 
 /**
  * The Class DriverBuilder uses a driver factory to construct and configure
- * a new driver object aggregated of definition objects derived from tag
- * objects.
+ * a new driver object aggregated of definition objects derived from xml model.
  * @see DriverFactory
  * @see TypeMapper
  */
@@ -41,12 +40,12 @@ public class DriverBuilder {
    * Builds the driver. Sets up a driver with the specified connection methods.
    *
    * @param model
-   *          A property model
+   *          A property model to be assigned to the new driver.
    * @param spec
-   *          the specifying tag model.
-   * @return the driver
+   *          The xml model describing the requested driver.
+   * @return The driver.
    * @throws DriverCreationException
-   *           the driver creation exception
+   *           A driver creation exception.
    */
   protected Driver buildDriver(final TemplateEngineModel model,
       final DriverTag spec) throws DriverCreationException {
