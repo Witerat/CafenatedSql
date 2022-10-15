@@ -18,7 +18,6 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -456,6 +455,7 @@ public class SimpleConnectionFactoryTest extends SimpleConnectionFactory {
    */
   @Test
   public final void testSetPropertyRequiredStringBoolean() {
+    part.setPropertyRequired("fiz", false);
     assertFalse(part.isPropertyRequired("baz"));
     part.setPropertyRequired("foo", true);
     assertTrue(part.isPropertyRequired("foo"));
